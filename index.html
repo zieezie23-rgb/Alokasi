@@ -1,0 +1,471 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rekap Nataru dan Seasonal</title><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0b4ea2">
+<link rel="icon" href="assets/icon.png"><link rel="apple-touch-icon" href="assets/icon.png">
+<style>
+:root{--bg:#f1f4fa;--ink:#17212b;--mut:#5d6b78;--line:#d3dae6;--acc:#0b4ea2;--err:#d71920;--yel:#ffcc00;--red:#e4002b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,sans-serif}
+main{max-width:960px;margin:0 auto;padding:28px 16px 60px}h1{font-size:22px;margin:0 0 30px;padding:12px 16px;background:var(--acc);color:#fff;border-radius:8px;box-shadow:0 5px 0 var(--yel),0 10px 0 var(--red)}.sub{color:var(--mut);margin:0 0 22px}
+.p{background:#fff;border:1px solid var(--line);border-radius:8px;margin-bottom:22px}
+.r{display:grid;grid-template-columns:150px 1fr 320px;gap:14px;padding:2px 0;font-size:13.5px;align-items:center}
+.n{font-weight:600}.m,small{color:var(--mut);font-size:13px}small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.e{color:var(--err)}
+.u{display:flex;gap:6px;flex-wrap:wrap;align-items:center}input[type=file]{max-width:180px;font-size:13px}
+select,input[type=text],input[type=password]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:4px}
+button{font:inherit;padding:6px 14px;border-radius:4px;border:1px solid var(--acc);background:var(--acc);color:#fff;cursor:pointer}button.g{background:#fff;color:var(--acc)}button:disabled{opacity:.5}button.dg{background:#fff;color:var(--err);border-color:var(--err)}button.dg.ask{background:var(--err);color:#fff}
+:focus-visible{outline:3px solid #9dbde8;outline-offset:1px}
+.msg{grid-column:1/-1;font-size:13.5px;padding:8px 12px;border-radius:4px;background:#e6eef9}.msg.x{background:#fbeceb;color:var(--err)}
+.gen{padding:18px}.c{display:flex;gap:16px;align-items:end;flex-wrap:wrap}.c label{display:flex;flex-direction:column;font-size:13px;color:var(--mut);gap:4px}
+.bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin:14px 0 6px;display:none}.bar i{display:block;height:100%;width:0;background:var(--acc)}
+a.dl.g{background:#fff;color:var(--acc)}a.dl{border:1px solid var(--acc);display:inline-block;margin:10px 8px 0 0;background:var(--acc);color:#fff;padding:8px 16px;border-radius:4px;text-decoration:none;font-weight:600}
+#jm{text-align:center}.ac{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0 8px;margin-bottom:14px}.ac .dl{margin-right:0}.ac .dl:last-child{margin-left:auto}#res table{width:100%;border-collapse:collapse}#res td:last-child{padding-right:0}#sm table{width:100%;border-collapse:collapse}#sm td{padding:2px 0 2px 10px;font-size:12.5px;text-align:right;white-space:nowrap;border-top:0}#sm td:first-child{text-align:left;padding-left:0}#sm tr.h td{font-weight:700;text-align:left;padding:10px 0 2px;border-top:1px solid var(--line);color:var(--acc)}#sm tr.sh td{color:var(--mut);font-size:11.5px}td{padding:3px 18px 3px 0;border-top:1px solid var(--line);font-size:14px}td:last-child{text-align:right}
+.p{overflow-x:auto}.r,.r *,.msg,td,.sub,.c label{white-space:nowrap}.r{grid-template-columns:90px minmax(0,1fr) 116px}.r>div:nth-child(2){overflow:hidden;text-overflow:ellipsis;text-align:center}.r>div:nth-child(3){text-align:right}.u{flex-wrap:wrap;justify-content:flex-end}label.bt{display:inline-block;font:inherit;padding:6px 14px;border-radius:4px;border:1px solid var(--acc);background:var(--acc);color:#fff;cursor:pointer}label.bt.off{opacity:.5;pointer-events:none}label.bt:focus-within{outline:3px solid #9dbde8;outline-offset:1px}.msg{overflow:hidden;text-overflow:ellipsis}
+.c.t button,.c.t label.bt,.c.t select{height:38px;box-sizing:border-box}.c.t label.bt{display:inline-flex;align-items:center;justify-content:center}.bg{display:flex}.bg>:first-child{border-radius:4px 0 0 4px}.bg>:last-child{border-radius:0 4px 4px 0;margin-left:-1px}.c.k{flex-wrap:nowrap;align-items:flex-end;gap:6px}.c.k button,.c.k label.bt,.c.k select{font-size:13px;padding:0 10px;white-space:nowrap}.c.k select{padding:0 4px}.c.k label{font-size:11.5px}
+
+.tabs{display:flex;gap:6px;margin:0 0 16px;border-bottom:1px solid var(--line)}.tabs button{background:transparent;color:var(--mut);border:0;border-bottom:3px solid transparent;border-radius:0;padding:8px 16px;font-weight:600;margin-bottom:-1px}.tabs button.on{color:var(--acc);border-bottom-color:var(--acc)}#sm .hd td{font-size:13px;font-weight:700;color:var(--acc);padding:0 0 6px 10px;border-top:0}#sm .hd td:first-child{padding-left:0}#sm .hd td:not(:first-child){color:var(--mut);font-size:11.5px}
+input[type=number]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:4px;width:150px}.alg{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}.alg>div{min-width:0}.alt{font-weight:700;color:var(--acc);margin:0 0 10px;font-size:14px}
+.alf{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mut)}.alf .m{white-space:normal}details.dd{border:1px solid var(--line);border-radius:4px;background:#fff}details.dd summary{cursor:pointer;padding:6px 10px;color:var(--ink);font-size:14px}.ddl{max-height:210px;overflow:auto;border-top:1px solid var(--line);padding:6px 10px}.ddl label{display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--ink);padding:2px 0;white-space:nowrap}
+.st{border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:#f3f7fd}.st span{display:block;font-size:12px;color:var(--mut)}.st b{display:block;font-size:19px;margin-top:2px}#alz td{text-align:right}#alz td:first-child{text-align:left}#alz tr.th td{font-size:11.5px;color:var(--mut);font-weight:600}select.al{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:#fff;width:100%}
+.tabs button.on{color:var(--acc);border-bottom-color:var(--red)}.tabs button:hover{color:var(--acc)}.alt{border-left:4px solid var(--yel);padding-left:8px}.st{border-left:4px solid var(--yel)}
+.alu{display:flex;gap:12px}.alu>.alf{flex:1 1 0;min-width:0}.alu .u{flex-wrap:nowrap;gap:4px;justify-content:flex-start}.alu label.bt,.alu button{padding:6px 10px}.alu .m{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#al_src .r{grid-template-columns:100px minmax(0,1fr) 130px 30px}#al_src .r button{padding:0 8px;height:26px}
+#ld{display:none;position:fixed;inset:0;z-index:99;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px}#ld.on{display:flex}#ld .sp{width:46px;height:46px;border:5px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}#ld .t{font-weight:600;font-size:17px}#ld .m{max-width:min(420px,90vw);white-space:normal;overflow-wrap:anywhere}#ld.er .sp{display:none}#ldr{display:none}#ld.er #ldr{display:inline-block}
+</style></head><body><div id="ld" class="on" role="status" aria-live="polite"><div class="sp"></div><div class="t" id="ldt">Membaca database...</div><div class="m" id="ldm">Menghubungkan ke database...</div><button type="button" id="ldr">Sinkron ulang</button></div><main>
+<h1>Rekap Nataru dan Seasonal</h1>
+<div class="tabs" role="tablist"><button type="button" role="tab" id="t2" aria-selected="false">Master</button><button type="button" role="tab" id="t1" class="on" aria-selected="true">Ringkasan</button><button type="button" role="tab" id="t3" aria-selected="false">Alokasi DPD</button></div>
+<div id="pg1"><section class="p gen" id="sm"></section></div>
+<div id="pg2" hidden>
+<section class="p gen" id="cl"><div class="c t" style="align-items:center">
+<div class="m" id="cm" style="flex:1 1 180px;min-width:0;margin:0;white-space:normal"></div>
+<label style="display:none">URL Web App (Apps Script)<input type="text" id="cu" style="width:min(430px,80vw)" placeholder="https://script.google.com/macros/s/.../exec"></label>
+<label id="kl">Kode rahasia<input type="password" id="ck" size="14" autocomplete="off"></label>
+<button id="cs">Simpan &amp; sambungkan</button><button class="g" id="ce" style="display:none">Ubah kode</button></div></section>
+<section class="p gen" style="padding:14px 10px"><div class="c t k">
+<div class="bg"><button class="g" type="button" id="hb" aria-expanded="false" aria-controls="hp" title="Format file yang diupload" style="font-weight:600">?</button><label class="bt" id="ulb">Upload file<input type="file" hidden multiple accept=".xlsx,.xlsm,.csv" id="fa"></label></div>
+<label>Mode NPB<select id="md"><option value="tambah">Tambahkan</option><option value="ganti">Ganti semua</option></select></label>
+<button class="dg" type="button" id="rs" style="margin-left:auto">Reset database</button></div>
+<div id="src" style="margin-top:10px;padding-top:8px;border-top:1px solid var(--line)"></div>
+<div id="hp" hidden style="margin-top:10px;padding:10px 14px;border-radius:4px;background:#e6eef9;font-size:13.5px;line-height:1.7">
+<div><b>Master</b>: master stock</div>
+<div><b>Toko</b>: KODE TOKO, NAMA TOKO, AM, KECAMATAN, KOTA</div>
+<div><b>Item</b>: PLU, DESC, POLA1, POLA2, KET NATARU</div>
+<div><b>Target</b>: TOKO, PRDCD, QTY_NAT, QTY_SEA</div>
+<div><b>NPB</b>: GAB, QTY ALOK, KETER</div></div>
+<div class="m" id="um" style="margin-top:8px;white-space:normal"></div><div id="ul" style="margin-top:6px"></div></section>
+<section class="p gen"><div class="c">
+<label>Kode gudang<input type="text" id="gd" size="7" value="G113"></label>
+<button id="go" style="margin-left:auto">Buat rekap (CSV)</button></div>
+<div class="bar" id="bar"><i id="fl"></i></div><div class="m" id="jm"></div><div id="res"></div></section>
+</div>
+<div id="pg3" hidden>
+<section class="p gen"><div class="alt">Upload</div>
+<div class="c t k"><div class="bg"><button class="g" type="button" id="al_hb" aria-expanded="false" aria-controls="al_hp" title="Format file yang diupload" style="font-weight:600">?</button><label class="bt" id="al_ulb">Upload file<input type="file" hidden multiple accept=".xlsx,.xlsm,.csv" id="al_fa"></label></div></div>
+<div id="al_src" style="margin-top:10px;padding-top:8px;border-top:1px solid var(--line)"></div>
+<div id="al_hp" hidden style="margin-top:10px;padding:10px 14px;border-radius:4px;background:#e6eef9;font-size:13.5px;line-height:1.7">
+<div><b>Stock akhir</b>: PLU (PLU / PLUKODE), QTY_AKHIR (stock akhir)</div>
+<div><b>Plan picking</b>: TOKO, PLAN PICKING (hanya toko bernilai 1 yang dihitung)</div>
+<div><b>Sudah alokasi</b>: GAB</div>
+<div style="color:var(--mut)">Boleh pilih beberapa file sekaligus. Jenis file dikenali dari nama file (Stock / Plan / Sudah) atau dari kolomnya.</div></div>
+<div class="m" id="al_um" style="margin-top:8px;white-space:normal"></div><div id="al_ul" style="margin-top:6px"></div></section>
+<section class="p gen"><div class="alt">Pilihan</div><div class="alg">
+<div class="alf"><span>Zona</span><div id="al_zona"></div></div>
+<div class="alf"><span>Pola 1</span><div id="al_pola1"></div></div>
+<div class="alf"><span>Pola 2</span><div id="al_pola2"></div></div>
+<div class="alf"><span>Ket Nataru</span><div id="al_ket"></div></div>
+<div class="alf"><span>Status alokasi</span><div id="al_sa"></div></div>
+</div></section>
+<section class="p gen"><div class="alt">Isian</div><div class="c">
+<label>Max item (per zona)<input type="number" id="al_mi" min="0" step="1" inputmode="numeric"></label>
+<label>Max qty alokasi (&times; minor)<input type="number" id="al_mq" min="0" step="1" inputmode="numeric"></label>
+<button id="al_go" style="margin-left:auto">Hitung alokasi</button></div>
+<div class="m" id="al_msg" style="margin-top:12px;white-space:normal"></div><div id="al_res" style="margin-top:12px"></div></section>
+</div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const $=s=>document.querySelector(s),tick=()=>new Promise(r=>setTimeout(r)),fn=n=>Number(n).toLocaleString('id-ID'),pc=(a,b)=>(b?Math.min(100,Math.floor(100*a/b)):100)+' %';
+const COLS=["GUDANG ","AM","KECAMATAN","KOTA","TOKO","NAMA TOKO","GAB","PLU","DESC","POLA1","POLA2","KET NATARU","ZONA","ALAMAT","FRAC","MINOR","ACOST","PTAG","QTY_NAT","CTN_NAT","RP_NAT","QTY_SEA","CTN_SEA","RP_SEA","QTY_TGT","CTN_TGT","RP_TGT","QTY_NPB_NAT","CTN_NPB_NAT","RP_NPB_NAT","QTY_SISA_NAT","CTN_SISA_NAT","RP_SISA_NAT","% NAT","QTY_NPB_SEA","CTN_NPB_SEA","RP_NPB_SEA","QTY_SISA_SEA","CTN_SISA_SEA","RP_SISA_SEA","% SEA"];
+const SRC={master:['Master','Diganti seluruhnya'],toko:['Toko','Diganti seluruhnya'],item:['Item','Diganti seluruhnya'],target:['Target','GAB ada diperbarui, GAB baru ditambahkan'],npb:['NPB','Ditambahkan setiap upload']};
+// ---- IndexedDB
+const idb=new Promise((ok,no)=>{const q=indexedDB.open('rekap',1);q.onupgradeneeded=()=>q.result.createObjectStore('s');q.onsuccess=()=>ok(q.result);q.onerror=()=>no(q.error)});
+const tx=async(m,f)=>{const d=await idb;return new Promise((ok,no)=>{const t=d.transaction('s',m);const r=f(t.objectStore('s'));t.oncomplete=()=>ok(r.result);t.onerror=()=>no(t.error)})};
+const get=k=>tx('readonly',s=>s.get(k)),put=(k,v)=>tx('readwrite',s=>s.put(v,k));
+// ---- helpers (sama dengan VLOOKUP/IFERROR di Excel)
+const N=v=>String(v??'').toUpperCase().split(/\s+/).filter(Boolean).join(' ');
+const K=v=>v==null?'':typeof v==='number'?String(v):String(v).trim();
+// Angka dari file: 5,580 / 1,234,567.89 (koma = ribuan) dan 1.234,56 / 1.234.567 (titik = ribuan) dibaca sebagai ribuan; 12,5 dan 0,125 tetap desimal.
+const NUM=v=>{if(typeof v==='number')return v;let s=String(v??'').trim().replace(/\s/g,'');
+ if(/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s)&&!/^-?0,/.test(s))s=s.replace(/,/g,'');
+ else if(/^-?\d{1,3}(\.\d{3})+,\d+$/.test(s)||/^-?\d{1,3}(\.\d{3}){2,}$/.test(s))s=s.replace(/\./g,'').replace(',','.');
+ else s=s.replace(',','.');
+ const n=parseFloat(s);return isNaN(n)?0:n};
+const V=v=>v===''||v==null?null:v, z=v=>v==null||v===''?0:v, d=(a,b)=>b?a/b:0;
+function hdr(r,must){for(let i=0;i<Math.min(20,r.length);i++){const n=(r[i]||[]).map(N);if(must.every(m=>n.includes(m))){const c={};n.forEach((x,j)=>{if(!(x in c))c[x]=j});return[c,r.slice(i+1)]}}throw Error('Header tidak ditemukan. Kolom wajib: '+must.join(', '))}
+const col=(c,...a)=>{for(const x of a)if(x in c)return c[x];throw Error('Kolom '+a[0]+' tidak ditemukan.')};
+const sha=async b=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',b))].map(x=>x.toString(16).padStart(2,'0')).join('');
+async function sheet(f,k){const buf=await f.arrayBuffer();const wb=XLSX.read(buf,{type:'array',dense:true,raw:true});
+ const ws=wb.Sheets[wb.SheetNames.find(n=>n.trim().toLowerCase()===k)||wb.SheetNames[0]];
+ return[XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null}),buf]}
+// ---- cloud (Google Spreadsheet via Apps Script Code.gs)
+const CF=()=>{if(DEF_KEY&&DEF_KEY!=='ISI-KODE-RAHASIA-ANDA')return{u:DEF_URL,k:DEF_KEY};try{const c=JSON.parse(localStorage.getItem('cloud')||'null');return c&&c.k?{u:DEF_URL,k:c.k}:null}catch(e){return null}},cloudOn=()=>{const c=CF();return!!(c&&c.u&&c.k)};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms)),cst=t=>{const e=$('#cm');if(e){e.className='m';e.textContent=t}const l=$('#ld');if(l&&l.classList.contains('on')&&!l.classList.contains('er'))$('#ldm').textContent=t};
+async function api(a){const c=CF();if(!c)throw Error('Belum tersambung.');let last;
+ for(let t=0;t<3;t++){try{const r=await fetch(c.u,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...a,secret:c.k})});
+  let j;try{j=await r.json()}catch(e){throw Object.assign(Error('Respons Web App tidak valid. Pastikan deploy "Anyone" dan URL berakhiran /exec.'),{fatal:1})}
+  if(!j.ok)throw Object.assign(Error(j.error||'Gagal'),{fatal:1});return j}
+  catch(e){last=e.fatal?e:Error('Tidak bisa terhubung. Cek internet dan URL Web App.');if(e.fatal)throw last;await sleep(1200*(t+1))}}
+ throw last}
+const NB=v=>v===''||v==null?null:v,CH=20000;
+let capsP=null;const caps=()=>capsP||(capsP=api({action:'caps'}).catch(()=>({})));
+const CV={master:{to:m=>[...m].map(([p,a])=>[p,...a]),from:rs=>new Map(rs.map(r=>[String(r[0]),[NB(r[1]),NB(r[2]),NB(r[3]),NUM(r[4]),NUM(r[5]),NB(r[6]),NUM(r[7])]]))},
+ toko:{to:m=>[...m].map(([p,a])=>[p,...a]),from:rs=>new Map(rs.map(r=>[String(r[0]),[NB(r[1]),NB(r[2]),NB(r[3]),NB(r[4])]]))},
+ target:{to:m=>[...m.values()],from:rs=>new Map(rs.map(r=>[String(r[0])+String(r[1]),[String(r[0]),String(r[1]),NUM(r[2]),NUM(r[3])]]))}};
+CV.item=CV.toko;
+async function push(ds,mode,rows,extra,prog,ch){ch=ch||CH;
+ if(mode==='merge'&&rows.length<=ch&&(await caps()).direct){const j=await api({action:'commit',ds,mode,rows,...extra});prog&&prog(rows.length,rows.length);return j}
+ await api({action:'begin',ds,mode,hash:extra&&extra.hash||''});
+ for(let i=0;i<rows.length;i+=ch){await api({action:'append',ds,rows:rows.slice(i,i+ch)});prog&&prog(Math.min(i+ch,rows.length),rows.length)}
+ return api({action:'commit',ds,mode,...extra})}
+async function pull(ds,prog){const rows=[];let off=0,total=1;
+ while(off<total){const j=await api({action:'pull',ds,offset:off,limit:15000});total=j.total;for(const r of j.rows)rows.push(r);off+=j.rows.length;prog&&prog(off,total);if(!j.rows.length)break}
+ return rows}
+// samakan data perangkat dengan Spreadsheet (Spreadsheet menang bila versinya beda; bila Spreadsheet kosong, data perangkat dikirim)
+async function syncAll(nodraw){if(!cloudOn())return;const{meta:cm}=await api({action:'meta'});const lm=(await get('meta'))||{};let ch=0;
+ for(const k in SRC){const c=cm[k],D=await get(k),loc=k==='npb'?(D&&D.m.size):(D&&D.size);
+  if(!c){if(loc){cst('Mengirim data '+SRC[k][0]+'...');const mt=lm[k]||{file:'(perangkat)',time:new Date().toLocaleString('id-ID')};
+    const rows=k==='npb'?[...D.m].map(([g,a])=>[g,a[0],a[1]]):CV[k].to(D);
+    const j=await push(k,'replace',rows,{file:mt.file,time:mt.time,files:k==='npb'?D.f.map(x=>({hash:x.h,name:x.name,n:x.n,time:mt.time})):[]});
+    lm[k]={file:mt.file,time:mt.time,ver:j.ver};ch++}continue}
+  if((lm[k]||{}).ver===c.ver&&loc)continue;
+  cst('Mengambil data '+SRC[k][0]+'...');const pg=(a,b)=>cst('Mengambil '+SRC[k][0]+': '+(b?Math.min(100,Math.floor(100*a/b)):100)+' %');
+  if(k==='npb'){const rs=await pull('npb',pg),fs=await pull('npbfiles');const m=new Map(rs.map(r=>[String(r[0]),[NUM(r[1]),NUM(r[2])]]));
+   await put('npb',{m,f:fs.map(r=>({h:String(r[0]),name:String(r[1]),n:NUM(r[2])}))})}
+  else await put(k,CV[k].from(await pull(k,pg)));
+  lm[k]={file:c.file,time:c.time,ver:c.ver};ch++}
+ await put('meta',lm);if(ch&&!nodraw)await draw();return ch}
+// ---- upload
+let SYNCED=0;
+async function upload(k,f,mode){
+ const cl=cloudOn(),mp=$('#um'),prog=(a,b)=>{mp.textContent='Mengirim data: '+pc(a,b)};
+ if(cl&&!SYNCED){mp.textContent='Mencocokkan data...';await syncAll(1);SYNCED=1}
+ const[r,buf]=await sheet(f,k);let msg,ver;const tm=new Date().toLocaleString('id-ID');
+ if(k==='master'){const[c,dt]=hdr(r,['PRDCD','DESC2','PLANOGRAM','ALAMAT','FRAC','ACOST','PTAG','MINOR']);const m=new Map();
+  for(const x of dt){const p=K(x[c.PRDCD]);if(!p||p==='PRDCD'||m.has(p))continue;m.set(p,[V(x[c.DESC2]),V(x[c.PLANOGRAM]),V(x[c.ALAMAT]),NUM(x[c.FRAC]),NUM(x[c.ACOST]),V(x[c.PTAG]),NUM(x[c.MINOR])])}
+  if(cl)ver=(await push('master','replace',CV.master.to(m),{file:f.name,time:tm},prog)).ver;
+  await put('master',m);msg=`Master diganti: ${fn(m.size)} PLU.`;
+ }else if(k==='toko'||k==='item'){const m=new Map();const hd=/^(TOKO|KODE|KODE TOKO|PLU|PRDCD)$/;
+  r.forEach((x,i)=>{if(i===0&&hd.test(N(x[0])))return;const p=K(x[0]);if(p&&!m.has(p))m.set(p,[V(x[1]),V(x[2]),V(x[3]),V(x[4])])});
+  if(cl)ver=(await push(k,'replace',CV[k].to(m),{file:f.name,time:tm},prog)).ver;
+  await put(k,m);msg=`${SRC[k][0]} diganti: ${fn(m.size)} baris.`;
+ }else if(k==='target'){const[c,dt]=hdr(r,['TOKO','PRDCD']);const a=col(c,'QTY_NAT','QTY NAT'),b=col(c,'QTY_SEA','QTY SEA');
+  const m=(await get('target'))||new Map(),dl=new Map();const before=m.size;let n=0;
+  for(const x of dt){const t=K(x[c.TOKO]),p=K(x[c.PRDCD]);if(!t||!p)continue;const v=[t,p,NUM(x[a]),NUM(x[b])],o=m.get(t+p);if(!o||o[2]!==v[2]||o[3]!==v[3])dl.set(t+p,v);m.set(t+p,v);n++}
+  if(cl)ver=(await push('target','merge',[...dl.values()],{file:f.name,time:tm},prog)).ver;
+  await put('target',m);msg=`Target: ${fn(n)} baris, ${fn(m.size-before)} GAB baru, ${fn(n-(m.size-before))} diperbarui. Total ${fn(m.size)}.`;
+ }else{const[c,dt]=hdr(r,['GAB']);const q=col(c,'QTY ALOK','QTY_ALOK','QTY'),ke=col(c,'KETER','KET');
+  const h=await sha(buf);let o=(mode==='ganti'?null:await get('npb'))||{m:new Map(),f:[]};
+  if(o.f.some(x=>x.h===h))throw Error('File ini sudah pernah diupload. Dibatalkan agar qty tidak terhitung dua kali. Pilih "Ganti semua" untuk mengulang dari awal.');
+  const dl=new Map();let n=0;for(const x of dt){const g=K(x[c.GAB]);if(!g)continue;const v=NUM(x[q]),e=dl.get(g)||[0,0];if(N(x[ke])==='NATARU')e[0]+=v;e[1]+=v;dl.set(g,e);n++}
+  if(cl)ver=(await push('npb',mode==='ganti'?'replace':'merge',[...dl].map(([g,a])=>[g,a[0],a[1]]),{hash:h,file:f.name,time:tm,files:[{hash:h,name:f.name,n,time:tm}]},prog)).ver;
+  for(const[g,a]of dl){const e=o.m.get(g)||[0,0];e[0]+=a[0];e[1]+=a[1];o.m.set(g,e)}
+  o.f.push({h,name:f.name,n});await put('npb',o);msg=`NPB ${mode==='ganti'?'diganti':'ditambahkan'}: ${fn(n)} baris. Total ${o.f.length} file.`}
+ const meta=(await get('meta'))||{};meta[k]={file:f.name,time:tm,ver};await put('meta',meta);return msg+(cl?' Tersimpan.':' (Belum tersambung, data belum disinkronkan.)')}
+// ---- tampilan sumber
+async function draw(){const meta=(await get('meta'))||{},box=$('#src');box.innerHTML='';
+ for(const k in SRC){const D=await get(k),n=k==='npb'?(D?D.m.size:0):(D?D.size:0),mt=meta[k]||{};
+  const el=document.createElement('div');el.className='r';
+  el.innerHTML=`<div class="n">${SRC[k][0]}</div>
+  <div class="m" title="${(mt.file||'')+' · '+(mt.time||'')}">${n&&mt.time?String(mt.time).split(/[,\s]/)[0]:''}</div>
+  <div>${n?`<b>${fn(n)}</b> ${k==='npb'?'GAB':'baris'}`:'<span class="e">Belum ada data</span>'}</div>`;
+  box.appendChild(el)}}
+// ---- upload banyak file sekaligus (jenis file dikenali dari nama file / nama sheet)
+async function detect(f){const n=f.name.toLowerCase();for(const k in SRC)if(n.includes(k))return k;
+ if(/\.xls[xm]$/.test(n)){try{const w=XLSX.read(await f.arrayBuffer(),{type:'array',bookSheets:true});for(const k in SRC)if(w.SheetNames.some(s=>s.trim().toLowerCase()===k))return k}catch(e){}}
+ return null}
+$('#hb').onclick=()=>{const h=$('#hp');h.hidden=!h.hidden;$('#hb').setAttribute('aria-expanded',String(!h.hidden))};
+$('#fa').onchange=async e=>{const inp=e.target,fs=[...inp.files],lb=inp.parentNode,ul=$('#ul'),um=$('#um');inp.value='';if(!fs.length)return;
+ lb.classList.add('off');ul.innerHTML='';SYNCED=0;
+ for(let i=0;i<fs.length;i++){const f=fs[i],row=document.createElement('div');row.className='msg';row.style.cssText='white-space:normal;margin-top:6px';ul.appendChild(row);
+  const pre='('+(i+1)+'/'+fs.length+') '+f.name+': ';
+  try{const k=await detect(f);if(!k)throw Error('jenis file tidak dikenali. Tambahkan kata Master / Toko / Item / Target / NPB pada nama file.');
+   um.textContent=pre+'memproses '+SRC[k][0]+'. File besar bisa butuh 1-2 menit...';await tick();
+   row.textContent=pre+'['+SRC[k][0]+'] '+await upload(k,f,k==='npb'?$('#md').value:'')}
+  catch(x){row.className='msg x';row.textContent=pre+x.message}
+  await draw()}
+ um.textContent='';lb.classList.remove('off')};
+// tombol buka Spreadsheet hasil rekap, diletakkan di sebelah tombol unduh
+function slink(u){let a=$('#sl');if(!a){a=document.createElement('a');a.id='sl';a.className='dl g';a.target='_blank';a.rel='noopener';a.textContent='Buka hasil rekap';let w=$('#res .ac');if(!w){w=document.createElement('div');w.className='ac';$('#res').prepend(w)}w.prepend(a)}a.href=u}
+// hasil 0 ditampilkan "-"
+const dz=n=>n?fn(n):'-';
+// ---- ringkasan per Pola 1 (Basic, Terkait); % = NPB / Target
+function sumShow(SM){const B=SM.b,T=SM.t,
+ nz=(v,dc=0)=>{v=Math.round(v*10**dc)/10**dc;return v?v.toLocaleString('id-ID',{maximumFractionDigits:dc}):'-'},
+ pc=(a,b)=>{const p=a?b/a*100:0,q=p.toFixed(2).split('.');return q[0]+','+q[1]+' %'},
+ row=(l,a,b,dc)=>`<tr><td>${l}</td><td>${nz(a,dc)}</td><td>${nz(b,dc)}</td><td>${pc(a,b)}</td></tr>`,
+ blk=(t,x,y)=>`<tr class="h"><td colspan="4">${t}</td></tr>`+row('Qty',x[0],y[0])+row('CTN',x[1],y[1])+row('Rp',x[2],y[2]),
+ tn=[T.nq,T.nc,T.nr],bn=[T.bq,T.bc,T.br],ts=[T.sq,T.sc,T.sr],is=[T.iq,T.ic,T.ir],ba=[B.sq,B.sc,B.sr],ia=[B.iq,B.ic,B.ir],
+ tt=tn.map((v,k)=>v+ts[k]),bt=bn.map((v,k)=>v+is[k]);
+ $('#sm').innerHTML='<table><tr class="hd"><td>Ringkasan</td><td>Target</td><td>NPB</td><td>%</td></tr>'
+  +blk('Basic &middot; Seasonal',ba,ia)
+  +blk('Terkait &middot; Nataru',tn,bn)
+  +blk('Terkait &middot; Seasonal',ts,is)
+  +blk('Terkait &middot; Total',tt,bt)
+  +blk('Total All',ba.map((v,k)=>v+tt[k]),ia.map((v,k)=>v+bt[k]));
+ }
+// ---- pantau rekap latar belakang di server (progres = baris selesai / total)
+async function rekapWatch(){const fl=$('#fl'),jm=$('#jm');$('#bar').style.display='block';
+ for(;;){let j;try{j=((await api({action:'rekapstatus'})).job)||{}}catch(e){jm.textContent='Menunggu koneksi... proses tetap berjalan.';await sleep(4000);continue}
+  if(j.state==='running'){fl.style.width=(j.total?100*j.done/j.total:0)+'%';jm.textContent=({npb:'Memperbarui kolom NPB',master:'Memperbarui kolom Master & NPB'}[j.mode]||'Menyimpan rekap')+': '+pc(j.done,j.total)+' (proses tetap berjalan, boleh ditinggal)';await sleep(2000);continue}
+  if(j.state==='error')throw Error(j.error||'Gagal menyimpan rekap.');
+  if(j.state==='done'){fl.style.width='100%';jm.textContent=j.mode==='none'?'Data sumber tidak berubah sejak rekap terakhir, hasil rekap sudah terbaru.':'Selesai. Rekap sudah tersimpan.';if(j.url)slink(j.url)}
+  return}}
+// ---- buat rekap
+$('#go').onclick=async()=>{const go=$('#go'),bar=$('#bar'),fl=$('#fl'),jm=$('#jm');go.disabled=true;$('#res').innerHTML='';bar.style.display='block';
+ try{if(cloudOn()){jm.textContent='Mengecek data terbaru...';try{await syncAll()}catch(e){jm.textContent='Koneksi gagal, memakai data terakhir.';await tick()}}
+  const[ms,tk,im,tg,np]=await Promise.all(['master','toko','item','target','npb'].map(get));
+  if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target dulu.');
+  const T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),g=$('#gd').value||'G113',sp=',';
+  const f=x=>typeof x==='number'?String(x):/[;,"\n]/.test(x)?'"'+String(x).replace(/"/g,'""')+'"':x;
+  const parts=['\ufeff'+COLS.join(sp)+'\n'];let buf=[],i=0,nt=0,nm=0,ni=0;const acc=()=>({nq:0,nc:0,nr:0,bq:0,bc:0,br:0,sq:0,sc:0,sr:0,iq:0,ic:0,ir:0}),SM={b:acc(),t:acc()};const cl=cloudOn(),srv=cl&&!!(await caps()).rekap,db=[],DBI=COLS.map((c,i)=>/^(CTN_|RP_|% )/.test(c)?-1:i).filter(i=>i>=0);
+  for(const[gab,[t,p,S,Vs]]of tg){const T=T0.get(t)||(nt++,[]),M=M0.get(p)||(nm++,[]),I=I0.get(p)||(ni++,[]),n=P.get(gab)||[0,0];
+   const fr=NUM(M[3]),ac=NUM(M[4]),AB=n[0],AI=n[1]-AB,Y=S+Vs,SN=S-AB,SS=Vs-AI;
+   const pl=String(z(I[1])).trim().toLowerCase(),G=pl==='basic'?SM.b:pl==='terkait'?SM.t:null;
+   if(G){G.nq+=S;G.nc+=d(S,fr);G.nr+=S*ac;G.bq+=AB;G.bc+=d(AB,fr);G.br+=AB*ac;G.sq+=Vs;G.sc+=d(Vs,fr);G.sr+=Vs*ac;G.iq+=AI;G.ic+=d(AI,fr);G.ir+=AI*ac}
+   const R=[g,z(T[1]),z(T[2]),z(T[3]),t,z(T[0]),gab,p,z(M[0]),z(I[1]),z(I[2]),z(I[3]),z(M[1]),z(M[2]),fr,NUM(M[6]),ac,z(M[5]),
+    S,d(S,fr),S*ac,Vs,d(Vs,fr),Vs*ac,Y,d(Y,fr),Y*ac,AB,d(AB,fr),AB*ac,SN,d(SN,fr),SN*ac,d(AB,S),AI,d(AI,fr),AI*ac,SS,d(SS,fr),SS*ac,d(AI,Vs)];if(cl&&!srv)db.push(DBI.map(i=>R[i]).map(x=>typeof x==='number'&&!Number.isInteger(x)?+x.toFixed(6):x));buf.push(R.map(f).join(sp));
+   if(++i%20000===0){parts.push(buf.join('\n')+'\n');buf=[];fl.style.width=(90*i/tg.size)+'%';jm.textContent=`Menghitung: ${pc(i,tg.size)}`;await tick()}}
+  parts.push(buf.join('\n')+'\n');let orphan=0;for(const k of P.keys())if(!tg.has(k))orphan++;
+  const url=URL.createObjectURL(new Blob(parts,{type:'text/csv;charset=utf-8'}));fl.style.width='100%';jm.textContent='Selesai';
+  const dt=new Date(),nm2='Rekap_'+(g.replace(/[^\w-]/g,'')||'G113')+'_'+String(dt.getDate()).padStart(2,'0')+'_'+['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'][dt.getMonth()]+'_'+String(dt.getFullYear()).slice(-2)+'.csv';
+  $('#res').innerHTML=`<div class="ac"><a class="dl" href="${url}" download="${nm2}">Unduh ${nm2}</a></div><table>
+  <tr><td>Baris rekap</td><td>${fn(tg.size)}</td></tr><tr><td>Toko tidak ada di data Toko</td><td>${dz(nt)}</td></tr>
+  <tr><td>PLU tidak ada di Master</td><td>${dz(nm)}</td></tr><tr><td>PLU tidak ada di Item</td><td>${dz(ni)}</td></tr>
+  <tr><td>GAB di NPB tanpa Target (tidak ikut terhitung)</td><td>${dz(orphan)}</td></tr></table>`;
+  sumShow(SM);
+  if(cl&&srv){fl.style.width='0%';jm.textContent='Memulai penyimpanan rekap...';
+   try{const w=new Date().toLocaleString('id-ID');
+    if((await caps()).bg){await api({action:'rekapstart',gudang:g,file:nm2,time:w});await rekapWatch()}
+    else{await api({action:'rekap',gudang:g,file:nm2,time:w});fl.style.width='100%';jm.textContent='Selesai. Rekap juga sudah tersimpan.'}}
+   catch(e){jm.innerHTML='<span class="e">CSV siap diunduh, tetapi rekap belum tersimpan: '+e.message+'</span>'}}
+  else if(cl){fl.style.width='0%';jm.textContent='Menyimpan rekap...';
+   try{await push('rekap','replace',db,{file:nm2,time:new Date().toLocaleString('id-ID')},(a,b)=>{fl.style.width=(100*a/b)+'%';jm.textContent='Menyimpan rekap: '+pc(a,b)},10000);
+    jm.textContent='Selesai. Rekap juga sudah tersimpan.'}
+   catch(e){jm.innerHTML='<span class="e">CSV siap diunduh, tetapi rekap belum tersimpan: '+e.message+'</span>'}}
+ }catch(e){jm.innerHTML='<span class="e">'+e.message+'</span>'}go.disabled=false};
+const setCl=()=>{const on=cloudOn();$('#kl').style.display=on?'none':'';$('#cs').style.display=on?'none':'';$('#ce').style.display=on?'':'none'};
+$('#ce').onclick=()=>{$('#kl').style.display='';$('#cs').style.display='';$('#ce').style.display='none';$('#ck').focus()};
+const DEF_KEY='00000';
+const DEF_URL='https://script.google.com/macros/s/AKfycbwymu26Dh5II0KEVYTJFEOzrp1Zp7o9dYye9FYBdTq_Ciqja13HCb7WADsfdagx5V6n/exec';
+{const c=CF();$('#cu').value=DEF_URL;if(c)$('#ck').value=c.k||''}
+$('#cs').onclick=async()=>{const u=DEF_URL,k=$('#ck').value.trim(),b=$('#cs');
+ if(!/^https:\/\/script\.google\.com\/.+\/exec$/.test(u)||!k){cst('Isi kode rahasia.');$('#cm').className='m e';return}
+ localStorage.setItem('cloud',JSON.stringify({u,k}));capsP=null;b.disabled=true;cst('Menghubungkan...');
+ try{await api({action:'ping'});const n=await syncAll();cst('Tersambung.'+(n?' '+n+' data disinkronkan.':''));setCl()}catch(e){cst(e.message);$('#cm').className='m e'}b.disabled=false};
+let rt;$('#rs').onclick=async()=>{const b=$('#rs'),um=$('#um');
+ if(!b.classList.contains('ask')){b.classList.add('ask');b.textContent='Yakin hapus semua? Klik lagi';clearTimeout(rt);rt=setTimeout(()=>{b.classList.remove('ask');b.textContent='Reset database'},5000);return}
+ clearTimeout(rt);b.disabled=true;$('#ulb').classList.add('off');um.className='m';
+ try{if(cloudOn()){um.textContent='Mengosongkan database...';
+   if(!(await caps()).reset)throw Error('Code.gs belum diperbarui. Tempel Code.gs terbaru lalu deploy versi baru.');
+   await api({action:'reset'})}
+  um.textContent='Menghapus data...';await tx('readwrite',s=>s.clear());
+  $('#res').innerHTML='';$('#jm').textContent='';$('#ul').innerHTML='';await draw();
+  um.textContent='Database dikosongkan.'}
+ catch(e){um.className='m e';um.textContent=e.message}
+ b.disabled=false;b.classList.remove('ask');b.textContent='Reset database';$('#ulb').classList.remove('off')};
+// ---- ringkasan dari database terakhir (tanpa perlu Buat rekap)
+async function calcSM(){const[ms,im,tg,np]=await Promise.all(['master','item','target','npb'].map(get));
+ const M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),acc=()=>({nq:0,nc:0,nr:0,bq:0,bc:0,br:0,sq:0,sc:0,sr:0,iq:0,ic:0,ir:0}),SM={b:acc(),t:acc()};
+ if(tg)for(const[gab,[t,p,S,Vs]]of tg){const M=M0.get(p)||[],I=I0.get(p)||[],n=P.get(gab)||[0,0],fr=NUM(M[3]),ac=NUM(M[4]),AB=n[0],AI=n[1]-AB,
+  pl=String(z(I[1])).trim().toLowerCase(),G=pl==='basic'?SM.b:pl==='terkait'?SM.t:null;
+  if(G){G.nq+=S;G.nc+=d(S,fr);G.nr+=S*ac;G.bq+=AB;G.bc+=d(AB,fr);G.br+=AB*ac;G.sq+=Vs;G.sc+=d(Vs,fr);G.sr+=Vs*ac;G.iq+=AI;G.ic+=d(AI,fr);G.ir+=AI*ac}}
+ return SM}
+let smBusy=0,smAgain=0;async function refreshSum(){if(smBusy){smAgain=1;return}smBusy=1;try{do{smAgain=0;sumShow(await calcSM())}while(smAgain)}catch(e){}smBusy=0}
+// ---- tab Alokasi: upload, pilihan, isian (tersimpan di perangkat) + hitung alokasi
+const ALK=(()=>{try{return JSON.parse(localStorage.getItem('alk')||'{}')||{}}catch(e){return{}}})();ALK.ex=ALK.ex||{};for(const k of['zona','pola1','pola2'])ALK.ex[k]=ALK.ex[k]||[];
+const alkSave=()=>{try{localStorage.setItem('alk',JSON.stringify(ALK))}catch(e){}};
+const ALKF=[['zona','Zona'],['pola1','Pola 1'],['pola2','Pola 2']];
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function alkDD(k,list){const box=$('#al_'+k),was=box.querySelector('details'),op=was&&was.open;box.innerHTML='';
+ if(!list.length){box.innerHTML='<div class="m" style="white-space:normal">Belum ada data. Upload Master/Item di tab Master.</div>';return}
+ const ex=new Set(ALK.ex[k]||[]),det=document.createElement('details');det.className='dd';det.open=!!op;
+ const sum=document.createElement('summary'),body=document.createElement('div');body.className='ddl';
+ const upd=()=>{const sel=list.filter(v=>!ex.has(v)),n=sel.length;sum.textContent=n===list.length?'Semua ('+n+')':n===0?'Tidak ada yang dipilih':n===1?sel[0]:n+' dipilih'};
+ const all=document.createElement('label'),ca=document.createElement('input');ca.type='checkbox';all.append(ca,' Pilih semua');body.appendChild(all);
+ const cbs=list.map(v=>{const l=document.createElement('label'),c=document.createElement('input');c.type='checkbox';c.checked=!ex.has(v);
+  c.onchange=()=>{c.checked?ex.delete(v):ex.add(v);ALK.ex[k]=[...ex];alkSave();sync()};l.append(c,' '+v);body.appendChild(l);return c});
+ const sync=()=>{ca.checked=cbs.every(c=>c.checked);upd()};
+ ca.onchange=()=>{cbs.forEach((c,i)=>{c.checked=ca.checked;ca.checked?ex.delete(list[i]):ex.add(list[i])});ALK.ex[k]=[...ex];alkSave();upd()};
+ det.append(sum,body);box.appendChild(det);sync()}
+async function alkOpts(){try{const[ms,im]=await Promise.all([get('master'),get('item')]),S={zona:new Set(),pola1:new Set(),pola2:new Set()},t=v=>String(z(v)).trim();
+ if(ms)for(const v of ms.values()){const x=t(v[1]);if(x)S.zona.add(x)}
+ if(im)for(const v of im.values()){const a=t(v[1]),b=t(v[2]);if(a)S.pola1.add(a);if(b)S.pola2.add(b)}
+ for(const[k]of ALKF)alkDD(k,[...S[k]].sort((a,b)=>a.localeCompare(b,'id',{numeric:true})))}catch(e){}}
+// ---- baca file upload (header dicari otomatis di 20 baris pertama)
+const PK=v=>K(v).replace(/^0+(?=.)/,''),sq=x=>x.replace(/[_\s]/g,''),isPLU=x=>['PLU','PLUKODE','PLU KODE','PLU_KODE','PRDCD','PLU/PRDCD','KODE PLU','KDPLU'].includes(x),isTk=x=>['TOKO','KODE TOKO','KODETOKO','KD TOKO'].includes(x),
+ alkHead=(r,ok)=>{for(let i=0;i<Math.min(20,r.length);i++){const n=(r[i]||[]).map(N);if(n.some(ok))return[n,r.slice(i+1)]}return null},
+ pick=(n,...fs)=>{for(const f of fs){const i=n.findIndex(f);if(i>=0)return i}return-1},
+ hd=n=>'Header terbaca: '+(n.filter(Boolean).slice(0,10).join(', ')||'(kosong)');
+function alkStock(r){const h=alkHead(r,isPLU);if(!h)throw Error('Kolom PLU (PLU / PLUKODE) tidak ditemukan (dicari di 20 baris pertama).');const[n,b]=h,ip=n.findIndex(isPLU),
+ is=pick(n,x=>sq(x)==='STOCKAKHIR'||sq(x)==='STOKAKHIR',x=>x.includes('AKHIR'),x=>/STOC?K|SALDO/.test(x));if(is<0)throw Error('Kolom stock akhir (mis. QTY_AKHIR) tidak ditemukan. '+hd(n));
+ const m=new Map();for(const x of b){const k=PK(x[ip]);if(k)m.set(k,(m.get(k)||0)+NUM(x[is]))}return m}
+// cadangan: cocokkan 7 digit terakhir bila kode PLU beda panjang (hanya dipakai jika tidak ambigu)
+function alkStock7(m){const m7=new Map();for(const[k,v]of m){const a=PK(k.slice(-7));m7.set(a,m7.has(a)?null:v)}return m7}
+function alkPlan(r){const h=alkHead(r,isTk);if(!h)throw Error('Kolom TOKO tidak ditemukan (dicari di 20 baris pertama).');const[n,b]=h,it=n.findIndex(isTk),
+ il=pick(n,x=>sq(x)==='PLANPICKING',x=>/PLAN|PICK/.test(x));if(il<0)throw Error('Kolom Plan tidak ditemukan. '+hd(n));
+ const st=new Set();for(const x of b){const k=K(x[it]).toUpperCase();if(k&&NUM(x[il])===1)st.add(k)}return st}
+function alkDone(r){const h=alkHead(r,x=>x==='GAB'),st=new Set();
+ if(h){const ig=h[0].indexOf('GAB');for(const x of h[1]){const k=K(x[ig]);if(k)st.add(k)}return st}
+ for(const x of r){const k=K((x||[])[0]);if(k&&N(k)!=='GAB')st.add(k)}return st}
+const PAR={stock:r=>fn(alkStock(r).size)+' PLU',plan:r=>fn(alkPlan(r).size)+' toko plan = 1',done:r=>fn(alkDone(r).size)+' baris'},AKEYS=['stock','plan','done'];
+const ALKN={stock:['Stock akhir','PLU'],plan:['Plan picking','toko'],done:['Sudah alokasi','baris']};
+async function alkStat(){const box=$('#al_src');box.innerHTML='';
+ for(const k of AKEYS){const D=await get('alk_'+k),el=document.createElement('div');el.className='r';
+  const n=D?((String(D.lb||'').match(/^[\d.,]+/)||[fn(Math.max(0,D.rows.length-1))])[0]):'';
+  el.innerHTML=`<div class="n">${ALKN[k][0]}</div>
+  <div class="m" title="${D?D.name+' · '+D.time:''}">${D?String(D.time).split(/[,\s]/)[0]:''}</div>
+  <div>${D?`<b>${n}</b> ${ALKN[k][1]}`:'<span class="e">Belum ada data</span>'}</div>
+  <div>${D?`<button type="button" class="g" data-k="${k}" title="Hapus file">&times;</button>`:''}</div>`;
+  box.appendChild(el)}}
+$('#al_src').onclick=async e=>{const b=e.target.closest('button[data-k]');if(!b)return;await tx('readwrite',s=>s.delete('alk_'+b.dataset.k));alkStat()};
+$('#al_hb').onclick=()=>{const h=$('#al_hp');h.hidden=!h.hidden;$('#al_hb').setAttribute('aria-expanded',String(!h.hidden))};
+// jenis file dikenali dari nama file, lalu dari kolomnya
+function alkDetect(f,r){const n=f.name.toLowerCase();
+ if(/stock|stok/.test(n))return'stock';if(/plan|picking/.test(n))return'plan';if(/sudah|done|alok/.test(n))return'done';
+ try{PAR.plan(r);return'plan'}catch(e){}try{PAR.stock(r);return'stock'}catch(e){}
+ if(alkHead(r,x=>x==='GAB'))return'done';return null}
+$('#al_fa').onchange=async e=>{const inp=e.target,fs=[...inp.files],lb=inp.parentNode,ul=$('#al_ul'),um=$('#al_um');inp.value='';if(!fs.length)return;
+ lb.classList.add('off');ul.innerHTML='';
+ for(let i=0;i<fs.length;i++){const f=fs[i],row=document.createElement('div');row.className='msg';row.style.cssText='white-space:normal;margin-top:6px';ul.appendChild(row);
+  const pre='('+(i+1)+'/'+fs.length+') '+f.name+': ';
+  try{um.textContent=pre+'membaca file. File besar bisa butuh 1-2 menit...';await tick();
+   const[r]=await sheet(f,'');if(!r.length)throw Error('File kosong.');
+   const k=alkDetect(f,r);if(!k)throw Error('jenis file tidak dikenali. Tambahkan kata Stock / Plan / Sudah pada nama file.');
+   const lbl=PAR[k](r);await put('alk_'+k,{name:f.name,time:new Date().toLocaleString('id-ID'),rows:r,lb:lbl});
+   row.textContent=pre+'['+ALKN[k][0]+'] '+lbl}
+  catch(x){row.className='msg x';row.textContent=pre+x.message}
+  await alkStat()}
+ um.textContent='';lb.classList.remove('off')};
+for(const[id,k]of[['al_mi','mi'],['al_mq','mq']]){const e=$('#'+id);if(ALK[k]!=null)e.value=ALK[k];e.oninput=()=>{ALK[k]=e.value===''?null:Math.max(0,Math.floor(+e.value));alkSave()}}
+function alkSel(id,key,opts,dv){const box=$('#'+id),det=document.createElement('details'),sum=document.createElement('summary'),body=document.createElement('div');det.className='dd';body.className='ddl';
+ let cur=opts.some(o=>o[0]===ALK[key])?ALK[key]:dv;const show=()=>{sum.textContent=opts.find(o=>o[0]===cur)[1]};
+ for(const[v,l]of opts){const lb=document.createElement('label'),r=document.createElement('input');r.type='radio';r.name=id;r.checked=v===cur;r.onchange=()=>{cur=v;ALK[key]=v;alkSave();show();det.open=false};lb.append(r,' '+l);body.appendChild(lb)}
+ show();det.append(sum,body);box.appendChild(det)}
+alkSel('al_ket','ket',[['all','All'],['nataru','Nataru']],'all');alkSel('al_sa','sa',[['semua','Semua'],['sudah','Sudah alokasi'],['belum','Belum alokasi']],'semua');
+// tutup semua daftar pilihan saat klik/tap di luar daftar, atau tekan Esc
+document.addEventListener('pointerdown',e=>{document.querySelectorAll('details.dd[open]').forEach(d=>{if(!d.contains(e.target))d.open=false})},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('details.dd[open]').forEach(d=>d.open=false)});
+// ---- hitung alokasi
+// ---- penulis xlsx minimal (tabel rapi bergaya, tanpa library tambahan)
+const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})(),
+ crc32=b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC[(c^b[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
+function zipStore(files,type){const te=new TextEncoder(),parts=[],cd=[];let off=0;
+ for(const[name,txt]of files){const nb=te.encode(name),db=te.encode(txt),crc=crc32(db),h=new DataView(new ArrayBuffer(30));
+  h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(12,0x21,true);h.setUint32(14,crc,true);h.setUint32(18,db.length,true);h.setUint32(22,db.length,true);h.setUint16(26,nb.length,true);
+  parts.push(new Uint8Array(h.buffer),nb,db);
+  const c=new DataView(new ArrayBuffer(46));c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(14,0x21,true);c.setUint32(16,crc,true);c.setUint32(20,db.length,true);c.setUint32(24,db.length,true);c.setUint16(28,nb.length,true);c.setUint32(42,off,true);
+  cd.push(new Uint8Array(c.buffer),nb);off+=30+nb.length+db.length}
+ let cl=0;for(const x of cd)cl+=x.length;const e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cl,true);e.setUint32(16,off,true);
+ return new Blob([...parts,...cd,new Uint8Array(e.buffer)],{type:type||'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})}
+// items: satu baris per PRDCD. Gaya: header hijau + kotak, grand total hijau (seperti contoh List Item Pemasangan Alokasi)
+function alkBook(items,per){
+ const X=t=>String(t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])),L=i=>String.fromCharCode(65+i),
+  H=['No.','PRDCD','Desc','POLA','ZONA','ALAMAT','Frac','Minor','ACOST','Stock','QTY','Ctn','Rp','JML TOKO','AVG CTN/TOKO'],
+  cs=(r,c,v,st)=>'<c r="'+L(c)+r+'" s="'+st+'" t="inlineStr"><is><t xml:space="preserve">'+X(v)+'</t></is></c>',
+  cn=(r,c,v,st)=>'<c r="'+L(c)+r+'" s="'+st+'"><v>'+(+v)+'</v></c>',ce=(r,c,st)=>'<c r="'+L(c)+r+'" s="'+st+'"/>',
+  rw=(r,cells,ht)=>'<row r="'+r+'"'+(ht?' ht="'+ht+'" customHeight="1"':'')+'>'+cells+'</row>',rl=c=>c>=10&&c<=12,
+  mg=['K4:M4'];let R='',a='',b='';
+ R+=rw(1,cs(1,0,'List Item Pemasangan Alokasi DPD',1),24)+rw(2,cs(2,0,'Periode   '+per,0));
+ for(let c=0;c<15;c++){if(rl(c)){a+=c===10?cs(4,c,'REAL',3):ce(4,c,3);b+=cs(5,c,H[c],3)}else{a+=cs(4,c,H[c],3);b+=ce(5,c,3);mg.push(L(c)+'4:'+L(c)+'5')}}
+ R+=rw(4,a,20)+rw(5,b,20);
+ let r=6,tq=0,tc=0,tr=0;
+ items.forEach((g,i)=>{tq+=g.q;tc+=g.c;tr+=g.rp;
+  R+=rw(r,cn(r,0,i+1,10)+cs(r,1,g.p,5)+cs(r,2,g.desc,4)+cs(r,3,g.pola,5)+cs(r,4,g.zn,5)+cs(r,5,g.al,5)+cn(r,6,g.fr,10)+cn(r,7,g.mn,10)+cn(r,8,g.ac,6)+cn(r,9,g.st,6)+cn(r,10,g.q,6)+cn(r,11,g.c,6)+cn(r,12,g.rp,6)+cn(r,13,g.tk.size,10)+cn(r,14,g.tk.size?g.c/g.tk.size:0,7));r++});
+ let gt=cs(r,0,'GRAND TOTAL',8);for(let c=1;c<10;c++)gt+=ce(r,c,8);gt+=cn(r,10,tq,9)+cn(r,11,tc,9)+cn(r,12,tr,9)+ce(r,13,8)+ce(r,14,8);
+ R+=rw(r,gt,22);mg.push('A'+r+':J'+r);
+ const W=[5,11,46,16,7,11,7,8,11,10,11,10,15,10,14],
+ sheet='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0" showGridLines="0"><pane ySplit="5" topLeftCell="A6" activePane="bottomLeft" state="frozen"/><selection pane="bottomLeft"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols>'
+  +W.map((w,i)=>'<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>').join('')+'</cols><sheetData>'+R+'</sheetData><mergeCells count="'+mg.length+'">'+mg.map(m=>'<mergeCell ref="'+m+'"/>').join('')+'</mergeCells><pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup orientation="landscape" fitToWidth="1" fitToHeight="0"/></worksheet>',
+ xf=(n,f,fl,bd,al)=>'<xf numFmtId="'+n+'" fontId="'+f+'" fillId="'+fl+'" borderId="'+bd+'" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment '+al+'/></xf>',
+ V='vertical="center"',
+ styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="164" formatCode="#,##0.0"/></numFmts><fonts count="3"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="16"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF92D050"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF000000"/></left><right style="thin"><color rgb="FF000000"/></right><top style="thin"><color rgb="FF000000"/></top><bottom style="thin"><color rgb="FF000000"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="11">'
+  +xf(0,0,0,0,'')+xf(0,2,0,0,V)+xf(0,0,0,0,'')
+  +xf(0,1,2,1,'horizontal="center" '+V+' wrapText="1"')+xf(0,0,0,1,V+' indent="1"')+xf(0,0,0,1,'horizontal="center" '+V)
+  +xf(3,0,0,1,'horizontal="right" '+V)+xf(164,0,0,1,'horizontal="center" '+V)
+  +xf(0,1,2,1,'horizontal="center" '+V)+xf(3,1,2,1,'horizontal="right" '+V)+xf(3,0,0,1,'horizontal="center" '+V)
+  +'</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>',
+ NS='xmlns="http://schemas.openxmlformats.org/package/2006/relationships"',HD='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+ return zipStore([
+  ['[Content_Types].xml',HD+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'],
+  ['_rels/.rels',HD+'<Relationships '+NS+'><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'],
+  ['xl/workbook.xml',HD+'<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Rekap Alokasi" sheetId="1" r:id="rId1"/></sheets></workbook>'],
+  ['xl/_rels/workbook.xml.rels',HD+'<Relationships '+NS+'><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'],
+  ['xl/styles.xml',styles],['xl/worksheets/sheet1.xml',sheet]])}
+let alkUrl=null,alkUrl2=null,alkUrl3=null;
+async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');go.disabled=true;out.innerHTML='';jm.className='m';
+ try{if(cloudOn()){jm.textContent='Mengecek data terbaru...';try{await syncAll()}catch(e){}}
+  const[ms,tk,im,tg,np,sk,pl,dn]=await Promise.all(['master','toko','item','target','npb','alk_stock','alk_plan','alk_done'].map(get));
+  if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target di tab Master.');
+  if(!sk)throw Error('Upload Stock akhir dulu.');if(!pl)throw Error('Upload Plan picking dulu.');
+  const sa=ALK.sa||'semua';if(sa!=='semua'&&!dn)throw Error('Pilihan Sudah/Belum alokasi butuh file Sudah alokasi. Upload dulu.');
+  jm.textContent='Menghitung alokasi...';await tick();
+  const ST=alkStock(sk.rows),ST7=alkStock7(ST),PL=alkPlan(pl.rows),DN=dn?alkDone(dn.rows):null,T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
+   XZ=new Set(ALK.ex.zona),X1=new Set(ALK.ex.pola1),X2=new Set(ALK.ex.pola2),nat=(ALK.ket||'all')==='nataru',mq=ALK.mq>0?ALK.mq:null,mi=ALK.mi>0?ALK.mi:null,
+   used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim();let i=0,lolos=0;
+  for(const[gab,[t,p,S,Vs]]of tg){
+   if(++i%50000===0){jm.textContent='Menghitung: '+pc(i,tg.size);await tick()}
+   const pk=PK(p);let stock=ST.get(pk);if(stock===undefined&&K(p).length<=7)stock=ST7.get(PK(K(p).slice(-7)));seen.add(pk);if(stock!=null)hit.add(pk);if(!(stock>=100)||!PL.has(K(t).toUpperCase()))continue;
+   const M=M0.get(p)||[],I=I0.get(p)||[],zn=t2(M[1]),p1=t2(I[1]),p2=t2(I[2]);
+   if(XZ.has(zn)||X1.has(p1)||X2.has(p2))continue;
+   if(nat&&N(z(I[3]))!=='NATARU')continue;
+   if(DN){const has=DN.has(gab);if(sa==='sudah'&&!has||sa==='belum'&&has)continue}
+   lolos++;
+   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,sisa=nat?S-AB:Vs-AI;
+   if(!(mn>0))continue;
+   // min(minor*x, rounddown(sisa/minor,0)*minor)
+   let q=Math.floor(sisa/mn)*mn;if(mq!=null)q=Math.min(mn*mq,q);
+   // total alokasi item yang sama tidak boleh melebihi stock; setelah terlewati, baris berikutnya 0
+   if(q>0){if(stop.has(pk))q=0;else{const u=(used.get(pk)||0)+q;if(u>stock){stop.add(pk);q=0}else used.set(pk,u)}}
+   if(q<=0)continue;
+   const T=T0.get(t)||[];rows.push({al:z(M[2]),am:z(T[1]),kota:z(T[3]),t,nt:z(T[0]),gab,p,pk,desc:z(M[0]),zn,p1,p2,kt:z(I[3]),fr,mn,ac,stock,sisa,q,ctn:d(q,fr),rp:q*ac})}
+  // max item per zona, urut total qty alokasi terbesar
+  let res=rows;
+  if(mi!=null){const zm=new Map();for(const r of rows){let m=zm.get(r.zn);if(!m)zm.set(r.zn,m=new Map());m.set(r.pk,(m.get(r.pk)||0)+r.q)}
+   const keep=new Set();for(const[zn,m]of zm)[...m].sort((a,b)=>b[1]-a[1]||(a[0]<b[0]?-1:1)).slice(0,mi).forEach(([pk])=>keep.add(zn+'\u0001'+pk));
+   res=rows.filter(r=>keep.has(r.zn+'\u0001'+r.pk))}
+  const dg=' PLU Target ditemukan di stock akhir: '+fn(hit.size)+' dari '+fn(seen.size)+'.';
+  if(!res.length){jm.textContent='Tidak ada baris alokasi yang memenuhi syarat ('+fn(lolos)+' baris lolos filter).'+dg;go.disabled=false;return}
+  const A=new Set(),Z=new Map();let tq=0,tc=0,tr=0;
+  for(const r of res){A.add(r.pk);tq+=r.q;tc+=r.ctn;tr+=r.rp;let g=Z.get(r.zn);if(!g)Z.set(r.zn,g={it:new Set(),q:0,c:0,r:0});g.it.add(r.pk);g.q+=r.q;g.c+=r.ctn;g.r+=r.rp}
+  const nf=(v,dc=0)=>Number(v).toLocaleString('id-ID',{maximumFractionDigits:dc});
+  const H=['AM','KOTA','TOKO','NAMA TOKO','GAB','PLU','DESC','ZONA','POLA1','POLA2','KET NATARU','FRAC','MINOR','ACOST','STOCK_AKHIR','SISA','QTY_ALOKASI','CTN_ALOKASI','RP_ALOKASI'],
+   f=x=>typeof x==='number'?String(x):/[;,"\n]/.test(x)?'"'+String(x).replace(/"/g,'""')+'"':String(x),parts=['\ufeff'+H.join(',')+'\n'];let buf=[];
+  for(const r of res)buf.push([r.am,r.kota,r.t,r.nt,r.gab,r.p,r.desc,r.zn,r.p1,r.p2,r.kt,r.fr,r.mn,r.ac,r.stock,r.sisa,r.q,+r.ctn.toFixed(4),+r.rp.toFixed(2)].map(f).join(','));
+  parts.push(buf.join('\n')+'\n');if(alkUrl)URL.revokeObjectURL(alkUrl);alkUrl=URL.createObjectURL(new Blob(parts,{type:'text/csv;charset=utf-8'}));
+  const dt=new Date(),nm='Alokasi_'+(($('#gd').value||'G113').replace(/[^\w-]/g,'')||'G113')+'_'+String(dt.getDate()).padStart(2,'0')+'_'+['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'][dt.getMonth()]+'_'+String(dt.getFullYear()).slice(-2)+'.csv';
+  const IT=new Map();for(const r of res){let g=IT.get(r.pk);if(!g)IT.set(r.pk,g={p:r.p,desc:r.desc,pola:r.p2,zn:r.zn,al:r.al,fr:r.fr,mn:r.mn,ac:r.ac,st:r.fr>0?r.stock/r.fr:0,q:0,c:0,rp:0,tk:new Set()});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp;g.tk.add(r.t)}
+  const items=[...IT.values()].sort((a,b)=>String(a.zn).localeCompare(String(b.zn),'id',{numeric:true})||b.q-a.q),
+   MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],per=String(dt.getDate()).padStart(2,'0')+' '+MB[dt.getMonth()]+' '+String(dt.getFullYear()).slice(-2),
+   nx=nm.replace(/^Alokasi_/,'Rekap_Alokasi_').replace(/\.csv$/,'.xlsx');
+  if(alkUrl2)URL.revokeObjectURL(alkUrl2);alkUrl2=URL.createObjectURL(alkBook(items,per));
+  const PF=new Map();for(const r of res){let g=PF.get(r.pk);if(!g)PF.set(r.pk,g={n:String(r.p).replace(/[^\w.-]/g,'_'),l:[]});g.l.push(r.p+','+r.t+','+r.q)}
+  const nz=nm.replace(/^Alokasi_/,'Alokasi_CSV_per_item_').replace(/\.csv$/,'.zip');
+  if(alkUrl3)URL.revokeObjectURL(alkUrl3);alkUrl3=URL.createObjectURL(zipStore([...PF.values()].map(g=>[g.n+'.csv','PLU,TOKO,QTY\r\n'+g.l.join('\r\n')+'\r\n']),'application/zip'));
+  const zr=[...Z].sort((a,b)=>a[0]<b[0]?-1:1).map(([zn,g])=>'<tr><td>'+esc(zn||'-')+'</td><td>'+nf(g.it.size)+'</td><td>'+nf(g.q)+'</td><td>'+nf(g.c,2)+'</td><td>'+nf(g.r)+'</td></tr>').join('');
+  out.innerHTML='<div class="alg"><div class="st"><span>Jumlah item</span><b>'+nf(A.size)+'</b></div><div class="st"><span>Total qty</span><b>'+nf(tq)+'</b></div><div class="st"><span>Total ctn</span><b>'+nf(tc,2)+'</b></div><div class="st"><span>Total Rp</span><b>'+nf(tr)+'</b></div></div>'
+   +'<table id="alz" style="margin-top:14px"><tr class="th"><td>Zona</td><td>Item</td><td>Qty</td><td>CTN</td><td>Rp</td></tr>'+zr+'</table>'
+   +'<div class="ac" style="margin-top:12px"><a class="dl" href="'+alkUrl+'" download="'+nm+'">Export '+nm+'</a><a class="dl" href="'+alkUrl2+'" download="'+nx+'">Export '+nx+'</a><a class="dl g" href="'+alkUrl3+'" download="'+nz+'">Unduh CSV per item ('+nf(PF.size)+' file)</a></div>';
+  jm.textContent='Selesai. '+nf(res.length)+' baris alokasi.'+dg}
+ catch(e){jm.className='m e';jm.textContent=e.message}
+ go.disabled=false}
+$('#al_go').onclick=alkCalc;
+const _draw=draw;draw=async function(){await _draw();refreshSum();alkOpts();alkStat()};
+function tab(n){for(const i of[1,2,3]){$('#pg'+i).hidden=i!==n;const b=$('#t'+i);b.classList.toggle('on',i===n);b.setAttribute('aria-selected',i===n)}}
+$('#t1').onclick=()=>tab(1);$('#t2').onclick=()=>tab(2);$('#t3').onclick=()=>tab(3);
+setCl();draw();
+const jobCheck=async()=>{try{if(!(await caps()).bg)return;const j=(await api({action:'rekapstatus'})).job;if(j&&j.state==='running'){const go=$('#go');go.disabled=true;try{await rekapWatch()}catch(e){$('#jm').innerHTML='<span class="e">'+e.message+'</span>'}go.disabled=false}}catch(e){}};
+async function boot(){const ld=$('#ld');
+ if(!cloudOn()){ld.className='';cst('Belum tersambung, data belum disinkronkan.');return}
+ ld.className='on';$('#ldt').textContent='Membaca database...';$('#ldm').className='m';$('#ldm').textContent='Menghubungkan ke database...';$('#ldr').disabled=true;
+ try{const n=await syncAll();await refreshSum();cst('Tersambung.'+(n?' '+n+' data diperbarui.':' Data sudah terbaru.'));ld.className='';jobCheck()}
+ catch(e){ld.className='on er';$('#ldt').textContent='Gagal membaca database';$('#ldm').className='m e';$('#ldm').textContent=(e&&e.message)||'Koneksi gagal.';$('#ldr').disabled=false;$('#cm').className='m e';$('#cm').textContent=(e&&e.message)||'Koneksi gagal.'}}
+$('#ldr').onclick=boot;boot();
+if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
+</script></body></html>
