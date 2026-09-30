@@ -12,7 +12,7 @@ main{max-width:960px;margin:0 auto;padding:calc(28px + env(safe-area-inset-top,0
 select,input[type=text],input[type=password]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:4px;background:var(--pn2);color:var(--ink)}
 button{font:inherit;padding:6px 14px;border-radius:4px;border:1px solid var(--acc);background:var(--acc);color:#fff;cursor:pointer}button.g{background:var(--pn);color:var(--ac2)}button:disabled{opacity:.5}button.dg{background:var(--pn);color:var(--err);border-color:var(--err)}button.dg.ask{background:var(--err);color:#fff}
 :focus-visible{outline:3px solid var(--ac2);outline-offset:1px}
-.msg{grid-column:1/-1;font-size:13.5px;padding:8px 12px;border-radius:4px;background:var(--pn2)}.msg.x{background:#3a1519;color:var(--err)}
+.msg{grid-column:1/-1;font-size:13.5px;padding:8px 12px;border-radius:4px;background:var(--pn2)}.msg.x{background:#3a1519;color:var(--err)}.msg button{padding:2px 10px;font-size:12px}
 .gen{padding:18px}.c{display:flex;gap:16px;align-items:end;flex-wrap:wrap}.c label{display:flex;flex-direction:column;font-size:13px;color:var(--mut);gap:4px}
 .bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin:14px 0 6px;display:none}.bar i{display:block;height:100%;width:0;background:var(--acc)}
 a.dl.g{background:var(--pn);color:var(--ac2)}a.dl{border:1px solid var(--acc);display:inline-block;margin:10px 8px 0 0;background:var(--acc);color:#fff;padding:8px 16px;border-radius:4px;text-decoration:none;font-weight:600}
@@ -26,9 +26,9 @@ input[type=number]{font:inherit;padding:5px 8px;border:1px solid var(--line);bor
 .st{border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:var(--pn2)}.st span{display:block;font-size:12px;color:var(--mut)}.st b{display:block;font-size:19px;margin-top:2px}#alz td{text-align:right}#alz td:first-child{text-align:left}#alz tr.th td{font-size:11.5px;color:var(--mut);font-weight:600}select.al{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--pn2);color:var(--ink);width:100%}
 .tabs button.on{color:var(--ac2);border-bottom-color:var(--red)}.tabs button:hover{color:var(--ac2)}.alt{border-left:4px solid var(--yel);padding-left:8px}.st{border-left:4px solid var(--yel)}
 .alu{display:flex;gap:12px}.alu>.alf{flex:1 1 0;min-width:0}.alu .u{flex-wrap:nowrap;gap:4px;justify-content:flex-start}.alu label.bt,.alu button{padding:6px 10px}.alu .m{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hp{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:6px 16px;align-items:baseline;margin-top:10px;padding:12px 16px;border-radius:4px;background:var(--pn2);font-size:13.5px;line-height:1.5}.hp[hidden]{display:none}.hp b::after{content:":";font-weight:400}.hp span{white-space:normal;overflow-wrap:anywhere}
+.hp{display:grid;grid-template-columns:max-content minmax(0,1fr) max-content;gap:6px 16px;align-items:baseline;margin-top:10px;padding:12px 16px;border-radius:4px;background:var(--pn2);font-size:13.5px;line-height:1.5}.hp[hidden]{display:none}.hp b::after{content:":";font-weight:400}.hp span{white-space:normal;overflow-wrap:anywhere}.hp{align-items:center}.hp .hd{text-align:right;min-height:26px}.hp button{padding:0 8px;height:26px;font-size:12px}
 .c.isi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:end}.c.isi label{white-space:normal;min-width:0;line-height:1.25}.c.isi input,.c.isi button{width:100%;height:36px;padding:0 8px;min-width:0}.c.isi button{font-size:13px;line-height:1.15;white-space:normal}
-#src .r{grid-template-columns:60px minmax(0,1fr) 100px 54px}#al_src .r{grid-template-columns:78px minmax(0,1fr) 104px 54px 28px}#src .r button,#al_src .r button{padding:0 8px;height:26px;font-size:12px}#src .r>div:nth-child(4),#al_src .r>div:nth-child(n+4){text-align:right}
+#src .r{grid-template-columns:60px minmax(0,1fr) 100px}#al_src .r{grid-template-columns:78px minmax(0,1fr) 104px 28px}#al_src .r button{padding:0 8px;height:26px;font-size:12px}#al_src .r>div:nth-child(n+4){text-align:right}
 #ld{display:none;position:fixed;inset:0;z-index:99;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px}#ld.on{display:flex}#ld .sp{width:46px;height:46px;border:5px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}#ld .t{font-weight:600;font-size:17px}#ld .m{max-width:min(420px,90vw);white-space:normal;overflow-wrap:anywhere}#ld.er .sp{display:none}#ldr{display:none}#ld.er #ldr{display:inline-block}
 </style></head><body><div id="ld" class="on" role="status" aria-live="polite"><div class="sp"></div><div class="t" id="ldt">Membaca database...</div><div class="m" id="ldm">Menghubungkan ke database...</div><button type="button" id="ldr">Sinkron ulang</button></div><main>
 <h1><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAI90lEQVR4nO3dMU7DQBBAUYLckbORE/hyyQl8N/fQI0SamJX3v9fSjEZC+hrJm8vH5/3rDQBIeR89AADw/wQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBoGT0Av9u3dfQIAC9zvT1Gj8APLgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQtowfgGH57+3X2bf3z73ZNwbP/A87HBQAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAgpbRA3CMfVtHj5Bh18AZuQAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABDkHYBJXW+P0SNM49l3/nZNgfcu5uMCAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIWkYPwDH2bR09QoZdA2fkAgAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJB3ACZ1vT1GjzCNZ9/52zUF3ruYjwsAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBoGT0Ax9i3dfQIGXYNnJELAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQd4BmNT19hg9wjSefedv1xR472I+LgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIWkYPwDH2bR09QoZdA2fkAgAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQNDl4/P+NXoIAOB/uQAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIK+Ad4ZMxWD41BxAAAAAElFTkSuQmCC" alt="" width="36" height="36"><span>Bahan Alokasi</span></h1>
@@ -42,11 +42,11 @@ input[type=number]{font:inherit;padding:5px 8px;border:1px solid var(--line);bor
 <button class="dg" type="button" id="rs" style="margin-left:auto">Reset database</button></div>
 <div id="src" style="margin-top:10px;padding-top:8px;border-top:1px solid var(--line)"></div>
 <div id="hp" class="hp" hidden>
-<b>Master</b><span>Master Stock</span>
-<b>Toko</b><span>KODE TOKO, NAMA TOKO, AM, KECAMATAN, KOTA</span>
-<b>Item</b><span>PLU, DESC, POLA1, POLA2, KET NATARU</span>
-<b>Target</b><span>TOKO, PRDCD, QTY_NAT, QTY_SEA</span>
-<b>NPB</b><span>GAB, TANGGAL, QTY ALOK, KETER</span></div>
+<b>Master</b><span>Master Stock</span><div class="hd" data-hd="master"></div>
+<b>Toko</b><span>KODE TOKO, NAMA TOKO, AM, KECAMATAN, KOTA</span><div class="hd" data-hd="toko"></div>
+<b>Item</b><span>PLU, DESC, POLA1, POLA2, KET NATARU</span><div class="hd" data-hd="item"></div>
+<b>Target</b><span>TOKO, PRDCD, QTY_NAT, QTY_SEA</span><div class="hd" data-hd="target"></div>
+<b>NPB</b><span>GAB, TANGGAL, QTY ALOK, KETER</span><div class="hd" data-hd="npb"></div></div>
 <div class="m" id="um" style="margin-top:8px;white-space:normal"></div><div id="ul" style="margin-top:6px"></div></section>
 <section class="p gen"><div class="c">
 <label>Kode gudang<input type="text" id="gd" size="7" value="G113"></label>
@@ -58,9 +58,9 @@ input[type=number]{font:inherit;padding:5px 8px;border:1px solid var(--line);bor
 <div class="c t k"><div class="bg"><button class="g" type="button" id="al_hb" aria-expanded="false" aria-controls="al_hp" title="Format file yang diupload" style="font-weight:600">?</button><label class="bt" id="al_ulb">Upload file<input type="file" hidden multiple accept=".xlsx,.xlsm,.csv" id="al_fa"></label></div></div>
 <div id="al_src" style="margin-top:10px;padding-top:8px;border-top:1px solid var(--line)"></div>
 <div id="al_hp" class="hp" hidden>
-<b>Stock akhir</b><span>Tarikan LWA Stock Akhir</span>
-<b>Plan picking</b><span>TOKO, PLAN</span>
-<b>Sudah alokasi</b><span>GAB</span></div>
+<b>Stock akhir</b><span>Tarikan LWA Stock Akhir</span><div class="hd" data-hd="stock"></div>
+<b>Plan picking</b><span>TOKO, PLAN</span><div class="hd" data-hd="plan"></div>
+<b>Sudah alokasi</b><span>GAB</span><div class="hd" data-hd="done"></div></div>
 <div class="m" id="al_um" style="margin-top:8px;white-space:normal"></div><div id="al_ul" style="margin-top:6px"></div></section>
 <section class="p gen"><div class="alt">Pilihan</div><div class="alg">
 <div class="alf"><span>Ket Nataru</span><div id="al_ket"></div></div>
@@ -181,7 +181,7 @@ function dlCsv(nm,H,rows){const f=x=>x==null?'':typeof x==='number'?String(x):/[
  u=URL.createObjectURL(new Blob(['\ufeff'+(H?[H,...rows]:rows).map(r=>r.map(f).join(',')).join('\n')+'\n'],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');
  a.href=u;a.download=nm;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
 const DLH={toko:['KODE TOKO','NAMA TOKO','AM','KECAMATAN','KOTA'],item:['PLU','DESC','POLA1','POLA2','KET NATARU'],target:['TOKO','PRDCD','QTY_NAT','QTY_SEA'],npb:['GAB','QTY_NATARU','QTY_TOTAL']};
-$('#src').onclick=async e=>{const b=e.target.closest('button[data-dl]');if(!b)return;const k=b.dataset.dl,D=await get(k);if(!D)return;
+$('#hp').onclick=async e=>{const b=e.target.closest('button[data-dl]');if(!b)return;const k=b.dataset.dl,D=await get(k);if(!D)return;
  if(k==='npb'){const R=await get('npb_raw');if(R){dlCsv('NPB.csv',R.l,R.rows.map(r=>R.l.map((_,i)=>r[i])));return}
   const um=$('#um');um.className='m';um.textContent='Data NPB ini belum menyimpan tanggal dan KETER (diupload sebelum pembaruan). Upload ulang file NPB dengan mode "Ganti semua". Yang terunduh masih total per GAB.'}
  dlCsv(SRC[k][0]+'.csv',DLH[k],k==='npb'?[...D.m].map(([g,a])=>[g,a[0],a[1]]):CV[k].to(D))};
@@ -191,23 +191,36 @@ async function draw(){const meta=(await get('meta'))||{},box=$('#src');box.inner
   el.innerHTML=`<div class="n">${SRC[k][0]}</div>
   <div class="m" title="${(mt.file||'')+' · '+(mt.time||'')}">${n&&mt.time?String(mt.time).split(/[,\s]/)[0]:''}</div>
   <div>${n?`<b>${fn(n)}</b> ${k==='npb'?'GAB':'baris'}`:'<span class="e">Belum ada data</span>'}</div>
-  <div>${n&&k!=='master'?`<button type="button" class="g" data-dl="${k}" title="Unduh data ${SRC[k][0]}">Unduh</button>`:''}</div>`;
-  box.appendChild(el)}}
+  `;
+  box.appendChild(el);const hd=document.querySelector(`#hp [data-hd="${k}"]`);if(hd)hd.innerHTML=n&&k!=='master'?`<button type="button" class="g" data-dl="${k}" title="Unduh data ${SRC[k][0]}">Unduh</button>`:''}}
 // ---- upload banyak file sekaligus (jenis file dikenali dari nama file / nama sheet)
 async function detect(f){const n=f.name.toLowerCase();for(const k in SRC)if(n.includes(k))return k;
  if(/\.xls[xm]$/.test(n)){try{const w=XLSX.read(await f.arrayBuffer(),{type:'array',bookSheets:true});for(const k in SRC)if(w.SheetNames.some(s=>s.trim().toLowerCase()===k))return k}catch(e){}}
  return null}
 $('#hb').onclick=()=>{const h=$('#hp');h.hidden=!h.hidden;$('#hb').setAttribute('aria-expanded',String(!h.hidden))};
-$('#fa').onchange=async e=>{const inp=e.target,fs=[...inp.files],lb=inp.parentNode,ul=$('#ul'),um=$('#um');inp.value='';if(!fs.length)return;
- lb.classList.add('off');ul.innerHTML='';SYNCED=0;
- for(let i=0;i<fs.length;i++){const f=fs[i],row=document.createElement('div');row.className='msg';row.style.cssText='white-space:normal;margin-top:6px';ul.appendChild(row);
-  const pre='('+(i+1)+'/'+fs.length+') '+f.name+': ';
-  try{const k=await detect(f);if(!k)throw Error('jenis file tidak dikenali. Tambahkan kata Master / Toko / Item / Target / NPB pada nama file.');
-   um.textContent=pre+'memproses '+SRC[k][0]+'. File besar bisa butuh 1-2 menit...';await tick();
-   row.textContent=pre+'['+SRC[k][0]+'] '+await upload(k,f,k==='npb'?$('#md').value:'')}
-  catch(x){row.className='msg x';row.textContent=pre+x.message}
-  await draw()}
- um.textContent='';lb.classList.remove('off')};
+// upload banyak file: file yang gagal diberi tombol "Upload ulang" (per file, dan untuk semua yang gagal)
+async function runFiles(fs,ul,um,lb,one,after){
+ ul.innerHTML='';const bad=new Set();let busy=0;
+ const all=document.createElement('div'),rows=fs.map((f,i)=>{const row=document.createElement('div');row.style.cssText='white-space:normal;margin-top:6px';ul.appendChild(row);return{f,row,pre:'('+(i+1)+'/'+fs.length+') '+f.name+': '}});
+ ul.appendChild(all);
+ const refAll=()=>{all.innerHTML='';if(bad.size>1&&!busy){const b=document.createElement('button');b.type='button';b.className='g';b.style.marginTop='8px';b.textContent='Upload ulang semua yang gagal ('+bad.size+')';b.onclick=()=>retry([...bad]);all.appendChild(b)}};
+ const run=async o=>{const{f,row,pre}=o;row.className='msg';row.textContent=pre+'memproses...';
+  try{row.textContent=pre+await one(f,pre);bad.delete(o)}
+  catch(x){row.className='msg x';row.textContent=pre+x.message;bad.add(o);
+   const b=document.createElement('button');b.type='button';b.className='g';b.textContent='Upload ulang';b.style.marginLeft='12px';b.onclick=()=>retry([o]);row.appendChild(b)}
+  await after()};
+ const retry=async os=>{if(busy)return;busy=1;lb.classList.add('off');refAll();
+  ul.querySelectorAll('button').forEach(b=>b.disabled=true);
+  for(const o of os)await run(o);
+  um.textContent='';busy=0;lb.classList.remove('off');ul.querySelectorAll('button').forEach(b=>b.disabled=false);refAll()};
+ busy=1;lb.classList.add('off');
+ for(const o of rows)await run(o);
+ um.textContent='';busy=0;lb.classList.remove('off');refAll()}
+$('#fa').onchange=async e=>{const inp=e.target,fs=[...inp.files],um=$('#um');inp.value='';if(!fs.length)return;SYNCED=0;
+ await runFiles(fs,$('#ul'),um,inp.parentNode,async(f,pre)=>{
+  const k=await detect(f);if(!k)throw Error('jenis file tidak dikenali. Tambahkan kata Master / Toko / Item / Target / NPB pada nama file.');
+  um.textContent=pre+'memproses '+SRC[k][0]+'. File besar bisa butuh 1-2 menit...';await tick();
+  return'['+SRC[k][0]+'] '+await upload(k,f,k==='npb'?$('#md').value:'')},draw)};
 // tombol buka Spreadsheet hasil rekap, diletakkan di sebelah tombol unduh
 function slink(u){let a=$('#sl');if(!a){a=document.createElement('a');a.id='sl';a.className='dl g';a.target='_blank';a.rel='noopener';a.textContent='Buka hasil rekap';let w=$('#res .ac');if(!w){w=document.createElement('div');w.className='ac';$('#res').prepend(w)}w.prepend(a)}a.href=u}
 // hasil 0 ditampilkan "-"
@@ -289,7 +302,7 @@ async function calcSM(){const[ms,im,tg,np]=await Promise.all(['master','item','t
  return SM}
 let smBusy=0,smAgain=0;async function refreshSum(){if(smBusy){smAgain=1;return}smBusy=1;try{do{smAgain=0;sumShow(await calcSM())}while(smAgain)}catch(e){}smBusy=0}
 // ---- tab Alokasi: upload, pilihan, isian (tersimpan di perangkat) + hitung alokasi
-const ALK=(()=>{try{return JSON.parse(localStorage.getItem('alk')||'{}')||{}}catch(e){return{}}})();ALK.ex=ALK.ex||{};for(const k of['zona','pola1','pola2'])ALK.ex[k]=ALK.ex[k]||[];
+const ALK=(()=>{try{return JSON.parse(localStorage.getItem('alk')||'{}')||{}}catch(e){return{}}})();ALK.ex=ALK.ex||{};for(const k of['zona','pola1','pola2'])ALK.ex[k]=(ALK.ex[k]||[]).filter(v=>v!=='0');
 const alkSave=()=>{try{localStorage.setItem('alk',JSON.stringify(ALK))}catch(e){}};
 const ALKF=[['zona','Zona'],['pola1','Pola 1'],['pola2','Pola 2']];
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -309,7 +322,7 @@ const ZO=['Bulky','Rokok','Non Aktif','Bulky Fraction'],zk=zn=>{const n=Number(z
 let ALKU=[];
 // urutan pilihan: Ket Nataru > Pola 1 > Pola 2 > Zona; daftar tiap pilihan hanya berisi turunan dari pilihan sebelumnya
 function alkRender(from){const nat=(ALK.ket||'all')==='nataru',F=[['pola1','a'],['pola2','b'],['zona','z']];let U=nat?ALKU.filter(x=>x.k==='NATARU'):ALKU;
- F.forEach(([k,f],i)=>{if(i>=from)alkDD(k,[...new Set(U.map(x=>x[f]).filter(Boolean))].sort((a,b)=>k==='zona'?ZO.indexOf(a)-ZO.indexOf(b):a.localeCompare(b,'id',{numeric:true})),()=>alkRender(i+1));
+ F.forEach(([k,f],i)=>{if(i>=from)alkDD(k,[...new Set(U.map(x=>x[f]).filter(v=>v&&v!=='0'))].sort((a,b)=>k==='zona'?ZO.indexOf(a)-ZO.indexOf(b):a.localeCompare(b,'id',{numeric:true})),()=>alkRender(i+1));
   const X=new Set(ALK.ex[k]);U=U.filter(x=>!X.has(x[f]))})}
 async function alkOpts(){try{const[ms,im]=await Promise.all([get('master'),get('item')]),t=v=>String(z(v)).trim();
  ALKU=[...new Set([...(ms?ms.keys():[]),...(im?im.keys():[])])].map(p=>{const M=(ms&&ms.get(p))||[],I=(im&&im.get(p))||[];return{k:N(z(I[3])),a:t(I[1]),b:t(I[2]),z:zk(t(M[1]))}});
@@ -338,28 +351,23 @@ async function alkStat(){const box=$('#al_src');box.innerHTML='';
   el.innerHTML=`<div class="n">${ALKN[k][0]}</div>
   <div class="m" title="${D?D.name+' · '+D.time:''}">${D?String(D.time).split(/[,\s]/)[0]:''}</div>
   <div>${D?`<b>${n}</b> ${ALKN[k][1]}`:'<span class="e">Belum ada data</span>'}</div>
-  <div>${D&&k!=='stock'?`<button type="button" class="g" data-dl="${k}" title="Unduh data ${ALKN[k][0]}">Unduh</button>`:''}</div>
   <div>${D?`<button type="button" class="g" data-k="${k}" title="Hapus file">&times;</button>`:''}</div>`;
-  box.appendChild(el)}}
-$('#al_src').onclick=async e=>{const u=e.target.closest('button[data-dl]');if(u){const D=await get('alk_'+u.dataset.dl);if(D)dlCsv(ALKN[u.dataset.dl][0].replace(/ /g,'_')+'.csv',null,D.rows);return}const b=e.target.closest('button[data-k]');if(!b)return;await tx('readwrite',s=>s.delete('alk_'+b.dataset.k));alkStat()};
+  box.appendChild(el);const hd=document.querySelector(`#al_hp [data-hd="${k}"]`);if(hd)hd.innerHTML=D&&k!=='stock'?`<button type="button" class="g" data-dl="${k}" title="Unduh data ${ALKN[k][0]}">Unduh</button>`:''}}
+$('#al_hp').onclick=async e=>{const u=e.target.closest('button[data-dl]');if(!u)return;const D=await get('alk_'+u.dataset.dl);if(D)dlCsv(ALKN[u.dataset.dl][0].replace(/ /g,'_')+'.csv',null,D.rows)};
+$('#al_src').onclick=async e=>{const b=e.target.closest('button[data-k]');if(!b)return;await tx('readwrite',s=>s.delete('alk_'+b.dataset.k));alkStat()};
 $('#al_hb').onclick=()=>{const h=$('#al_hp');h.hidden=!h.hidden;$('#al_hb').setAttribute('aria-expanded',String(!h.hidden))};
 // jenis file dikenali dari nama file, lalu dari kolomnya
 function alkDetect(f,r){const n=f.name.toLowerCase();
  if(/stock|stok/.test(n))return'stock';if(/plan|picking/.test(n))return'plan';if(/sudah|done|alok/.test(n))return'done';
  try{PAR.plan(r);return'plan'}catch(e){}try{PAR.stock(r);return'stock'}catch(e){}
  if(alkHead(r,x=>x==='GAB'))return'done';return null}
-$('#al_fa').onchange=async e=>{const inp=e.target,fs=[...inp.files],lb=inp.parentNode,ul=$('#al_ul'),um=$('#al_um');inp.value='';if(!fs.length)return;
- lb.classList.add('off');ul.innerHTML='';
- for(let i=0;i<fs.length;i++){const f=fs[i],row=document.createElement('div');row.className='msg';row.style.cssText='white-space:normal;margin-top:6px';ul.appendChild(row);
-  const pre='('+(i+1)+'/'+fs.length+') '+f.name+': ';
-  try{um.textContent=pre+'membaca file. File besar bisa butuh 1-2 menit...';await tick();
-   const[r]=await sheet(f,'');if(!r.length)throw Error('File kosong.');
-   const k=alkDetect(f,r);if(!k)throw Error('jenis file tidak dikenali. Tambahkan kata Stock / Plan / Sudah pada nama file.');
-   const lbl=PAR[k](r);await put('alk_'+k,{name:f.name,time:new Date().toLocaleString('id-ID'),rows:r,lb:lbl});
-   row.textContent=pre+'['+ALKN[k][0]+'] '+lbl}
-  catch(x){row.className='msg x';row.textContent=pre+x.message}
-  await alkStat()}
- um.textContent='';lb.classList.remove('off')};
+$('#al_fa').onchange=async e=>{const inp=e.target,fs=[...inp.files],um=$('#al_um');inp.value='';if(!fs.length)return;
+ await runFiles(fs,$('#al_ul'),um,inp.parentNode,async(f,pre)=>{
+  um.textContent=pre+'membaca file. File besar bisa butuh 1-2 menit...';await tick();
+  const[r]=await sheet(f,'');if(!r.length)throw Error('File kosong.');
+  const k=alkDetect(f,r);if(!k)throw Error('jenis file tidak dikenali. Tambahkan kata Stock / Plan / Sudah pada nama file.');
+  const lbl=PAR[k](r);await put('alk_'+k,{name:f.name,time:new Date().toLocaleString('id-ID'),rows:r,lb:lbl});
+  return'['+ALKN[k][0]+'] '+lbl},alkStat)};
 for(const[id,k]of[['al_mi','mi'],['al_mq','mq'],['al_ps','ps']]){const e=$('#'+id);if(ALK[k]!=null)e.value=ALK[k];e.oninput=()=>{ALK[k]=e.value===''?null:k==='ps'?Math.min(100,Math.max(0,+e.value||0)):Math.max(0,Math.floor(+e.value));alkSave()}}
 function alkSel(id,key,opts,dv,cb){const box=$('#'+id),det=document.createElement('details'),sum=document.createElement('summary'),body=document.createElement('div');det.className='dd';body.className='ddl';
  let cur=opts.some(o=>o[0]===ALK[key])?ALK[key]:dv;const show=()=>{sum.textContent=opts.find(o=>o[0]===cur)[1]};
