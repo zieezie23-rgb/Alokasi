@@ -83,7 +83,7 @@ input[type=number]{font:inherit;padding:5px 8px;border:1px solid var(--line);bor
 <script>
 const $=s=>document.querySelector(s),tick=()=>new Promise(r=>setTimeout(r)),fn=n=>Number(n).toLocaleString('id-ID'),pc=(a,b)=>(b?Math.min(100,Math.floor(100*a/b)):100)+' %';
 const COLS=["GUDANG ","AM","KECAMATAN","KOTA","TOKO","NAMA TOKO","GAB","PLU","DESC","POLA1","POLA2","KET NATARU","ZONA","ALAMAT","FRAC","MINOR","ACOST","PTAG","QTY_NAT","CTN_NAT","RP_NAT","QTY_SEA","CTN_SEA","RP_SEA","QTY_TGT","CTN_TGT","RP_TGT","QTY_NPB_NAT","CTN_NPB_NAT","RP_NPB_NAT","QTY_SISA_NAT","CTN_SISA_NAT","RP_SISA_NAT","% NAT","QTY_NPB_SEA","CTN_NPB_SEA","RP_NPB_SEA","QTY_SISA_SEA","CTN_SISA_SEA","RP_SISA_SEA","% SEA"];
-const SRC={master:['Master','Diganti seluruhnya'],toko:['Toko','Diganti seluruhnya'],item:['Item','Diganti seluruhnya'],target:['Target','GAB ada diperbarui, GAB baru ditambahkan'],npb:['NPB','Ditambahkan setiap upload'],pomgg:['POMGG','Diganti seluruhnya']};
+const SRC={master:['Master','Diganti seluruhnya'],toko:['Toko','Diganti seluruhnya'],item:['Item','Diganti seluruhnya'],target:['Target','GAB ada diperbarui, GAB baru ditambahkan'],npb:['NPB','Ditambahkan setiap upload'],pomgg:['POMGG','Yang berubah diperbarui, yang baru ditambahkan']};
 // ---- IndexedDB
 const idb=new Promise((ok,no)=>{const q=indexedDB.open('rekap',1);q.onupgradeneeded=()=>q.result.createObjectStore('s');q.onsuccess=()=>ok(q.result);q.onerror=()=>no(q.error)});
 const tx=async(m,f)=>{const d=await idb;return new Promise((ok,no)=>{const t=d.transaction('s',m);const r=f(t.objectStore('s'));t.oncomplete=()=>ok(r.result);t.onerror=()=>no(t.error)})};
@@ -128,9 +128,9 @@ function pdt(v){if(v==null||v==='')return null;
  const s=String(v).trim();let m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m)return[+m[3],+m[1],+m[2]];
  m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);return m?[+m[1],+m[2],+m[3]]:null}
 const pfmt=a=>a?String(a[1]).padStart(2,'0')+'/'+String(a[2]).padStart(2,'0')+'/'+a[0]:'';
-// PLU POMGG (PRDCD 8 digit) dicocokkan ke PLU Target: sama persis, atau 7 digit terakhir bila PLU Target 7 digit
-function pluMap(tg){const m=new Map(),m7=new Map();for(const v of tg.values()){const p=v[1],pk=PK(p);if(!m.has(pk))m.set(pk,p);if(K(p).length<=7&&!m7.has(pk))m7.set(pk,p)}return{m,m7}}
-const pluOf=(prd,mm)=>{const r=mm.m.get(PK(prd));return r!==undefined?r:mm.m7.get(PK(K(prd).slice(-7)))};
+// PLU POMGG (PRDCD 8 digit) dicocokkan ke PLU Target hanya bila kodenya sama persis (nol di depan diabaikan); tanpa pencocokan 7 digit terakhir
+function pluMap(tg){const m=new Map();for(const v of tg.values()){const p=v[1],pk=PK(p);if(!m.has(pk))m.set(pk,p)}return m}
+const pluOf=(prd,mm)=>mm.get(PK(prd));
 async function push(ds,mode,rows,extra,prog,ch){ch=ch||CH;
  if(mode==='merge'&&rows.length<=ch&&(await caps()).direct){const j=await api({action:'commit',ds,mode,rows,...extra});prog&&prog(rows.length,rows.length);return j}
  await api({action:'begin',ds,mode,hash:extra&&extra.hash||''});
@@ -192,8 +192,14 @@ async function upload(k,f,mode){
    if(!(n.startsWith('EV')||n.startsWith('HO')||d.toUpperCase()[1]==='V'||par.has(n)||par.has(rv)))continue;
    const bd=K(x[c.BPB_DATE]),bq=K(x[c.BPB_QTY]);
    rows.push([K(x[c.RECID]),d,K(x[c.SUPCO]),p,NUM(x[c.QTY]),pfmt(t),bd===''?null:(pdt(bd)?pfmt(pdt(bd)):bd),bq===''?null:NUM(bq),K(x[c.NOPB]),K(x[c.NO_PO_REVISI])||null])}
-  if(cl)ver=(await push('pomgg','replace',rows,{file:f.name,time:tm},prog)).ver;
-  await put('pomgg',rows);msg=`POMGG diganti: ${fn(rows.length)} baris tersimpan dari ${fn(tot)} baris file.`;
+  // Gabung dengan data tersimpan: kunci = DOCNO + PRDCD. Kunci yang ada di file diganti isinya, kunci baru ditambahkan, selebihnya dipertahankan
+  // (baris lama yang PLU-nya tidak lagi cocok dengan Target dibuang).
+  const KY=x=>x[1]+'|'+x[3],old=(await get('pomgg'))||[],grp=L=>{const g=new Map();for(const x of L){const k=KY(x),a=g.get(k);a?a.push(x):g.set(k,[x])}return g},
+   sig=a=>JSON.stringify(a.map(x=>JSON.stringify(x)).sort()),go=grp(old),gn=grp(rows);
+  let nb=0,nu=0,ns=0;for(const[k,a]of gn){const b=go.get(k);if(!b)nb++;else if(sig(a)!==sig(b))nu++;else ns++}
+  const keep=old.filter(x=>!gn.has(KY(x))&&pluOf(x[3],mm)!==undefined),mg=[...keep,...rows];
+  if(cl)ver=(await push('pomgg','replace',mg,{file:f.name,time:tm},prog)).ver;
+  await put('pomgg',mg);msg=`POMGG digabung: ${fn(nb)} baru, ${fn(nu)} berubah, ${fn(ns)} tidak berubah (dari ${fn(tot)} baris file). Total tersimpan ${fn(mg.length)} baris.`;
  }else{const[c,dt]=hdr(r,['GAB']);const q=col(c,'QTY ALOK','QTY_ALOK','QTY'),ke=col(c,'KETER','KET');
   const h=await sha(buf);let o=(mode==='ganti'?null:await get('npb'))||{m:new Map(),f:[]};
   if(o.f.some(x=>x.h===h))throw Error('File ini sudah pernah diupload. Dibatalkan agar qty tidak terhitung dua kali. Pilih "Ganti semua" untuk mengulang dari awal.');
