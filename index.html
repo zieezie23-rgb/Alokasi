@@ -438,9 +438,9 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
   for(const r of res)buf.push([r.am,r.kota,r.t,r.nt,r.gab,r.p,r.desc,r.zn,r.p1,r.p2,r.kt,r.fr,r.mn,r.ac,r.stock,r.sisa,r.q,+r.ctn.toFixed(4),+r.rp.toFixed(2)].map(f).join(','));
   parts.push(buf.join('\n')+'\n');if(alkUrl)URL.revokeObjectURL(alkUrl);alkUrl=URL.createObjectURL(new Blob(parts,{type:'text/csv;charset=utf-8'}));
   const dt=new Date(),nm='Alokasi_'+(($('#gd').value||'G113').replace(/[^\w-]/g,'')||'G113')+'_'+String(dt.getDate()).padStart(2,'0')+'_'+['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'][dt.getMonth()]+'_'+String(dt.getFullYear()).slice(-2)+'.csv';
-  const IT=new Map();for(const r of res){let g=IT.get(r.pk);if(!g)IT.set(r.pk,g={p:r.p,desc:r.desc,pola:r.p2,zn:r.zn,al:r.al,fr:r.fr,mn:r.mn,ac:r.ac,st:r.fr>0?r.stock/r.fr:0,q:0,c:0,rp:0,tk:new Set()});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp;g.tk.add(r.t)}
+  const IT=new Map();for(const r of res){let g=IT.get(r.pk);if(!g)IT.set(r.pk,g={p:r.p,desc:r.desc,pola:r.p2,zn:r.zn,al:r.al,fr:r.fr,mn:r.mn,ac:r.ac,st:r.stock,q:0,c:0,rp:0,tk:new Set()});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp;g.tk.add(r.t)}
   const items=[...IT.values()].sort((a,b)=>String(a.zn).localeCompare(String(b.zn),'id',{numeric:true})||b.q-a.q),
-   MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],per=String(dt.getDate()).padStart(2,'0')+' '+MB[dt.getMonth()]+' '+String(dt.getFullYear()).slice(-2),
+   MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],bs=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1),per=String(bs.getDate()).padStart(2,'0')+' '+MB[bs.getMonth()]+' '+String(bs.getFullYear()).slice(-2),
    nx=nm.replace(/^Alokasi_/,'Rekap_Alokasi_').replace(/\.csv$/,'.xlsx');
   if(alkUrl2)URL.revokeObjectURL(alkUrl2);alkUrl2=URL.createObjectURL(alkBook(items,per));
   const PF=new Map();for(const r of res){let g=PF.get(r.pk);if(!g)PF.set(r.pk,g={n:String(r.p).replace(/[^\w.-]/g,'_'),l:[]});g.l.push(r.p+','+r.t+','+r.q)}
