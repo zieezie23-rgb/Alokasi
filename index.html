@@ -102,7 +102,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-const $=s=>document.querySelector(s),tick=()=>new Promise(r=>setTimeout(r)),fn=n=>Number(n).toLocaleString('id-ID'),pc=(a,b)=>(b?Math.min(100,Math.floor(100*a/b)):100)+' %';
+const $=s=>document.querySelector(s),tick=()=>new Promise(r=>setTimeout(r)),fn=n=>Number(n).toLocaleString('id-ID'),fdt=t=>{const m=String(t||'').match(/(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/);return m&&+m[2]>=1&&+m[2]<=12?m[1].padStart(2,'0')+' '+['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][+m[2]-1]+' '+m[3].slice(2):String(t||'').split(/[,\s]/)[0]},pc=(a,b)=>(b?Math.min(100,Math.floor(100*a/b)):100)+' %';
 const COLS=["GUDANG ","AM","KECAMATAN","KOTA","TOKO","NAMA TOKO","GAB","PLU","DESC","POLA1","POLA2","KET NATARU","ZONA","ALAMAT","FRAC","MINOR","ACOST","PTAG","QTY_NAT","CTN_NAT","RP_NAT","QTY_SEA","CTN_SEA","RP_SEA","QTY_TGT","CTN_TGT","RP_TGT","QTY_NPB_NAT","CTN_NPB_NAT","RP_NPB_NAT","QTY_SISA_NAT","CTN_SISA_NAT","RP_SISA_NAT","% NAT","QTY_NPB_SEA","CTN_NPB_SEA","RP_NPB_SEA","QTY_SISA_SEA","CTN_SISA_SEA","RP_SISA_SEA","% SEA"];
 const SRC={master:['Master','Diganti seluruhnya'],toko:['Toko','Diganti seluruhnya'],item:['Item','Diganti seluruhnya'],target:['Target','GAB ada diperbarui, GAB baru ditambahkan'],npb:['NPB','Ditambahkan setiap upload'],pomgg:['POMGG','Yang berubah diperbarui, yang baru ditambahkan']};
 // ---- IndexedDB
@@ -128,14 +128,14 @@ async function sheet(f,k){const buf=await f.arrayBuffer();const wb=XLSX.read(buf
 // ---- cloud (Google Spreadsheet via Apps Script Code.gs)
 const CF=()=>{if(DEF_KEY&&DEF_KEY!=='ISI-KODE-RAHASIA-ANDA')return{u:DEF_URL,k:DEF_KEY};try{const c=JSON.parse(localStorage.getItem('cloud')||'null');return c&&c.k?{u:DEF_URL,k:c.k}:null}catch(e){return null}},cloudOn=()=>{const c=CF();return!!(c&&c.u&&c.k)};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms)),cst=t=>{const e=$('#cm');if(e){e.className='m';e.textContent=t}const l=$('#ld');if(l&&l.classList.contains('on')&&!l.classList.contains('er'))$('#ldm').textContent=t};
-async function api(a){const c=CF();if(!c)throw Error('Belum tersambung.');let last;
- for(let t=0;t<3;t++){try{const r=await fetch(c.u,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...a,secret:c.k})});
-  let j;try{j=await r.json()}catch(e){throw Object.assign(Error('Respons Web App tidak valid. Pastikan deploy "Anyone" dan URL berakhiran /exec.'),{fatal:1})}
-  if(!j.ok)throw Object.assign(Error(j.error||'Gagal'),{fatal:1});return j}
-  catch(e){last=e.fatal?e:Error('Tidak bisa terhubung. Cek internet dan URL Web App.');if(e.fatal)throw last;await sleep(1200*(t+1))}}
+async function api(a){const c=CF();if(!c)throw Error('Belum tersambung.');let last;const rd=/^(caps|ping|meta|pull|rekapstatus)$/.test(a.action),mx=rd?4:3;
+ for(let t=0;t<mx;t++){const ac=rd&&typeof AbortController!=='undefined'?new AbortController():null,tm=ac&&setTimeout(()=>ac.abort(),30000);try{const r=await fetch(c.u,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...a,secret:c.k}),signal:ac?ac.signal:undefined});
+  let j;try{j=await r.json()}catch(e){if(e.name==='AbortError')throw e;throw Object.assign(Error('Respons Web App tidak valid. Pastikan deploy "Anyone" dan URL berakhiran /exec.'),{fatal:1})}
+  if(!j.ok){const m=j.error||'Gagal',b=/lock|kunci|penguncian/i.test(m);throw Object.assign(Error(b?'Sedang sibuk. Coba lagi sebentar.':m),{fatal:b?0:1,busy:b})}return j}
+  catch(e){last=e.fatal||e.busy?e:Error(e.name==='AbortError'?'Respons terlalu lama. Coba lagi.':'Tidak bisa terhubung. Cek internet dan URL Web App.');if(e.fatal)throw last;await sleep(1200*(t+1))}finally{clearTimeout(tm)}}
  throw last}
 const NB=v=>v===''||v==null?null:v,CH=20000;
-let capsP=null;const caps=()=>capsP||(capsP=api({action:'caps'}).catch(()=>({})));
+let capsP=null;const caps=()=>capsP||(capsP=api({action:'caps'}).catch(()=>{capsP=null;return{}}));
 const CV={master:{to:m=>[...m].map(([p,a])=>[p,...a]),from:rs=>new Map(rs.map(r=>[String(r[0]),[NB(r[1]),NB(r[2]),NB(r[3]),NUM(r[4]),NUM(r[5]),NB(r[6]),NUM(r[7])]]))},
  toko:{to:m=>[...m].map(([p,a])=>[p,...a]),from:rs=>new Map(rs.map(r=>[String(r[0]),[NB(r[1]),NB(r[2]),NB(r[3]),NB(r[4])]]))},
  target:{to:m=>[...m.values()],from:rs=>new Map(rs.map(r=>[String(r[0])+String(r[1]),[String(r[0]),String(r[1]),NUM(r[2]),NUM(r[3])]]))}};
@@ -246,7 +246,7 @@ async function draw(){const meta=(await get('meta'))||{},box=$('#src');box.inner
  for(const k in SRC){const D=await get(k),n=k==='npb'?(D?D.m.size:0):(D?(D.size??D.length):0),mt=meta[k]||{};
   const el=document.createElement('div');el.className='r';
   el.innerHTML=`<div class="n">${SRC[k][0]}</div>
-  <div class="m" title="${(mt.file||'')+' · '+(mt.time||'')}">${n&&mt.time?String(mt.time).split(/[,\s]/)[0]:''}</div>
+  <div class="m" title="${(mt.file||'')+' · '+(mt.time||'')}">${n&&mt.time?fdt(mt.time):''}</div>
   <div>${n?`<b>${fn(n)}</b> ${k==='npb'?'GAB':'baris'}`:'<span class="e">Belum ada data</span>'}</div>
   `;
   box.appendChild(el);const hd=document.querySelector(`#hp [data-hd="${k}"]`);if(hd)hd.innerHTML=n&&k!=='master'?`<button type="button" class="g" data-dl="${k}" title="Unduh data ${SRC[k][0]}">Unduh</button>`:''}}
@@ -328,7 +328,7 @@ function smXlsx(P){const n=P.items.length,per=3,W=5,ws={},mg=[],rows=[];let maxR
  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,P.sec);
  smSave(new Blob([XLSX.write(wb,{bookType:'xlsx',type:'array'})],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),smName(P,'xlsx'))}
 async function smJpg(P,i){if(!window.html2canvas)throw Error('Library JPG belum termuat. Cek koneksi internet lalu coba lagi.');
- const el=$('#rp'+i),c=await html2canvas(el,{scale:2,backgroundColor:getComputedStyle(document.body).getPropertyValue('--pn').trim()||'#121a2b',useCORS:true});
+ const el=$('#rp'+i),c=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,onclone:(doc)=>{const s=doc.createElement('style');s.textContent='#sm .rp{--pn:#fff;--pn2:#fff;--bg:#fff;--ink:#111;--mut:#555;--line:#c3cad6;--ac2:#0b4ea2;--err:#c40024;background:#fff!important}#sm .xt3,#sm .tm2 span:last-child{color:#b45309!important}#sm .rb tr.xp td{color:#000!important}';doc.head.appendChild(s);const L={'#13294d':'#e3edfb','#1d3a6b':'#cfe0f7','#3d3200':'#fff3bf','#3d1a22':'#fbd9df'};doc.querySelectorAll('#sm .rb').forEach(b=>{for(const p of['--bt','--nt']){const v=b.style.getPropertyValue(p).trim().toLowerCase();if(L[v])b.style.setProperty(p,L[v])}})}});
  await new Promise((ok,no)=>c.toBlob(b=>{if(!b)return no(Error('Gagal membuat gambar.'));smSave(b,smName(P,'jpg'));ok()},'image/jpeg',.95))}
 $('#sm').addEventListener('click',async e=>{const b=e.target.closest('button[data-x]');if(!b)return;const i=+b.dataset.i,P=SMP[i];if(!P)return;
  const old=b.textContent;b.disabled=true;try{if(b.dataset.x==='xlsx')smXlsx(P);else{b.textContent='Memproses...';await smJpg(P,i)}}catch(er){alert(er.message||er)}b.textContent=old;b.disabled=false});
@@ -454,7 +454,7 @@ async function alkStat(){const box=$('#al_src');box.innerHTML='';
  for(const k of AKEYS){const D=await get('alk_'+k),el=document.createElement('div');el.className='r';
   const n=D?((String(D.lb||'').match(/^[\d.,]+/)||[fn(Math.max(0,D.rows.length-1))])[0]):'';
   el.innerHTML=`<div class="n">${ALKN[k][0]}</div>
-  <div class="m" title="${D?D.name+' · '+D.time:''}">${D?String(D.time).split(/[,\s]/)[0]:''}</div>
+  <div class="m" title="${D?D.name+' · '+D.time:''}">${D?fdt(D.time):''}</div>
   <div>${D?`<b>${n}</b> ${ALKN[k][1]}`:'<span class="e">Belum ada data</span>'}</div>
   <div>${D?`<button type="button" class="g" data-k="${k}" title="Hapus file">&times;</button>`:''}</div>`;
   box.appendChild(el);const hd=document.querySelector(`#al_hp [data-hd="${k}"]`);if(hd)hd.innerHTML=D&&k!=='stock'?`<button type="button" class="g" data-dl="${k}" title="Unduh data ${ALKN[k][0]}">Unduh</button>`:''}}
@@ -594,7 +594,7 @@ const jobCheck=async()=>{try{if(!(await caps()).bg)return;const j=(await api({ac
 async function boot(){const ld=$('#ld');
  if(!cloudOn()){ld.className='';cst('Belum tersambung, data belum disinkronkan.');return}
  ld.className='on';$('#ldt').textContent='Membaca database...';$('#ldm').className='m';$('#ldm').textContent='Menghubungkan ke database...';$('#ldr').disabled=true;
- try{const n=await syncAll();await refreshSum();cst('Tersambung.'+(n?' '+n+' data diperbarui.':' Data sudah terbaru.'));ld.className='';jobCheck()}
+ try{let n;for(let i=0;;i++){try{n=await syncAll();break}catch(e){if(e.fatal||i>=2)throw e;$('#ldm').textContent='Mencoba lagi...';await sleep(2000*(i+1))}}await refreshSum();cst('Tersambung.'+(n?' '+n+' data diperbarui.':' Data sudah terbaru.'));ld.className='';jobCheck()}
  catch(e){ld.className='on er';$('#ldt').textContent='Gagal membaca database';$('#ldm').className='m e';$('#ldm').textContent=(e&&e.message)||'Koneksi gagal.';$('#ldr').disabled=false}}
 $('#ldr').onclick=boot;boot();
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
