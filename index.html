@@ -4,7 +4,7 @@
 <style>
 :root{color-scheme:dark;--bg:#0a0f1c;--ink:#e8edf6;--mut:#94a3b8;--line:#25324a;--acc:#0b4ea2;--ac2:#6aa9ff;--err:#ff5c63;--yel:#ffcc00;--red:#e4002b;--pn:#121a2b;--pn2:#182338}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,sans-serif}
-main{max-width:960px;margin:0 auto;padding:calc(28px + env(safe-area-inset-top,0px)) calc(16px + env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) calc(16px + env(safe-area-inset-left,0px));display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}h1{font-size:22px;margin:0 0 30px;padding:12px 16px;background:linear-gradient(135deg,#0b4ea2,#082f66);color:#fff;border-radius:8px;box-shadow:0 5px 0 var(--yel),0 10px 0 var(--red);display:flex;align-items:center;gap:12px}h1 img{flex:none;border-radius:8px;box-shadow:0 0 0 2px var(--yel)}footer{margin-top:auto;padding-top:28px;text-align:center;color:var(--mut);font-size:5px;line-height:1.4}.sub{color:var(--mut);margin:0 0 22px}
+main{max-width:960px;margin:0 auto;padding:calc(28px + env(safe-area-inset-top,0px)) calc(16px + env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) calc(16px + env(safe-area-inset-left,0px));display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}h1{font-size:22px;margin:0 0 30px;padding:12px 16px;background:linear-gradient(135deg,#0b4ea2,#082f66);color:#fff;border-radius:8px;box-shadow:0 5px 0 var(--yel),0 10px 0 var(--red);display:flex;align-items:center;gap:12px}h1 img{flex:none}footer{margin-top:auto;padding-top:28px;text-align:center;color:var(--mut);font-size:5px;line-height:1.4}.sub{color:var(--mut);margin:0 0 22px}
 .p{background:var(--pn);border:1px solid var(--line);border-radius:8px;margin-bottom:22px}
 .r{display:grid;grid-template-columns:150px 1fr 320px;gap:14px;padding:2px 0;font-size:13.5px;align-items:center}
 .n{font-weight:600}.m,small{color:var(--mut);font-size:13px}small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.e{color:var(--err)}
@@ -28,7 +28,7 @@ input[type=number]{font:inherit;padding:5px 8px;border:1px solid var(--line);bor
 .alu{display:flex;gap:12px}.alu>.alf{flex:1 1 0;min-width:0}.alu .u{flex-wrap:nowrap;gap:4px;justify-content:flex-start}.alu label.bt,.alu button{padding:6px 10px}.alu .m{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hp{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:6px 16px;align-items:baseline;margin-top:10px;padding:12px 16px;border-radius:4px;background:var(--pn2);font-size:13.5px;line-height:1.5}.hp[hidden]{display:none}.hp b::after{content:":";font-weight:400}.hp span{white-space:normal;overflow-wrap:anywhere}
 .c.isi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:end}.c.isi label{white-space:normal;min-width:0;line-height:1.25}.c.isi input,.c.isi button{width:100%;height:36px;padding:0 8px;min-width:0}.c.isi button{font-size:13px;line-height:1.15;white-space:normal}
-#al_src .r{grid-template-columns:100px minmax(0,1fr) 130px 30px}#al_src .r button{padding:0 8px;height:26px}
+#src .r{grid-template-columns:60px minmax(0,1fr) 100px 54px}#al_src .r{grid-template-columns:78px minmax(0,1fr) 104px 54px 28px}#src .r button,#al_src .r button{padding:0 8px;height:26px;font-size:12px}#src .r>div:nth-child(4),#al_src .r>div:nth-child(n+4){text-align:right}
 #ld{display:none;position:fixed;inset:0;z-index:99;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px}#ld.on{display:flex}#ld .sp{width:46px;height:46px;border:5px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}#ld .t{font-weight:600;font-size:17px}#ld .m{max-width:min(420px,90vw);white-space:normal;overflow-wrap:anywhere}#ld.er .sp{display:none}#ldr{display:none}#ld.er #ldr{display:inline-block}
 </style></head><body><div id="ld" class="on" role="status" aria-live="polite"><div class="sp"></div><div class="t" id="ldt">Membaca database...</div><div class="m" id="ldm">Menghubungkan ke database...</div><button type="button" id="ldr">Sinkron ulang</button></div><main>
 <h1><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAI90lEQVR4nO3dMU7DQBBAUYLckbORE/hyyQl8N/fQI0SamJX3v9fSjEZC+hrJm8vH5/3rDQBIeR89AADw/wQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBoGT0Av9u3dfQIAC9zvT1Gj8APLgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQtowfgGH57+3X2bf3z73ZNwbP/A87HBQAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAgpbRA3CMfVtHj5Bh18AZuQAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABDkHYBJXW+P0SNM49l3/nZNgfcu5uMCAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIWkYPwDH2bR09QoZdA2fkAgAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJB3ACZ1vT1GjzCNZ9/52zUF3ruYjwsAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBoGT0Ax9i3dfQIGXYNnJELAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQd4BmNT19hg9wjSefedv1xR472I+LgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIWkYPwDH2bR09QoZdA2fkAgAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQNDl4/P+NXoIAOB/uQAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIK+Ad4ZMxWD41BxAAAAAElFTkSuQmCC" alt="" width="36" height="36"><span>Bahan Alokasi</span></h1>
@@ -42,11 +42,11 @@ input[type=number]{font:inherit;padding:5px 8px;border:1px solid var(--line);bor
 <button class="dg" type="button" id="rs" style="margin-left:auto">Reset database</button></div>
 <div id="src" style="margin-top:10px;padding-top:8px;border-top:1px solid var(--line)"></div>
 <div id="hp" class="hp" hidden>
-<b>Master</b><span>master stock</span>
+<b>Master</b><span>Master Stock</span>
 <b>Toko</b><span>KODE TOKO, NAMA TOKO, AM, KECAMATAN, KOTA</span>
 <b>Item</b><span>PLU, DESC, POLA1, POLA2, KET NATARU</span>
 <b>Target</b><span>TOKO, PRDCD, QTY_NAT, QTY_SEA</span>
-<b>NPB</b><span>GAB, QTY ALOK, KETER</span></div>
+<b>NPB</b><span>GAB, TANGGAL, QTY ALOK, KETER</span></div>
 <div class="m" id="um" style="margin-top:8px;white-space:normal"></div><div id="ul" style="margin-top:6px"></div></section>
 <section class="p gen"><div class="c">
 <label>Kode gudang<input type="text" id="gd" size="7" value="G113"></label>
@@ -132,16 +132,23 @@ async function syncAll(nodraw){if(!cloudOn())return;const{meta:cm}=await api({ac
   if(!c){if(loc){cst('Mengirim data '+SRC[k][0]+'...');const mt=lm[k]||{file:'(perangkat)',time:new Date().toLocaleString('id-ID')};
     const rows=k==='npb'?[...D.m].map(([g,a])=>[g,a[0],a[1]]):CV[k].to(D);
     const j=await push(k,'replace',rows,{file:mt.file,time:mt.time,files:k==='npb'?D.f.map(x=>({hash:x.h,name:x.name,n:x.n,time:mt.time})):[]});
+    if(k==='npb'){const R=await get('npb_raw');if(R&&R.rows.length&&(await caps()).detail)await push('npbdetail','replace',R.rows,{file:mt.file,time:mt.time})}
     lm[k]={file:mt.file,time:mt.time,ver:j.ver};ch++}continue}
   if((lm[k]||{}).ver===c.ver&&loc)continue;
   cst('Mengambil data '+SRC[k][0]+'...');const pg=(a,b)=>cst('Mengambil '+SRC[k][0]+': '+(b?Math.min(100,Math.floor(100*a/b)):100)+' %');
   if(k==='npb'){const rs=await pull('npb',pg),fs=await pull('npbfiles');const m=new Map(rs.map(r=>[String(r[0]),[NUM(r[1]),NUM(r[2])]]));
-   await put('npb',{m,f:fs.map(r=>({h:String(r[0]),name:String(r[1]),n:NUM(r[2])}))})}
+   await put('npb',{m,f:fs.map(r=>({h:String(r[0]),name:String(r[1]),n:NUM(r[2])}))});{let R=null;if((await caps()).detail){const ds=await pull('npbdetail');if(ds.length)R={l:DH,rows:ds.map(r=>[String(r[0]),String(r[1]??''),NUM(r[2]),String(r[3]??'')])}}
+   if(R)await put('npb_raw',R);else await tx('readwrite',s=>s.delete('npb_raw'))}}
   else await put(k,CV[k].from(await pull(k,pg)));
   lm[k]={file:c.file,time:c.time,ver:c.ver};ch++}
  await put('meta',lm);if(ch&&!nodraw)await draw();return ch}
 // ---- upload
 let SYNCED=0;
+// detail NPB (GAB, TANGGAL, QTY ALOK, KETER) disimpan terpisah dari total per GAB; tanggal Excel diubah jadi YYYY-MM-DD
+const DTC=/TGL|TANGGAL|DATE/,DH=['GAB','TANGGAL','QTY ALOK','KETER'],xd=v=>{if(typeof v!=='number'||v<20000||v>80000)return v;const t=new Date(Date.UTC(1899,11,30)+Math.round(v*864e5)),p=n=>String(n).padStart(2,'0'),s=t.getUTCFullYear()+'-'+p(t.getUTCMonth()+1)+'-'+p(t.getUTCDate());return v%1?s+' '+p(t.getUTCHours())+':'+p(t.getUTCMinutes())+':'+p(t.getUTCSeconds()):s};
+function npbDetail(dt,c,q,ke){const dk=Object.keys(c).find(n=>DTC.test(n)),di=dk==null?-1:c[dk],o=[];
+ for(const x of dt){const g=K(x[c.GAB]);if(!g)continue;o.push([g,di<0?'':String(xd(x[di])??'').trim(),NUM(x[q]),String(x[ke]??'').trim()])}return o}
+async function npbRawSave(rows,replace){const R=(replace?null:await get('npb_raw'))||{l:DH,rows:[]};for(const r of rows)R.rows.push(r);R.l=DH;await put('npb_raw',R)}
 async function upload(k,f,mode){
  const cl=cloudOn(),mp=$('#um'),prog=(a,b)=>{mp.textContent='Mengirim data: '+pc(a,b)};
  if(cl&&!SYNCED){mp.textContent='Mencocokkan data...';await syncAll(1);SYNCED=1}
@@ -163,17 +170,28 @@ async function upload(k,f,mode){
   const h=await sha(buf);let o=(mode==='ganti'?null:await get('npb'))||{m:new Map(),f:[]};
   if(o.f.some(x=>x.h===h))throw Error('File ini sudah pernah diupload. Dibatalkan agar qty tidak terhitung dua kali. Pilih "Ganti semua" untuk mengulang dari awal.');
   const dl=new Map();let n=0;for(const x of dt){const g=K(x[c.GAB]);if(!g)continue;const v=NUM(x[q]),e=dl.get(g)||[0,0];if(N(x[ke])==='NATARU')e[0]+=v;e[1]+=v;dl.set(g,e);n++}
-  if(cl)ver=(await push('npb',mode==='ganti'?'replace':'merge',[...dl].map(([g,a])=>[g,a[0],a[1]]),{hash:h,file:f.name,time:tm,files:[{hash:h,name:f.name,n,time:tm}]},prog)).ver;
+  const dr=npbDetail(dt,c,q,ke);if(cl&&!(await caps()).detail)throw Error('Code.gs belum diperbarui. Tempel Code.gs terbaru lalu deploy versi baru.');
+  if(cl){ver=(await push('npb',mode==='ganti'?'replace':'merge',[...dl].map(([g,a])=>[g,a[0],a[1]]),{hash:h,file:f.name,time:tm,files:[{hash:h,name:f.name,n,time:tm}]},prog)).ver;await push('npbdetail',mode==='ganti'?'replace':'merge',dr,{file:f.name,time:tm},prog)}
   for(const[g,a]of dl){const e=o.m.get(g)||[0,0];e[0]+=a[0];e[1]+=a[1];o.m.set(g,e)}
-  o.f.push({h,name:f.name,n});await put('npb',o);msg=`NPB ${mode==='ganti'?'diganti':'ditambahkan'}: ${fn(n)} baris. Total ${o.f.length} file.`}
+  await npbRawSave(dr,mode==='ganti');o.f.push({h,name:f.name,n});await put('npb',o);msg=`NPB ${mode==='ganti'?'diganti':'ditambahkan'}: ${fn(n)} baris. Total ${o.f.length} file.`}
  const meta=(await get('meta'))||{};meta[k]={file:f.name,time:tm,ver};await put('meta',meta);return msg+(cl?' Tersimpan.':' (Belum tersambung, data belum disinkronkan.)')}
 // ---- tampilan sumber
+// unduh data yang tersimpan di aplikasi sebagai CSV
+function dlCsv(nm,H,rows){const f=x=>x==null?'':typeof x==='number'?String(x):/[;,"\r\n]/.test(x)?'"'+String(x).replace(/"/g,'""')+'"':String(x),
+ u=URL.createObjectURL(new Blob(['\ufeff'+(H?[H,...rows]:rows).map(r=>r.map(f).join(',')).join('\n')+'\n'],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');
+ a.href=u;a.download=nm;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
+const DLH={toko:['KODE TOKO','NAMA TOKO','AM','KECAMATAN','KOTA'],item:['PLU','DESC','POLA1','POLA2','KET NATARU'],target:['TOKO','PRDCD','QTY_NAT','QTY_SEA'],npb:['GAB','QTY_NATARU','QTY_TOTAL']};
+$('#src').onclick=async e=>{const b=e.target.closest('button[data-dl]');if(!b)return;const k=b.dataset.dl,D=await get(k);if(!D)return;
+ if(k==='npb'){const R=await get('npb_raw');if(R){dlCsv('NPB.csv',R.l,R.rows.map(r=>R.l.map((_,i)=>r[i])));return}
+  const um=$('#um');um.className='m';um.textContent='Data NPB ini belum menyimpan tanggal dan KETER (diupload sebelum pembaruan). Upload ulang file NPB dengan mode "Ganti semua". Yang terunduh masih total per GAB.'}
+ dlCsv(SRC[k][0]+'.csv',DLH[k],k==='npb'?[...D.m].map(([g,a])=>[g,a[0],a[1]]):CV[k].to(D))};
 async function draw(){const meta=(await get('meta'))||{},box=$('#src');box.innerHTML='';
  for(const k in SRC){const D=await get(k),n=k==='npb'?(D?D.m.size:0):(D?D.size:0),mt=meta[k]||{};
   const el=document.createElement('div');el.className='r';
   el.innerHTML=`<div class="n">${SRC[k][0]}</div>
   <div class="m" title="${(mt.file||'')+' · '+(mt.time||'')}">${n&&mt.time?String(mt.time).split(/[,\s]/)[0]:''}</div>
-  <div>${n?`<b>${fn(n)}</b> ${k==='npb'?'GAB':'baris'}`:'<span class="e">Belum ada data</span>'}</div>`;
+  <div>${n?`<b>${fn(n)}</b> ${k==='npb'?'GAB':'baris'}`:'<span class="e">Belum ada data</span>'}</div>
+  <div>${n&&k!=='master'?`<button type="button" class="g" data-dl="${k}" title="Unduh data ${SRC[k][0]}">Unduh</button>`:''}</div>`;
   box.appendChild(el)}}
 // ---- upload banyak file sekaligus (jenis file dikenali dari nama file / nama sheet)
 async function detect(f){const n=f.name.toLowerCase();for(const k in SRC)if(n.includes(k))return k;
@@ -320,9 +338,10 @@ async function alkStat(){const box=$('#al_src');box.innerHTML='';
   el.innerHTML=`<div class="n">${ALKN[k][0]}</div>
   <div class="m" title="${D?D.name+' · '+D.time:''}">${D?String(D.time).split(/[,\s]/)[0]:''}</div>
   <div>${D?`<b>${n}</b> ${ALKN[k][1]}`:'<span class="e">Belum ada data</span>'}</div>
+  <div>${D&&k!=='stock'?`<button type="button" class="g" data-dl="${k}" title="Unduh data ${ALKN[k][0]}">Unduh</button>`:''}</div>
   <div>${D?`<button type="button" class="g" data-k="${k}" title="Hapus file">&times;</button>`:''}</div>`;
   box.appendChild(el)}}
-$('#al_src').onclick=async e=>{const b=e.target.closest('button[data-k]');if(!b)return;await tx('readwrite',s=>s.delete('alk_'+b.dataset.k));alkStat()};
+$('#al_src').onclick=async e=>{const u=e.target.closest('button[data-dl]');if(u){const D=await get('alk_'+u.dataset.dl);if(D)dlCsv(ALKN[u.dataset.dl][0].replace(/ /g,'_')+'.csv',null,D.rows);return}const b=e.target.closest('button[data-k]');if(!b)return;await tx('readwrite',s=>s.delete('alk_'+b.dataset.k));alkStat()};
 $('#al_hb').onclick=()=>{const h=$('#al_hp');h.hidden=!h.hidden;$('#al_hb').setAttribute('aria-expanded',String(!h.hidden))};
 // jenis file dikenali dari nama file, lalu dari kolomnya
 function alkDetect(f,r){const n=f.name.toLowerCase();
