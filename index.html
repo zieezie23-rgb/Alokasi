@@ -134,7 +134,7 @@ async function api(a){const c=CF();if(!c)throw Error('Belum tersambung.');let la
   if(!j.ok){const m=j.error||'Gagal',b=/lock|kunci|penguncian/i.test(m);throw Object.assign(Error(b?'Sedang sibuk. Coba lagi sebentar.':m),{fatal:b?0:1,busy:b})}return j}
   catch(e){last=e.fatal||e.busy?e:Error(e.name==='AbortError'?'Respons terlalu lama. Coba lagi.':'Tidak bisa terhubung. Cek internet dan URL Web App.');if(e.fatal)throw last;await sleep(1200*(t+1))}finally{clearTimeout(tm)}}
  throw last}
-const NB=v=>v===''||v==null?null:v,CH=20000;
+const NB=v=>v===''||v==null?null:v,CH=5000,PL=5000;
 let capsP=null;const caps=()=>capsP||(capsP=api({action:'caps'}).catch(()=>{capsP=null;return{}}));
 const CV={master:{to:m=>[...m].map(([p,a])=>[p,...a]),from:rs=>new Map(rs.map(r=>[String(r[0]),[NB(r[1]),NB(r[2]),NB(r[3]),NUM(r[4]),NUM(r[5]),NB(r[6]),NUM(r[7])]]))},
  toko:{to:m=>[...m].map(([p,a])=>[p,...a]),from:rs=>new Map(rs.map(r=>[String(r[0]),[NB(r[1]),NB(r[2]),NB(r[3]),NB(r[4])]]))},
@@ -157,9 +157,12 @@ async function push(ds,mode,rows,extra,prog,ch){ch=ch||CH;
  await api({action:'begin',ds,mode,hash:extra&&extra.hash||''});
  for(let i=0;i<rows.length;i+=ch){await api({action:'append',ds,rows:rows.slice(i,i+ch)});prog&&prog(Math.min(i+ch,rows.length),rows.length)}
  return api({action:'commit',ds,mode,...extra})}
-async function pull(ds,prog){const rows=[];let off=0,total=1;
- while(off<total){const j=await api({action:'pull',ds,offset:off,limit:15000});total=j.total;for(const r of j.rows)rows.push(r);off+=j.rows.length;prog&&prog(off,total);if(!j.rows.length)break}
- return rows}
+const PART={};
+async function pull(ds,prog,ver,vds){const P=PART[ds]&&PART[ds].ver===ver?PART[ds]:(PART[ds]={ver,rows:[],off:0,total:1});
+ while(P.off<P.total){const j=await api({action:'pull',ds,offset:P.off,limit:PL,ver,vds});
+  if(j.changed){delete PART[ds];throw Error('Data database berubah saat dibaca, memuat ulang.')}
+  P.total=j.total;for(const r of j.rows)P.rows.push(r);P.off+=j.rows.length;prog&&prog(P.off,P.total);if(!j.rows.length)break}
+ delete PART[ds];return P.rows}
 // samakan data perangkat dengan Spreadsheet (Spreadsheet menang bila versinya beda; bila Spreadsheet kosong, data perangkat dikirim)
 async function syncAll(nodraw){if(!cloudOn())return;const{meta:cm}=await api({action:'meta'});const lm=(await get('meta'))||{};let ch=0;
  for(const k in SRC){const c=cm[k],D=await get(k),loc=k==='npb'?(D&&D.m.size):(D&&(D.size??D.length));
@@ -170,10 +173,10 @@ async function syncAll(nodraw){if(!cloudOn())return;const{meta:cm}=await api({ac
     lm[k]={file:mt.file,time:mt.time,ver:j.ver};ch++}continue}
   if((lm[k]||{}).ver===c.ver&&loc)continue;
   cst('Mengambil data '+SRC[k][0]+'...');const pg=(a,b)=>cst('Mengambil '+SRC[k][0]+': '+(b?Math.min(100,Math.floor(100*a/b)):100)+' %');
-  if(k==='npb'){const rs=await pull('npb',pg),fs=await pull('npbfiles');const m=new Map(rs.map(r=>[String(r[0]),[NUM(r[1]),NUM(r[2])]]));
-   await put('npb',{m,f:fs.map(r=>({h:String(r[0]),name:String(r[1]),n:NUM(r[2])}))});{let R=null;if((await caps()).detail){const ds=await pull('npbdetail');if(ds.length)R={l:DH,rows:ds.map(r=>[String(r[0]),String(r[1]??''),NUM(r[2]),String(r[3]??'')])}}
+  if(k==='npb'){const rs=await pull('npb',pg,c.ver,'npb'),fs=await pull('npbfiles',null,c.ver,'npb');const m=new Map(rs.map(r=>[String(r[0]),[NUM(r[1]),NUM(r[2])]]));
+   await put('npb',{m,f:fs.map(r=>({h:String(r[0]),name:String(r[1]),n:NUM(r[2])}))});{let R=null;if((await caps()).detail){const ds=await pull('npbdetail',null,c.ver,'npb');if(ds.length)R={l:DH,rows:ds.map(r=>[String(r[0]),String(r[1]??''),NUM(r[2]),String(r[3]??'')])}}
    if(R)await put('npb_raw',R);else await tx('readwrite',s=>s.delete('npb_raw'))}}
-  else await put(k,CV[k].from(await pull(k,pg)));
+  else await put(k,CV[k].from(await pull(k,pg,c.ver,k)));
   lm[k]={file:c.file,time:c.time,ver:c.ver};ch++}
  await put('meta',lm);if(ch&&!nodraw)await draw();return ch}
 // ---- upload
@@ -328,7 +331,7 @@ function smXlsx(P){const n=P.items.length,per=3,W=5,ws={},mg=[],rows=[];let maxR
  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,P.sec);
  smSave(new Blob([XLSX.write(wb,{bookType:'xlsx',type:'array'})],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),smName(P,'xlsx'))}
 async function smJpg(P,i){if(!window.html2canvas)throw Error('Library JPG belum termuat. Cek koneksi internet lalu coba lagi.');
- const el=$('#rp'+i),c=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,onclone:(doc)=>{const s=doc.createElement('style');s.textContent='#sm .rp{--pn:#fff;--pn2:#fff;--bg:#fff;--ink:#111;--mut:#555;--line:#c3cad6;--ac2:#0b4ea2;--err:#c40024;background:#fff!important}#sm .xt3,#sm .tm2 span:last-child{color:#b45309!important}#sm .rb tr.xp td{color:#000!important}';doc.head.appendChild(s);const L={'#13294d':'#e3edfb','#1d3a6b':'#cfe0f7','#3d3200':'#fff3bf','#3d1a22':'#fbd9df'};doc.querySelectorAll('#sm .rb').forEach(b=>{for(const p of['--bt','--nt']){const v=b.style.getPropertyValue(p).trim().toLowerCase();if(L[v])b.style.setProperty(p,L[v])}})}});
+ const el=$('#rp'+i),c=await html2canvas(el,{scale:2,windowWidth:1280,backgroundColor:'#ffffff',useCORS:true,onclone:(doc)=>{const s=doc.createElement('style');s.textContent='#sm .rp{--pn:#fff;--pn2:#fff;--bg:#fff;--ink:#111;--mut:#555;--line:#c3cad6;--ac2:#0b4ea2;--err:#c40024;background:#fff!important}#sm .xt3,#sm .tm2 span:last-child{color:#b45309!important}#sm .rb tr.xp td{color:#000!important}';doc.head.appendChild(s);const L={'#13294d':'#e3edfb','#1d3a6b':'#cfe0f7','#3d3200':'#fff3bf','#3d1a22':'#fbd9df'};doc.querySelectorAll('#sm .rb').forEach(b=>{for(const p of['--bt','--nt']){const v=b.style.getPropertyValue(p).trim().toLowerCase();if(L[v])b.style.setProperty(p,L[v])}})}});
  await new Promise((ok,no)=>c.toBlob(b=>{if(!b)return no(Error('Gagal membuat gambar.'));smSave(b,smName(P,'jpg'));ok()},'image/jpeg',.95))}
 $('#sm').addEventListener('click',async e=>{const b=e.target.closest('button[data-x]');if(!b)return;const i=+b.dataset.i,P=SMP[i];if(!P)return;
  const old=b.textContent;b.disabled=true;try{if(b.dataset.x==='xlsx')smXlsx(P);else{b.textContent='Memproses...';await smJpg(P,i)}}catch(er){alert(er.message||er)}b.textContent=old;b.disabled=false});
