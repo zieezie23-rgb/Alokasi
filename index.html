@@ -30,10 +30,30 @@ input[type=number]{font:inherit;padding:5px 8px;border:1px solid var(--line);bor
 .c.isi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:end}.c.isi label{white-space:normal;min-width:0;line-height:1.25}.c.isi input,.c.isi button{width:100%;height:36px;padding:0 8px;min-width:0}.c.isi button{font-size:13px;line-height:1.15;white-space:normal}
 #src .r{grid-template-columns:60px minmax(0,1fr) 100px}#al_src .r{grid-template-columns:78px minmax(0,1fr) 104px 28px}#al_src .r button{padding:0 8px;height:26px;font-size:12px}#al_src .r>div:nth-child(n+4){text-align:right}
 #ld{display:none;position:fixed;inset:0;z-index:99;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px}#ld.on{display:flex}#ld .sp{width:46px;height:46px;border:5px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}#ld .t{font-weight:600;font-size:17px}#ld .m{max-width:min(420px,90vw);white-space:normal;overflow-wrap:anywhere}#ld.er .sp{display:none}#ldr{display:none}#ld.er #ldr{display:inline-block}
+
+input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:4px;background:var(--pn2);color:var(--ink)}
+#pg1 .gen{padding:10px}
+#sm .rp{background:#fff;color:#000;border:2px solid #000;padding:10px;margin:0 0 18px;font:12px/1.35 Calibri,"Segoe UI",system-ui,sans-serif}
+#sm .rt{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px}
+#sm .xt1{font-size:18px;font-weight:700;line-height:1.2;white-space:normal}#sm .xt2,#sm .xt3{font-size:13px;font-weight:700}#sm .xt3{white-space:nowrap}
+#sm .rs{text-align:center;font-size:22px;font-weight:700;margin:2px 0 8px}
+#sm .rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:10px;align-items:start}
+#sm .rg.xn{display:flex;justify-content:center}#sm .rg.xn .rc{width:100%;max-width:420px}
+#sm .rb{border:1px solid #000;background:#fff}
+#sm .rb table{width:100%;min-width:0;border-collapse:collapse}
+#sm .rb td{border:1px solid #000;padding:2px 5px;text-align:right;white-space:nowrap;font-size:12px;color:#000;background:#fff}
+#sm .rb td:first-child{text-align:left}
+#sm .rb tr.xh td{background:var(--hd);text-align:center;font-weight:700;padding:4px}
+#sm .rb tr.xs td{background:#000;height:6px;padding:0;border:0}
+#sm .rb tr.xc td{text-align:center}
+#sm .rb tr.xy td{background:var(--bt)}
+#sm .rb tr.xp td{background:var(--nt);font-weight:700}
+#sm .tm2{display:flex;justify-content:space-between;align-items:center;gap:6px;margin:0 0 3px;font-weight:700;color:#000}
+#sm .tm2 span:first-child{color:#e00000}#sm .tm2 span:last-child{background:#ddd9c4;color:#c00000;padding:2px 14px;min-width:80px;text-align:center}
 </style></head><body><div id="ld" class="on" role="status" aria-live="polite"><div class="sp"></div><div class="t" id="ldt">Membaca database...</div><div class="m" id="ldm">Menghubungkan ke database...</div><button type="button" id="ldr">Sinkron ulang</button></div><main>
 <h1><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAI90lEQVR4nO3dMU7DQBBAUYLckbORE/hyyQl8N/fQI0SamJX3v9fSjEZC+hrJm8vH5/3rDQBIeR89AADw/wQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBoGT0Av9u3dfQIAC9zvT1Gj8APLgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQtowfgGH57+3X2bf3z73ZNwbP/A87HBQAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAgpbRA3CMfVtHj5Bh18AZuQAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABDkHYBJXW+P0SNM49l3/nZNgfcu5uMCAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIWkYPwDH2bR09QoZdA2fkAgAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJB3ACZ1vT1GjzCNZ9/52zUF3ruYjwsAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBoGT0Ax9i3dfQIGXYNnJELAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQd4BmNT19hg9wjSefedv1xR472I+LgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIEgAAECQAACBIAABAkAAAgCABAABBAgAAggQAAAQJAAAIWkYPwDH2bR09QoZdA2fkAgAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQNDl4/P+NXoIAOB/uQAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIIEAAAECQAACBIAABAkAAAgSAAAQJAAAIAgAQAAQQIAAIK+Ad4ZMxWD41BxAAAAAElFTkSuQmCC" alt="" width="36" height="36"><span>Bahan Alokasi</span></h1>
 <div class="tabs" role="tablist"><button type="button" role="tab" id="t2" aria-selected="false">Master</button><button type="button" role="tab" id="t1" class="on" aria-selected="true">Ringkasan</button><button type="button" role="tab" id="t3" aria-selected="false">Alokasi DPD</button></div>
-<div id="pg1"><section class="p gen"><div id="sm"></div></section></div>
+<div id="pg1"><section class="p gen"><div class="c" style="margin-bottom:14px"><label>Tanggal laporan<input type="date" id="tmd"></label></div><div id="sm"></div></section></div>
 <div id="pg2" hidden>
 <section class="p gen" style="padding:14px 10px"><div class="alt">Upload</div>
 <div class="c t k">
@@ -182,12 +202,14 @@ async function upload(k,f,mode){
  }else if(k==='pomgg'){const tg=await get('target');
   if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target dulu (POMGG hanya menyimpan PLU yang ada di Target).');
   if(cl&&!(await caps()).pomgg)throw Error('Code.gs belum diperbarui. Tempel Code.gs terbaru lalu deploy versi baru.');
-  const[c,dt]=hdr(r,POH),U=x=>K(x).toUpperCase(),mm=pluMap(tg),par=new Set(),rows=[];let tot=0;
-  // PO induk = NOPB diawali EV / HO, atau digit ke-2 DOCNO = V
-  for(const x of dt){const d=U(x[c.DOCNO]),n=U(x[c.NOPB]);if(d&&(n.startsWith('EV')||n.startsWith('HO')||d[1]==='V'))par.add(d)}
-  for(const x of dt){const d=K(x[c.DOCNO]);if(!d||d==='DOCNO')continue;tot++;
+  const[c,dt]=hdr(r,POH),U=x=>K(x).toUpperCase(),mm=pluMap(tg),par=new Set(),rows=[];let tot=0,nt=0;
+  // FILTER 1: PLU (PRDCD) harus ada di Target. Baris yang tidak lolos langsung dibuang; filter lain hanya diterapkan pada baris yang lolos.
+  const cand=[];for(const x of dt){const d=K(x[c.DOCNO]);if(!d||d==='DOCNO')continue;tot++;if(pluOf(K(x[c.PRDCD]),mm)===undefined){nt++;continue}cand.push(x)}
+  // PO induk (dari baris ber-PLU Target saja) = NOPB diawali EV / HO, atau digit ke-2 DOCNO = V
+  for(const x of cand){const d=U(x[c.DOCNO]),n=U(x[c.NOPB]);if(n.startsWith('EV')||n.startsWith('HO')||d[1]==='V')par.add(d)}
+  for(const x of cand){const d=K(x[c.DOCNO]);
    const t=pdt(x[c.PO_DATE]);if(!t||t[0]*10000+t[1]*100+t[2]<POMIN)continue;
-   const p=K(x[c.PRDCD]);if(pluOf(p,mm)===undefined)continue;
+   const p=K(x[c.PRDCD]);
    const n=U(x[c.NOPB]),rv=U(x[c.NO_PO_REVISI]);
    if(!(n.startsWith('EV')||n.startsWith('HO')||d.toUpperCase()[1]==='V'||par.has(n)||par.has(rv)))continue;
    const bd=K(x[c.BPB_DATE]),bq=K(x[c.BPB_QTY]);
@@ -197,9 +219,9 @@ async function upload(k,f,mode){
   const KY=x=>x[1]+'|'+x[3],old=(await get('pomgg'))||[],grp=L=>{const g=new Map();for(const x of L){const k=KY(x),a=g.get(k);a?a.push(x):g.set(k,[x])}return g},
    sig=a=>JSON.stringify(a.map(x=>JSON.stringify(x)).sort()),go=grp(old),gn=grp(rows);
   let nb=0,nu=0,ns=0;for(const[k,a]of gn){const b=go.get(k);if(!b)nb++;else if(sig(a)!==sig(b))nu++;else ns++}
-  const keep=old.filter(x=>!gn.has(KY(x))&&pluOf(x[3],mm)!==undefined),mg=[...keep,...rows];
+  const od=old.filter(x=>pluOf(x[3],mm)===undefined).length,keep=old.filter(x=>!gn.has(KY(x))&&pluOf(x[3],mm)!==undefined),mg=[...keep,...rows];
   if(cl)ver=(await push('pomgg','replace',mg,{file:f.name,time:tm},prog)).ver;
-  await put('pomgg',mg);msg=`POMGG digabung: ${fn(nb)} baru, ${fn(nu)} berubah, ${fn(ns)} tidak berubah (dari ${fn(tot)} baris file). Total tersimpan ${fn(mg.length)} baris.`;
+  await put('pomgg',mg);msg=`POMGG digabung: ${fn(nb)} baru, ${fn(nu)} berubah, ${fn(ns)} tidak berubah (dari ${fn(tot)} baris file; ${fn(nt)} baris dibuang karena PLU tidak ada di Target${od?', '+fn(od)+' baris lama ikut dibuang karena PLU tidak ada di Target':''}). Total tersimpan ${fn(mg.length)} baris.`;
  }else{const[c,dt]=hdr(r,['GAB']);const q=col(c,'QTY ALOK','QTY_ALOK','QTY'),ke=col(c,'KETER','KET');
   const h=await sha(buf);let o=(mode==='ganti'?null:await get('npb'))||{m:new Map(),f:[]};
   if(o.f.some(x=>x.h===h))throw Error('File ini sudah pernah diupload. Dibatalkan agar qty tidak terhitung dua kali. Pilih "Ganti semua" untuk mengulang dari awal.');
@@ -259,22 +281,32 @@ $('#fa').onchange=async e=>{const inp=e.target,fs=[...inp.files],um=$('#um');inp
 function slink(u){let a=$('#sl');if(!a){a=document.createElement('a');a.id='sl';a.className='dl g';a.target='_blank';a.rel='noopener';a.textContent='Buka hasil rekap';let w=$('#res .ac');if(!w){w=document.createElement('div');w.className='ac';$('#res').prepend(w)}w.prepend(a)}a.href=u}
 // hasil 0 ditampilkan "-"
 const dz=n=>n?fn(n):'-';
-// ---- ringkasan per Pola 1 (Basic, Terkait); % = NPB / Target
-function sumShow(SM){const B=SM.b,T=SM.t,
- nz=(v,dc=0)=>{v=Math.round(v*10**dc)/10**dc;return v?v.toLocaleString('id-ID',{maximumFractionDigits:dc}):'-'},
- pc=(a,b)=>{const p=a?b/a*100:0,q=p.toFixed(2).split('.');return q[0]+','+q[1]+' %'},
- row=(l,a,b,dc,it,ib,po,bp)=>`<tr><td>${l}</td>${it==null?'':`<td class="it" rowspan="3">${nz(it)}</td>`}<td>${nz(a,dc)}</td><td>${nz(po,dc)}</td><td>${nz(bp,dc)}</td>${ib==null?'':`<td class="it" rowspan="3">${nz(ib)}</td>`}<td>${nz(b,dc)}</td><td>${pc(a,b)}</td></tr>`,
- blk=(t,x,y,it,ib,po,bp)=>`<tr class="h"><td colspan="8">${t}</td></tr>`+row('Qty',x[0],y[0],0,it,ib,po[0],bp[0])+row('CTN',x[1],y[1],undefined,undefined,undefined,po[1],bp[1])+row('Rp',x[2],y[2],undefined,undefined,undefined,po[2],bp[2]),
- ad=(u,v)=>u.map((x,k)=>x+v[k]),pT=ad(T.pn,T.ps),gT=ad(T.gn,T.gs),
- tn=[T.nq,T.nc,T.nr],bn=[T.bq,T.bc,T.br],ts=[T.sq,T.sc,T.sr],is=[T.iq,T.ic,T.ir],ba=[B.sq,B.sc,B.sr],ia=[B.iq,B.ic,B.ir],
- tt=tn.map((v,k)=>v+ts[k]),bt=bn.map((v,k)=>v+is[k]);
- $('#sm').innerHTML='<table><tr class="hd"><td><div class="alt" style="margin:0">Ringkasan</div></td><td>Item</td><td>Target</td><td>PO</td><td>BPB</td><td>Item</td><td>NPB</td><td>%</td></tr>'
-  +blk('Basic &middot; Seasonal',ba,ia,B.xs.size,B.ys.size,B.ps,B.gs)
-  +blk('Terkait &middot; Nataru',tn,bn,T.xn.size,T.yn.size,T.pn,T.gn)
-  +blk('Terkait &middot; Seasonal',ts,is,T.xs.size,T.ys.size,T.ps,T.gs)
-  +blk('Terkait &middot; Total',tt,bt,T.xt.size,T.yt.size,pT,gT)
-  +blk('Total All',ba.map((v,k)=>v+tt[k]),ia.map((v,k)=>v+bt[k]),B.xs.size+T.xt.size,B.ys.size+T.yt.size,ad(B.ps,pT),ad(B.gs,gT));
- }
+// ---- ringkasan: 3 bagian (Basic, Nataru, Terkait Seasonal), kotak per Pola 2
+let SML=null;
+function sumShow(SM){SML=SM;const B=SM.b,T=SM.t,tm=$('#tmd'),ymd=t=>t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
+ if(!tm.value){let v='';try{v=localStorage.getItem('termin')||''}catch(e){}tm.value=v||ymd(new Date(Date.now()-864e5))}
+ const[Y,Mo,D]=tm.value.split('-').map(Number),MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+  t1=D+' '+MO[Mo-1]+' '+Y,t2=String(D).padStart(2,'0')+'-'+MO[Mo-1]+'-'+String(Y).slice(-2),
+  en=v=>{v=Math.round(v);return v?v.toLocaleString('en-US'):'-'},pp=(a,b)=>(b?a/b*100:0).toFixed(2)+'%',
+  mt=k=>({tg:[k.ti.size,k.tg[1],k.tg[2]],po:[k.pi.size,k.po[1],k.po[2]],ou:[k.oi.size,k.ou[1],k.ou[2]],bp:[k.gi.size,k.bp[1],k.bp[2]],np:[k.ni.size,k.np[1],k.np[2]]}),
+  tr=(l,v,c)=>'<tr'+(c?' class="'+c+'"':'')+'><td>'+l+'</td>'+v.map(x=>'<td>'+x+'</td>').join('')+'</tr>',
+  cells=v=>v.map(en),ratio=(a,b)=>a.map((x,i)=>pp(x,b[i])),bar='<tr class="xs"><td colspan="4"></td></tr>',
+  box=(t,k,st)=>{const q=mt(k);return '<div class="rb" style="'+st+'"><table><tr class="xh"><td colspan="4">'+t+'</td></tr>'+bar+'<tr class="xc"><td>Ket</td><td>Item</td><td>Ctn</td><td>Nilai</td></tr>'
+   +tr('Target',cells(q.tg))+tr('Po',cells(q.po))+tr('Po Outstanding',cells(q.ou))+tr('Bpb',cells(q.bp))+tr('Npb',cells(q.np))+bar
+   +tr('BPB Vs PO',ratio(q.bp,q.po))+tr('NPB Vs BPB',ratio(q.np,q.bp))+tr('PO vs Target',ratio(q.po,q.tg))+tr('BPB vs Target',ratio(q.bp,q.tg),'xy')+tr('NPB Vs Target',ratio(q.np,q.tg),'xp')+'</table></div>'},
+  tp=k=>{const q=mt(k),v=q.tg[2]?q.np[2]/q.tg[2]*100:0;return v?v.toFixed(2)+' %':'- %'},
+  cell=(t,k,st,tl)=>'<div class="rc">'+(tl?'<div class="tm2"><span>Termin sd '+t1+'</span><span>'+tp(k)+'</span></div>':'')+box(t,k,st)+'</div>',
+  hd=(a,b,c)=>'<div class="rt"><div><div class="xt1">'+a+'</div><div class="xt2">'+b+'</div></div>'+(c?'<div class="xt3">'+c+'</div>':'')+'</div>',
+  order=(G,pref)=>[...G.sub.keys()].sort((a,b)=>{const i=pref.indexOf(a),j=pref.indexOf(b);return(i<0?99:i)-(j<0?99:j)||a.localeCompare(b,'id')}),
+  PE='--hd:#fce4d6;--bt:#ffffcc;--nt:#e6b8b7',GR='--hd:#00b050;--bt:#ffffcc;--nt:#e6b8b7',TY='--hd:#ffff99;--bt:#fff;--nt:#ffff66',TO='--hd:#ffc000;--bt:#fff;--nt:#ffc000',
+  sb=order(B,['BISCUIT CORE','BISCUIT NON CORE','SYRUP','OTHER BEVS','SOFT DRINK']),st=order(T,['PRAPUASA','PUASA','LEBARAN','PASCA LEBARAN']);
+ $('#sm').innerHTML=
+  '<div class="rp">'+hd('Laporan Pencapaian Seasonal Lebaran DC Bogor 1','Periode Seasonal 2026',t2)+'<div class="rs">BASIC</div><div class="rg">'
+   +sb.map(k=>cell(k,B.sub.get(k).s,PE)).join('')+cell('TOTAL BASIC',B.tot.s,GR)+'</div></div>'
+  +'<div class="rp">'+hd('Laporan Pencapaian Nataru DC BGR1','Periode Nataru 2026')+'<div class="rs">NATARU</div><div class="rg xn">'+cell('NATARU',T.tot.n,PE)+'</div></div>'
+  +'<div class="rp">'+hd('Laporan Pencapaian Seasonal Lebaran DC Bogor 1','Periode Seasonal Terkait 2027')+'<div class="rs">TERKAIT LEBARAN</div><div class="rg">'
+   +st.map(k=>cell(k,T.sub.get(k).s,TY)).join('')+cell('TOTAL TERKAIT LEBARAN',T.tot.s,TO)+'</div></div>'}
+$('#tmd').onchange=()=>{try{localStorage.setItem('termin',$('#tmd').value)}catch(e){}if(SML)sumShow(SML)};
 // ---- pantau rekap latar belakang di server (progres = baris selesai / total)
 async function rekapWatch(){const fl=$('#fl'),jm=$('#jm');$('#bar').style.display='block';
  for(;;){let j;try{j=((await api({action:'rekapstatus'})).job)||{}}catch(e){jm.textContent='Menunggu koneksi... proses tetap berjalan.';await sleep(4000);continue}
@@ -304,7 +336,7 @@ $('#go').onclick=async()=>{const go=$('#go'),bar=$('#bar'),fl=$('#fl'),jm=$('#jm
   <tr><td>Baris rekap</td><td>${fn(tg.size)}</td></tr><tr><td>Toko tidak ada di data Toko</td><td>${dz(nt)}</td></tr>
   <tr><td>PLU tidak ada di Master</td><td>${dz(nm)}</td></tr><tr><td>PLU tidak ada di Item</td><td>${dz(ni)}</td></tr>
   <tr><td>GAB di NPB tanpa Target (tidak ikut terhitung)</td><td>${dz(orphan)}</td></tr></table>`;
-  sumShow(SM);
+  refreshSum();
   if(cl&&srv){fl.style.width='0%';jm.textContent='Memulai penyimpanan rekap...';
    try{const w=new Date().toLocaleString('id-ID');
     if((await caps()).bg){await api({action:'rekapstart',gudang:g,file:nm2,time:w});await rekapWatch()}
@@ -330,15 +362,21 @@ let rt;$('#rs').onclick=async()=>{const b=$('#rs'),um=$('#um');
  b.disabled=false;b.classList.remove('ask');b.textContent='Reset database';$('#ulb').classList.remove('off')};
 // ---- ringkasan dari database terakhir (tanpa perlu Buat rekap)
 async function calcSM(){const[ms,im,tg,np,po]=await Promise.all(['master','item','target','npb','pomgg'].map(get));
- const M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),acc=()=>({nq:0,nc:0,nr:0,bq:0,bc:0,br:0,sq:0,sc:0,sr:0,iq:0,ic:0,ir:0,xs:new Set(),xn:new Set(),xt:new Set(),ys:new Set(),yn:new Set(),yt:new Set(),pn:[0,0,0],ps:[0,0,0],gn:[0,0,0],gs:[0,0,0]}),SM={b:acc(),t:acc()};
+ const M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
+  // satu 'kind' = angka satu kotak: tg Target, po PO, ou PO Outstanding, bp BPB, np NPB, masing-masing [qty, ctn, rupiah] + himpunan PLU (Item)
+  kd=()=>({tg:[0,0,0],po:[0,0,0],ou:[0,0,0],bp:[0,0,0],np:[0,0,0],ti:new Set(),pi:new Set(),oi:new Set(),gi:new Set(),ni:new Set()}),
+  acc=()=>({n:kd(),s:kd()}),grp=()=>({tot:acc(),sub:new Map()}),SM={b:grp(),t:grp()},IS={tg:'ti',po:'pi',ou:'oi',bp:'gi',np:'ni'},
+  put=(o,f,p,q,fr,ac)=>{const a=o[f];a[0]+=q;a[1]+=d(q,fr);a[2]+=q*ac;if(q>0)o[IS[f]].add(p)},
+  // s: 'n' = Nataru, 's' = Seasonal; dicatat ke total Pola 1 dan ke kotak per Pola 2
+  hit=(G,l,s,f,p,q,fr,ac)=>{if(!q)return;const k=(l&&l!=='0'&&N(l))||'(TANPA POLA2)';let b=G.sub.get(k);if(!b)G.sub.set(k,b=acc());put(G.tot[s],f,p,q,fr,ac);put(b[s],f,p,q,fr,ac)};
  if(tg)for(const[gab,[t,p,S,Vs]]of tg){const M=M0.get(p)||[],I=I0.get(p)||[],n=P.get(gab)||[0,0],fr=NUM(M[3]),ac=NUM(M[4]),AB=n[0],AI=n[1]-AB,
   pl=String(z(I[1])).trim().toLowerCase(),G=pl==='basic'?SM.b:pl==='terkait'?SM.t:null;
-  if(G){if(Vs>0)G.xs.add(p);if(S>0)G.xn.add(p);if(S+Vs>0)G.xt.add(p);if(AI>0)G.ys.add(p);if(AB>0)G.yn.add(p);if(AB+AI>0)G.yt.add(p);G.nq+=S;G.nc+=d(S,fr);G.nr+=S*ac;G.bq+=AB;G.bc+=d(AB,fr);G.br+=AB*ac;G.sq+=Vs;G.sc+=d(Vs,fr);G.sr+=Vs*ac;G.iq+=AI;G.ic+=d(AI,fr);G.ir+=AI*ac}}
-  // PO (jumlah QTY) & BPB (jumlah BPB_QTY) dari POMGG: Basic -> Seasonal; Terkait -> Nataru bila KET NATARU = NATARU, selain itu Seasonal
+  if(G){const l=String(z(I[2])).trim();hit(G,l,'n','tg',p,S,fr,ac);hit(G,l,'s','tg',p,Vs,fr,ac);hit(G,l,'n','np',p,AB,fr,ac);hit(G,l,'s','np',p,AI,fr,ac)}}
+ // PO, BPB, PO Outstanding (PO - BPB, minimal 0 per baris) dari POMGG: Basic -> Seasonal; Terkait -> Nataru bila KET NATARU = NATARU, selain itu Seasonal
  if(po&&tg){const mm=pluMap(tg);for(const r of po){const p=pluOf(r[3],mm);if(p===undefined)continue;
   const M=M0.get(p)||[],I=I0.get(p)||[],fr=NUM(M[3]),ac=NUM(M[4]),pl=String(z(I[1])).trim().toLowerCase(),G=pl==='basic'?SM.b:pl==='terkait'?SM.t:null;if(!G)continue;
-  const nat=pl==='terkait'&&N(z(I[3]))==='NATARU',Q=NUM(r[4]),BQ=NUM(r[7]),a=nat?G.pn:G.ps,b=nat?G.gn:G.gs;
-  a[0]+=Q;a[1]+=d(Q,fr);a[2]+=Q*ac;b[0]+=BQ;b[1]+=d(BQ,fr);b[2]+=BQ*ac}}
+  const nat=pl==='terkait'&&N(z(I[3]))==='NATARU',Q=NUM(r[4]),BQ=NUM(r[7]),s=nat?'n':'s',l=String(z(I[2])).trim();
+  hit(G,l,s,'po',p,Q,fr,ac);hit(G,l,s,'bp',p,BQ,fr,ac);hit(G,l,s,'ou',p,Math.max(Q-BQ,0),fr,ac)}}
  return SM}
 
 let smBusy=0,smAgain=0;async function refreshSum(){if(smBusy){smAgain=1;return}smBusy=1;try{do{smAgain=0;sumShow(await calcSM())}while(smAgain)}catch(e){}smBusy=0}
