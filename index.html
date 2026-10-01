@@ -26,6 +26,16 @@ a.dl.g{background:var(--pn);color:var(--ac2)}a.dl{border:1px solid var(--acc);di
 .mn button.on{background:var(--pn);color:var(--ac2)}
 .mn button:hover,.mn a:hover,.mn button:focus-visible,.mn a:focus-visible,.mn button:active,.mn a:active{background:rgba(106,169,255,.2);color:#fff;box-shadow:inset -3px 0 0 var(--ac2);outline:0}
 .mn a.db{color:var(--err)}.mn a.db:hover,.mn a.db:focus-visible,.mn a.db:active{background:rgba(255,92,99,.18);color:var(--err);box-shadow:inset -3px 0 0 var(--err)}
+.sg{display:flex;gap:6px;margin:0 0 8px}.sg button{padding:4px 12px;font-size:12.5px;background:var(--pn);color:var(--ac2)}.sg button.on{background:var(--acc);color:#fff}
+.trw{overflow:auto;max-height:72vh;border:1px solid var(--line);border-radius:6px;background:var(--pn)}
+.tt{border-collapse:separate;border-spacing:0;font-size:12px;min-width:max-content}
+.tt th,.tt td{padding:3px 6px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);white-space:nowrap;text-align:right;background:var(--pn)}
+.tt thead th{position:sticky;z-index:2;text-align:center;color:#fff;background:var(--acc);font-weight:700}
+.tt thead tr:first-child th{top:0;height:26px}.tt thead tr:nth-child(2) th{top:26px;height:38px;white-space:normal;line-height:1.15;min-width:74px}
+.tt thead th.nt{background:var(--red)}.tt thead tr:first-child th[colspan]{text-align:left}
+.tt th:first-child,.tt td:first-child{position:sticky;left:0;z-index:1;text-align:left}.tt thead th:first-child{z-index:4;top:0}
+.tt td.wk{text-align:center;color:var(--mut)}.tt td.z{color:var(--mut)}
+.tt tr.w1 td{border-top:2px solid var(--ac2)}.tt tr.cur td{font-weight:700}.tt tr.cur td:first-child{box-shadow:inset 4px 0 0 var(--yel)}
 .tabs{display:flex;gap:6px;margin:0 0 16px;border-bottom:1px solid var(--line)}.tabs button{background:transparent;color:var(--mut);border:0;border-bottom:3px solid transparent;border-radius:0;padding:8px 16px;font-weight:600;margin-bottom:-1px}.tabs button.on{color:var(--ac2);border-bottom-color:var(--acc)}#sm .hd td{font-size:13px;font-weight:700;color:var(--ac2);padding:0 0 6px 10px;border-top:0;vertical-align:middle}#sm .hd td:first-child{padding-left:0}#sm .hd td:not(:first-child){color:var(--mut);font-size:11.5px}
 input[type=number]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:4px;background:var(--pn2);color:var(--ink);width:150px}.alg{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}.alg>div{min-width:0}.alt{font-weight:700;color:var(--ac2);margin:0 0 10px;font-size:14px}
 .alf{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mut)}.alf .m{white-space:normal}details.dd{border:1px solid var(--line);border-radius:4px;background:var(--pn2)}details.dd summary{cursor:pointer;padding:6px 10px;color:var(--ink);font-size:14px}.ddl{max-height:210px;overflow:auto;border-top:1px solid var(--line);padding:6px 10px}.ddl label{display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--ink);padding:2px 0;white-space:nowrap}
@@ -59,7 +69,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 </style></head><body><div id="ld" class="on" role="status" aria-live="polite"><div class="sp"></div><div class="t" id="ldt">Membaca database...</div><div class="m" id="ldm">Menghubungkan ke database...</div><button type="button" id="ldr">Sinkron ulang</button></div><main>
 <div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1>
 <nav class="mn" id="mn" hidden><button type="button" id="t2" aria-selected="false">Master</button><button type="button" id="t3" aria-selected="false">Alokasi DPD</button><a href="https://docs.google.com/spreadsheets/d/1sNZO22t6ZnRRiFcIFOpMFJiKqLt9BpcUGDLfw5qrQdg/edit?pli=1&amp;gid=0#gid=0" class="db" target="_blank" rel="noopener">&#9888;&#xFE0E; DATABASE</a></nav></div>
-<div class="tabs" role="tablist"><button type="button" role="tab" id="t1" class="on" aria-selected="true">Ringkasan</button></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" id="t1" class="on" aria-selected="true">Ringkasan</button><button type="button" role="tab" id="t4" aria-selected="false">Trend Termin</button></div>
 <div id="pg1"><section class="p gen"><div id="sm"></div></section></div>
 <div id="pg2" hidden>
 <section class="p gen" style="padding:14px 10px"><div class="alt">Upload</div>
@@ -104,6 +114,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <button id="al_go">Hitung alokasi</button></div>
 <div class="m" id="al_msg" style="margin-top:12px;white-space:normal"></div><div id="al_res" style="margin-top:12px"></div></section>
 </div>
+<div id="pg4" hidden><section class="p gen"><div class="sg"><button type="button" class="g on" data-v="k">Kumulatif</button><button type="button" class="g" data-v="h">Per hari</button></div><div class="m" id="trn" style="margin:0 0 8px;white-space:normal"></div><div class="trw" id="trw"></div></section></div>
 <footer>Resep Rahasia Krabby Patty v 1.0 @2026 &bull; Zie Project</footer>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -615,11 +626,31 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
  go.disabled=false}
 $('#al_go').onclick=alkCalc;
 const _draw=draw;draw=async function(){await _draw();refreshSum();alkOpts();alkStat()};
+const TR={data:null,view:'k',busy:0},TRB=['Min','Sen','Sel','Rab','Kam','Jum','Sab'],TRM=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+async function trLoad(){if(TR.data){return}if(TR.busy)return;TR.busy=1;$('#trn').textContent='Memuat termin.json...';
+ try{const r=await fetch('termin.json',{cache:'no-cache'});if(!r.ok)throw Error('HTTP '+r.status);const d=await r.json();
+  if(!d||!Array.isArray(d.minggu)||!Array.isArray(d.pola)||!d.minggu.length||!d.pola.length)throw Error('format tidak sesuai');
+  const w=[];for(const p of d.pola){if(!Array.isArray(p.persen)||p.persen.length!==d.minggu.length)throw Error('jumlah minggu pada '+p.nama+' tidak sama');const t=p.persen.reduce((a,b)=>a+(+b||0),0);if(Math.abs(t-100)>.01)w.push(p.nama+' = '+t)}
+  TR.data=d;TR.warn=w}catch(e){$('#trn').textContent='Gagal memuat termin.json: '+(e.message||e);TR.busy=0;return}
+ TR.busy=0;trDraw()}
+function trDraw(){const d=TR.data;if(!d)return;
+ const MS=864e5,[y,m,dd]=d.minggu[0].mulai.split('-').map(Number),t0=Date.UTC(y,m-1,dd),nW=d.minggu.length,hm=new Date(Date.now()-MS),tc=Date.UTC(hm.getFullYear(),hm.getMonth(),hm.getDate()),
+  cum=d.pola.map(()=>0),rows=[];let mx=0;
+ for(let k=0;k<nW;k++)for(let j=0;j<7;j++){const t=t0+(k*7+j)*MS,dy=d.pola.map((p,i)=>{const v=(+p.persen[k]||0)/7;cum[i]+=v;if(v>mx)mx=v;return v});rows.push({t,wk:j===0?d.minggu[k].no:'',w1:j===0,dy,cu:cum.slice()})}
+ const f=v=>v.toFixed(2)+'%',kum=TR.view==='k',top=kum?100:mx||1;
+ let g1='',i=0;while(i<d.pola.length){let n=1;while(i+n<d.pola.length&&d.pola[i+n].grup===d.pola[i].grup)n++;g1+='<th colspan="'+n+'">'+d.pola[i].grup+'</th>';i+=n}
+ const g2=d.pola.map(p=>'<th'+(p.nama==='NATARU'?' class="nt"':'')+'>'+p.nama+'</th>').join('');
+ const body=rows.map(r=>{const dt=new Date(r.t),lb=TRB[dt.getUTCDay()]+', '+String(dt.getUTCDate()).padStart(2,'0')+' '+TRM[dt.getUTCMonth()]+' '+String(dt.getUTCFullYear()).slice(-2),vs=kum?r.cu:r.dy;
+  return '<tr class="'+(r.w1?'w1':'')+(r.t===tc?' cur':'')+'"><td>'+lb+'</td><td class="wk">'+r.wk+'</td>'+vs.map(v=>v>0?'<td style="background:rgba(106,169,255,'+(.06+.34*Math.min(1,v/top)).toFixed(3)+')">'+f(v)+'</td>':'<td class="z">-</td>').join('')+'</tr>'}).join('');
+ $('#trw').innerHTML='<table class="tt"><thead><tr><th rowspan="2">Tanggal</th><th rowspan="2">Mgg</th>'+g1+'</tr><tr>'+g2+'</tr></thead><tbody>'+body+'</tbody></table>';
+ const e=new Date(t0+(nW*7-1)*MS);
+ $('#trn').textContent=(kum?'Termin kumulatif (%) sampai tanggal tersebut':'Kenaikan persen per hari')+' · '+String(new Date(t0).getUTCDate()).padStart(2,'0')+' '+TRM[new Date(t0).getUTCMonth()]+' '+new Date(t0).getUTCFullYear()+' s.d. '+String(e.getUTCDate()).padStart(2,'0')+' '+TRM[e.getUTCMonth()]+' '+e.getUTCFullYear()+' · persen minggu ÷ 7 per hari'+(TR.warn&&TR.warn.length?' · PERINGATAN jumlah bukan 100%: '+TR.warn.join(', '):'')}
+$('#pg4').addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(!b)return;TR.view=b.dataset.v;document.querySelectorAll('#pg4 .sg button').forEach(x=>x.classList.toggle('on',x===b));trDraw()});
 const mb=$('#mb'),mn=$('#mn'),mc=()=>{mn.hidden=true;mb.setAttribute('aria-expanded','false')};
 mb.onclick=e=>{e.stopPropagation();const o=mn.hidden;mn.hidden=!o;mb.setAttribute('aria-expanded',String(o))};
 document.addEventListener('click',e=>{if(!e.target.closest('#mn'))mc()});document.addEventListener('keydown',e=>{if(e.key==='Escape')mc()});mn.addEventListener('click',e=>{if(e.target.closest('button,a'))mc()});
-function tab(n){for(const i of[1,2,3]){$('#pg'+i).hidden=i!==n;const b=$('#t'+i);b.classList.toggle('on',i===n);b.setAttribute('aria-selected',i===n)}}
-$('#t1').onclick=()=>tab(1);$('#t2').onclick=()=>tab(2);$('#t3').onclick=()=>tab(3);
+function tab(n){for(const i of[1,2,3,4]){$('#pg'+i).hidden=i!==n;const b=$('#t'+i);b.classList.toggle('on',i===n);b.setAttribute('aria-selected',i===n)}}
+$('#t1').onclick=()=>tab(1);$('#t2').onclick=()=>tab(2);$('#t3').onclick=()=>tab(3);$('#t4').onclick=()=>{tab(4);trLoad()};
 draw();
 const jobCheck=async()=>{try{if(!(await caps()).bg)return;const j=(await api({action:'rekapstatus'})).job;if(j&&j.state==='running'){const go=$('#go');go.disabled=true;try{await rekapWatch()}catch(e){$('#jm').innerHTML='<span class="e">'+e.message+'</span>'}go.disabled=false}}catch(e){}};
 async function boot(){const ld=$('#ld');
