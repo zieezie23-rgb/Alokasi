@@ -65,7 +65,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 #sm .rb tr.xy td{background:var(--bt)}
 #sm .rb tr.xp td{background:var(--nt);font-weight:700;color:var(--yel)}
 #sm .tm2{display:flex;justify-content:space-between;align-items:center;gap:6px;margin:0 0 3px;font-weight:700}
-#sm .tm2 span:first-child{color:var(--err)}#sm .tm2 span:last-child{background:var(--pn2);border:1px solid var(--line);color:var(--yel);padding:2px 14px;min-width:80px;text-align:center;border-radius:3px}
+#sm .tm2 span:first-child{color:var(--err)}#sm .tm2 span:last-child{background:rgba(221,217,196,.16);border:1px solid var(--line);color:var(--err);padding:2px 14px;min-width:80px;text-align:center;border-radius:3px}#sm .tm2.e{visibility:hidden}#sm .rb tr.xp td.sl{background:#ffc7ce!important;color:#9c0006!important}#sm .rb tr.xp td.sh{background:#c6efce!important;color:#006100!important}#sm .rb tr.xp td.se{background:#ffeb9c!important;color:#9c5700!important}
 </style></head><body><div id="ld" class="on" role="status" aria-live="polite"><div class="sp"></div><div class="t" id="ldt">Membaca database...</div><div class="m" id="ldm">Menghubungkan ke database...</div><button type="button" id="ldr">Sinkron ulang</button></div><main>
 <div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1>
 <nav class="mn" id="mn" hidden><button type="button" id="t2" aria-selected="false">Master</button><button type="button" id="t3" aria-selected="false">Alokasi DPD</button><a href="https://docs.google.com/spreadsheets/d/1sNZO22t6ZnRRiFcIFOpMFJiKqLt9BpcUGDLfw5qrQdg/edit?pli=1&amp;gid=0#gid=0" class="db" target="_blank" rel="noopener">&#9888;&#xFE0E; DATABASE</a></nav></div>
@@ -312,11 +312,12 @@ function sumShow(SM){SML=SM;const B=SM.b,T=SM.t,hm=new Date(Date.now()-864e5),Y=
   mt=k=>({tg:[k.ti.size,k.tg[1],k.tg[2]],po:[k.pi.size,k.po[1],k.po[2]],ou:[k.oi.size,k.ou[1],k.ou[2]],bp:[k.gi.size,k.bp[1],k.bp[2]],np:[k.ni.size,k.np[1],k.np[2]]}),
   tr=(l,v,c)=>'<tr'+(c?' class="'+c+'"':'')+'><td>'+l+'</td>'+v.map(x=>'<td>'+x+'</td>').join('')+'</tr>',
   cells=v=>v.map(en),ratio=(a,b)=>a.map((x,i)=>pp(x,b[i])),bar='<tr class="xs"><td colspan="4"></td></tr>',
-  box=(t,k,st)=>{const q=mt(k);return '<div class="rb" style="'+st+'"><table><tr class="xh"><td colspan="4">'+t+'</td></tr>'+bar+'<tr class="xc"><td>Ket</td><td>Item</td><td>Ctn</td><td>Nilai</td></tr>'
+  stc=(q,tm)=>{if(tm==null)return'';const a=Math.round((q.tg[2]?q.np[2]/q.tg[2]*100:0)*100),b=Math.round(tm*100);return a<b?'sl':a>b?'sh':'se'},// sl=lebih kecil (merah), sh=lebih besar (hijau), se=sama (kuning)
+  box=(t,k,st,tm)=>{const q=mt(k);return '<div class="rb" style="'+st+'"><table><tr class="xh"><td colspan="4">'+t+'</td></tr>'+bar+'<tr class="xc"><td>Ket</td><td>Item</td><td>Ctn</td><td>Nilai</td></tr>'
    +tr('Target',cells(q.tg))+tr('Po',cells(q.po))+tr('Po Outstanding',cells(q.ou))+tr('Bpb',cells(q.bp))+tr('Npb',cells(q.np))+bar
-   +tr('BPB Vs PO',ratio(q.bp,q.po))+tr('NPB Vs BPB',ratio(q.np,q.bp))+tr('PO vs Target',ratio(q.po,q.tg))+tr('BPB vs Target',ratio(q.bp,q.tg),'xy')+tr('NPB Vs Target',ratio(q.np,q.tg),'xp')+'</table></div>'},
-  tp=k=>{const q=mt(k),v=q.tg[2]?q.np[2]/q.tg[2]*100:0;return v?v.toFixed(2)+' %':'- %'},
-  cell=(t,k,st,tl)=>'<div class="rc">'+(tl?'<div class="tm2"><span>Termin sd '+t1+'</span><span>'+tp(k)+'</span></div>':'')+box(t,k,st)+'</div>',
+   +tr('BPB Vs PO',ratio(q.bp,q.po))+tr('NPB Vs BPB',ratio(q.np,q.bp))+tr('PO vs Target',ratio(q.po,q.tg))+tr('BPB vs Target',ratio(q.bp,q.tg),'xy')+(rr=>'<tr class="xp"><td>NPB Vs Target</td><td>'+rr[0]+'</td><td>'+rr[1]+'</td><td class="'+stc(q,tm)+'">'+rr[2]+'</td></tr>')(ratio(q.np,q.tg))+'</table></div>'},
+  tmv=t=>/^TOTAL/i.test(t)?undefined:trAt(t,Y,Mo,D),// persen termin kumulatif sampai tanggal laporan; undefined = kotak total (tanpa baris termin)
+  cell=(t,k,st,tm)=>'<div class="rc">'+(tm===undefined?'<div class="tm2 e"><span>&nbsp;</span><span>&nbsp;</span></div>':'<div class="tm2"><span>Termin sd '+t1+'</span><span>'+(tm==null?'-':tm.toFixed(2)+'%')+'</span></div>')+box(t,k,st,tm)+'</div>',
   hd=(a,b,c)=>'<div class="rt"><div><div class="xt1">'+a+'</div><div class="xt2">'+b+'</div></div>'+(c?'<div class="xt3">'+c+'</div>':'')+'</div>',
   order=(G,pref)=>[...G.sub.keys()].sort((a,b)=>{const i=pref.indexOf(a),j=pref.indexOf(b);return(i<0?99:i)-(j<0?99:j)||a.localeCompare(b,'id')}),
   // warna kotak mengikuti tema aplikasi: biru (sub), kuning (total), merah (Nataru)
@@ -326,21 +327,21 @@ function sumShow(SM){SML=SM;const B=SM.b,T=SM.t,hm=new Date(Date.now()-864e5),Y=
  // panel: {id,file,title,sub,tag,sec,items:[{t,k,st}]}; dipakai untuk render dan export
  SMP=[
   {id:'basic',title:'Laporan Pencapaian Seasonal Lebaran DC Bogor 1',sub:'Periode Seasonal 2026',tag:t2,sec:'BASIC',
-   items:sb.map(k=>({t:k,k:B.sub.get(k).s,st:PE})).concat([{t:'TOTAL BASIC',k:B.tot.s,st:TOT}])},
+   items:sb.map(k=>({t:k,k:B.sub.get(k).s,st:PE,tm:tmv(k)})).concat([{t:'TOTAL BASIC',k:B.tot.s,st:TOT,tm:tmv('TOTAL BASIC')}])},
   {id:'terkait',title:'Laporan Pencapaian Seasonal Lebaran DC Bogor 1',sub:'Periode Nataru 2026 & Seasonal Terkait 2027',tag:'',sec:'TERKAIT',
-   items:[{t:'NATARU',k:T.tot.n,st:NT}].concat(st.map(k=>({t:k,k:T.sub.get(k).s,st:PE})),[{t:'TOTAL TERKAIT LEBARAN',k:T.tot.s,st:TOT}])}];
+   items:[{t:'NATARU',k:T.tot.n,st:NT,tm:tmv('NATARU')}].concat(st.map(k=>({t:k,k:T.sub.get(k).s,st:PE,tm:tmv(k)})),[{t:'TOTAL TERKAIT LEBARAN',k:T.tot.s,st:TOT,tm:tmv('TOTAL TERKAIT LEBARAN')}])}];
  SMP.forEach(P=>{P.mt=mt;P.t1=t1;P.t2=t2});
  $('#sm').innerHTML='<div class="px"><div class="xm"><button type="button" class="g" data-m="1" aria-haspopup="true" aria-expanded="false">Export ▾</button><div class="xl" hidden>'
   +SMP.map((P,i)=>'<button type="button" class="g xsb" data-s="'+i+'" aria-expanded="false">'+P.sec.charAt(0)+P.sec.slice(1).toLowerCase()+'</button><div class="xo" hidden><button type="button" class="g" data-x="xlsx" data-i="'+i+'">Excel</button><button type="button" class="g" data-x="jpg" data-i="'+i+'">JPEG</button></div>').join('')
   +'</div></div></div>'
   +SMP.map((P,i)=>'<div class="pw"><div class="rp" id="rp'+i+'">'+hd(P.title,P.sub,P.tag)+'<div class="rs">'+P.sec+'</div><div class="rg">'
-  +P.items.map(x=>cell(x.t,x.k,x.st,0)).join('')+'</div></div></div>').join('')}
+  +P.items.map(x=>cell(x.t,x.k,x.st,x.tm)).join('')+'</div></div></div>').join('')}
 // ---- export per panel (Excel / JPG)
 function smName(P,e){const d=new Date();return 'Ringkasan_'+P.sec+'_'+String(d.getDate()).padStart(2,'0')+'_'+['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'][d.getMonth()]+'_'+String(d.getFullYear()).slice(-2)+'.'+e}
 function smSave(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
 function loadX(){return window.ExcelJS?Promise.resolve():new Promise((ok,no)=>{const e=document.createElement('script');e.src='https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js';e.onload=ok;e.onerror=()=>no(Error('Library Excel belum termuat. Cek koneksi internet lalu coba lagi.'));document.head.appendChild(e)})}
 async function smXlsx(P){await loadX();
- const per=3,W=5,RP=15,n=P.items.length,mm=Math.min(n,per)*W-1,wb=new ExcelJS.Workbook(),ws=wb.addWorksheet(P.sec,{views:[{showGridLines:false}],pageSetup:{orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0}});
+ const per=3,W=5,RP=16,n=P.items.length,mm=Math.min(n,per)*W-1,wb=new ExcelJS.Workbook(),ws=wb.addWorksheet(P.sec,{views:[{showGridLines:false}],pageSetup:{orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0}});
  const ar=h=>{h=h.replace('#','');if(h.length===3)h=h.replace(/./g,'$&$&');return{argb:'FF'+h.toUpperCase()}},
   LT={'#13294d':'#e3edfb','#1d3a6b':'#cfe0f7','#3d3200':'#fff3bf','#3d1a22':'#fbd9df'},HD={acc:'#0b4ea2',yel:'#ffcc00',red:'#e4002b'},
   ln={style:'thin',color:ar('#c3cad6')},BD={top:ln,left:ln,bottom:ln,right:ln},SD={left:ln,right:ln},
@@ -349,19 +350,21 @@ async function smXlsx(P){await loadX();
  put(1,1,P.title,{f:{bold:true,size:15,color:ar('#0b4ea2')}});
  put(2,1,P.sub+(P.tag?'   '+P.tag:''),{f:{bold:true,size:11,color:ar('#555555')}});
  put(3,1,P.sec,{f:{bold:true,size:16},al:{horizontal:'center'}});ws.mergeCells(3,1,3,mm);
- P.items.forEach((x,i)=>{const r0=5+Math.floor(i/per)*RP,c0=1+(i%per)*W,q=P.mt(x.k),sty=x.st||'',g=re=>((sty.match(re)||[])[1]||'').toLowerCase(),
+ P.items.forEach((x,i)=>{const r0=6+Math.floor(i/per)*RP,c0=1+(i%per)*W,q=P.mt(x.k),sty=x.st||'',g=re=>((sty.match(re)||[])[1]||'').toLowerCase(),
    hd=HD[g(/--hd:var\(--(\w+)\)/)]||'#0b4ea2',hc=g(/--hc:(#\w+)/)||'#fff',bt=LT[g(/--bt:(#\w+)/)]||'#e3edfb',nt=LT[g(/--nt:(#\w+)/)]||'#cfe0f7';
+  if(x.tm!==undefined){put(r0-1,c0,'Termin sd '+P.t1,{f:{bold:true,color:ar('#e00000')}});ws.mergeCells(r0-1,c0,r0-1,c0+2);put(r0-1,c0+3,x.tm==null?'-':x.tm/100,{f:{bold:true,color:ar('#e00000')},bg:'#ddd9c4',al:{horizontal:'center'},nf:'0.00%',bd:BD})}
   put(r0,c0,x.t,{f:{bold:true,color:ar(hc)},bg:hd,al:{horizontal:'center'},bd:BD});ws.mergeCells(r0,c0,r0,c0+3);
   for(let j=0;j<4;j++){put(r0+1,c0+j,null,{bd:SD});put(r0+8,c0+j,null,{bd:SD})}
   ws.getRow(r0+1).height=5;ws.getRow(r0+8).height=5;
   ['Ket','Item','Ctn','Nilai'].forEach((l,j)=>put(r0+2,c0+j,l,{f:{color:ar('#555555')},al:{horizontal:'center'},bd:BD}));
   [['Target','tg'],['Po','po'],['Po Outstanding','ou'],['Bpb','bp'],['Npb','np']].forEach(([l,f],j)=>{put(r0+3+j,c0,l,{bd:BD});q[f].forEach((v,m)=>put(r0+3+j,c0+1+m,Math.round(v),{nf:NF,al:{horizontal:'right'},bd:BD}))});
   [['BPB Vs PO','bp','po'],['NPB Vs BPB','np','bp'],['PO vs Target','po','tg'],['BPB vs Target','bp','tg'],['NPB Vs Target','np','tg']].forEach(([l,a,b],j)=>{const bg=j===3?bt:j===4?nt:null,f=j===4?{bold:true}:null;
-   put(r0+9+j,c0,l,{bd:BD,bg,f});q[a].forEach((v,m)=>put(r0+9+j,c0+1+m,pr(v,q[b][m]),{nf:'0.00%',al:{horizontal:'right'},bd:BD,bg,f}))})});
+   put(r0+9+j,c0,l,{bd:BD,bg,f});q[a].forEach((v,m)=>{let bg2=bg,f2=f;if(j===4&&m===2&&x.tm!=null){const A=Math.round(pr(q.np[2],q.tg[2])*1e4),B=Math.round(x.tm*100),C=A<B?['#ffc7ce','#9c0006']:A>B?['#c6efce','#006100']:['#ffeb9c','#9c5700'];bg2=C[0];f2={bold:true,color:ar(C[1])}}
+    put(r0+9+j,c0+1+m,pr(v,q[b][m]),{nf:'0.00%',al:{horizontal:'right'},bd:BD,bg:bg2,f:f2})})})});
  for(let c=1;c<=mm;c++)ws.getColumn(c).width=(c-1)%W===0?16:(c-1)%W===4?3:14;
  smSave(new Blob([await wb.xlsx.writeBuffer()],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),smName(P,'xlsx'))}
 async function smJpg(P,i){if(!window.html2canvas)throw Error('Library JPG belum termuat. Cek koneksi internet lalu coba lagi.');
- const el=$('#rp'+i),c=await html2canvas(el,{scale:2,windowWidth:1280,backgroundColor:'#ffffff',useCORS:true,onclone:(doc)=>{const s=doc.createElement('style');s.textContent='#sm .rp{--pn:#fff;--pn2:#fff;--bg:#fff;--ink:#111;--mut:#555;--line:#c3cad6;--ac2:#0b4ea2;--err:#c40024;background:#fff!important}#sm .xt3,#sm .tm2 span:last-child{color:#b45309!important}#sm .rb tr.xp td{color:#000!important}';doc.head.appendChild(s);const L={'#13294d':'#e3edfb','#1d3a6b':'#cfe0f7','#3d3200':'#fff3bf','#3d1a22':'#fbd9df'};doc.querySelectorAll('#sm .rb').forEach(b=>{for(const p of['--bt','--nt']){const v=b.style.getPropertyValue(p).trim().toLowerCase();if(L[v])b.style.setProperty(p,L[v])}})}});
+ const el=$('#rp'+i),c=await html2canvas(el,{scale:2,windowWidth:1280,backgroundColor:'#ffffff',useCORS:true,onclone:(doc)=>{const s=doc.createElement('style');s.textContent='#sm .rp{--pn:#fff;--pn2:#fff;--bg:#fff;--ink:#111;--mut:#555;--line:#c3cad6;--ac2:#0b4ea2;--err:#c40024;background:#fff!important}#sm .xt3{color:#b45309!important}#sm .tm2 span:last-child{background:#ddd9c4!important;color:#c40024!important;border:0!important}#sm .rb tr.xp td{color:#000!important}';doc.head.appendChild(s);const L={'#13294d':'#e3edfb','#1d3a6b':'#cfe0f7','#3d3200':'#fff3bf','#3d1a22':'#fbd9df'};doc.querySelectorAll('#sm .rb').forEach(b=>{for(const p of['--bt','--nt']){const v=b.style.getPropertyValue(p).trim().toLowerCase();if(L[v])b.style.setProperty(p,L[v])}})}});
  await new Promise((ok,no)=>c.toBlob(b=>{if(!b)return no(Error('Gagal membuat gambar.'));smSave(b,smName(P,'jpg'));ok()},'image/jpeg',.95))}
 const xlClose=()=>document.querySelectorAll('#sm .xl').forEach(x=>{x.hidden=true;x.previousElementSibling.setAttribute('aria-expanded','false');x.querySelectorAll('.xo').forEach(o=>o.hidden=true);x.querySelectorAll('.xsb').forEach(b=>b.setAttribute('aria-expanded','false'))});
 $('#sm').addEventListener('click',async e=>{const m=e.target.closest('button[data-m]');
@@ -627,21 +630,27 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
 $('#al_go').onclick=alkCalc;
 const _draw=draw;draw=async function(){await _draw();refreshSum();alkOpts();alkStat()};
 const TR={data:null,view:'k',busy:0},TRB=['Min','Sen','Sel','Rab','Kam','Jum','Sab'],TRM=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-async function trLoad(){if(TR.data){return}if(TR.busy)return;TR.busy=1;$('#trn').textContent='Memuat termin.json...';
+function trAt(nm,y,m,d){const D=TR.data;if(!D)return null;const q=String(nm).trim().toUpperCase(),p=D.pola.find(x=>String(x.nama).trim().toUpperCase()===q);if(!p)return null;
+ const[a,b,c]=D.minggu[0].mulai.split('-').map(Number),n=Math.floor((Date.UTC(y,m-1,d)-Date.UTC(a,b-1,c))/864e5);
+ if(n<0)return 0;if(n>=D.minggu.length*7)return p.persen.reduce((t,v)=>t+(+v||0),0);// setelah selesai tetap dianggap 100%
+ const k=Math.floor(n/7);let t=0;for(let i=0;i<k;i++)t+=+p.persen[i]||0;return t+(n%7+1)*(+p.persen[k]||0)/7}
+async function trLoad(){if(TR.data){if(!$('#trw').firstChild)trDraw();return}if(TR.busy)return;TR.busy=1;$('#trn').textContent='Memuat termin.json...';
  try{const r=await fetch('termin.json',{cache:'no-cache'});if(!r.ok)throw Error('HTTP '+r.status);const d=await r.json();
   if(!d||!Array.isArray(d.minggu)||!Array.isArray(d.pola)||!d.minggu.length||!d.pola.length)throw Error('format tidak sesuai');
   const w=[];for(const p of d.pola){if(!Array.isArray(p.persen)||p.persen.length!==d.minggu.length)throw Error('jumlah minggu pada '+p.nama+' tidak sama');const t=p.persen.reduce((a,b)=>a+(+b||0),0);if(Math.abs(t-100)>.01)w.push(p.nama+' = '+t)}
   TR.data=d;TR.warn=w}catch(e){$('#trn').textContent='Gagal memuat termin.json: '+(e.message||e);TR.busy=0;return}
- TR.busy=0;trDraw()}
+ TR.busy=0;if(SML)sumShow(SML);if(!$('#pg4').hidden)trDraw()}
 function trDraw(){const d=TR.data;if(!d)return;
  const MS=864e5,[y,m,dd]=d.minggu[0].mulai.split('-').map(Number),t0=Date.UTC(y,m-1,dd),nW=d.minggu.length,hm=new Date(Date.now()-MS),tc=Date.UTC(hm.getFullYear(),hm.getMonth(),hm.getDate()),
   cum=d.pola.map(()=>0),rows=[];let mx=0;
- for(let k=0;k<nW;k++)for(let j=0;j<7;j++){const t=t0+(k*7+j)*MS,dy=d.pola.map((p,i)=>{const v=(+p.persen[k]||0)/7;cum[i]+=v;if(v>mx)mx=v;return v});rows.push({t,wk:j===0?d.minggu[k].no:'',w1:j===0,dy,cu:cum.slice()})}
+ for(let k=0;k<nW;k++)for(let j=0;j<7;j++){const t=t0+(k*7+j)*MS,dy=d.pola.map((p,i)=>{const v=(+p.persen[k]||0)/7;cum[i]+=v;if(v>mx)mx=v;return v});rows.push({n:k*7+j,t,wk:j===0?d.minggu[k].no:'',w1:j===0,dy,cu:cum.slice()})}
+ TR.rows=rows;// kumulatif tetap tersimpan (100% setelah pola selesai), hanya sel tabelnya dikosongkan
+ const en=d.pola.map(p=>{let l=-1;p.persen.forEach((v,k)=>{if((+v||0)>0)l=k});return(l+1)*7-1});
  const f=v=>v.toFixed(2)+'%',kum=TR.view==='k',top=kum?100:mx||1;
  let g1='',i=0;while(i<d.pola.length){let n=1;while(i+n<d.pola.length&&d.pola[i+n].grup===d.pola[i].grup)n++;g1+='<th colspan="'+n+'">'+d.pola[i].grup+'</th>';i+=n}
  const g2=d.pola.map(p=>'<th'+(p.nama==='NATARU'?' class="nt"':'')+'>'+p.nama+'</th>').join('');
  const body=rows.map(r=>{const dt=new Date(r.t),lb=TRB[dt.getUTCDay()]+', '+String(dt.getUTCDate()).padStart(2,'0')+' '+TRM[dt.getUTCMonth()]+' '+String(dt.getUTCFullYear()).slice(-2),vs=kum?r.cu:r.dy;
-  return '<tr class="'+(r.w1?'w1':'')+(r.t===tc?' cur':'')+'"><td>'+lb+'</td><td class="wk">'+r.wk+'</td>'+vs.map(v=>v>0?'<td style="background:rgba(106,169,255,'+(.06+.34*Math.min(1,v/top)).toFixed(3)+')">'+f(v)+'</td>':'<td class="z">-</td>').join('')+'</tr>'}).join('');
+  return '<tr class="'+(r.w1?'w1':'')+(r.t===tc?' cur':'')+'"><td>'+lb+'</td><td class="wk">'+r.wk+'</td>'+vs.map((v,i)=>r.n>en[i]?'<td></td>':v>0?'<td style="background:rgba(106,169,255,'+(.06+.34*Math.min(1,v/top)).toFixed(3)+')">'+f(v)+'</td>':'<td class="z">-</td>').join('')+'</tr>'}).join('');
  $('#trw').innerHTML='<table class="tt"><thead><tr><th rowspan="2">Tanggal</th><th rowspan="2">Mgg</th>'+g1+'</tr><tr>'+g2+'</tr></thead><tbody>'+body+'</tbody></table>';
  const e=new Date(t0+(nW*7-1)*MS);
  $('#trn').textContent=(kum?'Termin kumulatif (%) sampai tanggal tersebut':'Kenaikan persen per hari')+' · '+String(new Date(t0).getUTCDate()).padStart(2,'0')+' '+TRM[new Date(t0).getUTCMonth()]+' '+new Date(t0).getUTCFullYear()+' s.d. '+String(e.getUTCDate()).padStart(2,'0')+' '+TRM[e.getUTCMonth()]+' '+e.getUTCFullYear()+' · persen minggu ÷ 7 per hari'+(TR.warn&&TR.warn.length?' · PERINGATAN jumlah bukan 100%: '+TR.warn.join(', '):'')}
@@ -650,7 +659,7 @@ const mb=$('#mb'),mn=$('#mn'),mc=()=>{mn.hidden=true;mb.setAttribute('aria-expan
 mb.onclick=e=>{e.stopPropagation();const o=mn.hidden;mn.hidden=!o;mb.setAttribute('aria-expanded',String(o))};
 document.addEventListener('click',e=>{if(!e.target.closest('#mn'))mc()});document.addEventListener('keydown',e=>{if(e.key==='Escape')mc()});mn.addEventListener('click',e=>{if(e.target.closest('button,a'))mc()});
 function tab(n){for(const i of[1,2,3,4]){$('#pg'+i).hidden=i!==n;const b=$('#t'+i);b.classList.toggle('on',i===n);b.setAttribute('aria-selected',i===n)}}
-$('#t1').onclick=()=>tab(1);$('#t2').onclick=()=>tab(2);$('#t3').onclick=()=>tab(3);$('#t4').onclick=()=>{tab(4);trLoad()};
+$('#t1').onclick=()=>tab(1);$('#t2').onclick=()=>tab(2);$('#t3').onclick=()=>tab(3);$('#t4').onclick=()=>{tab(4);trLoad()};trLoad();
 draw();
 const jobCheck=async()=>{try{if(!(await caps()).bg)return;const j=(await api({action:'rekapstatus'})).job;if(j&&j.state==='running'){const go=$('#go');go.disabled=true;try{await rekapWatch()}catch(e){$('#jm').innerHTML='<span class="e">'+e.message+'</span>'}go.disabled=false}}catch(e){}};
 async function boot(){const ld=$('#ld');
