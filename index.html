@@ -37,8 +37,9 @@ a.dl.g{background:var(--pn);color:var(--ac2)}a.dl{border:1px solid var(--acc);di
 .tt td.wk{text-align:center;color:var(--mut)}.tt td.z{color:var(--mut)}
 .tt tr.w1 td{border-top:2px solid var(--ac2)}.tt tr.cur td{font-weight:700}.tt tr.cur td:first-child{box-shadow:inset 4px 0 0 var(--yel)}
 .tabs{display:flex;gap:6px;margin:0 0 16px;border-bottom:1px solid var(--line)}.tabs button{background:transparent;color:var(--mut);border:0;border-bottom:3px solid transparent;border-radius:0;padding:8px 16px;font-weight:600;margin-bottom:-1px}.tabs button.on{color:var(--ac2);border-bottom-color:var(--acc)}#sm .hd td{font-size:13px;font-weight:700;color:var(--ac2);padding:0 0 6px 10px;border-top:0;vertical-align:middle}#sm .hd td:first-child{padding-left:0}#sm .hd td:not(:first-child){color:var(--mut);font-size:11.5px}
-input[type=number]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:4px;background:var(--pn2);color:var(--ink);width:150px}.alg{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}.alg>div{min-width:0}.alt{font-weight:700;color:var(--ac2);margin:0 0 10px;font-size:14px}
-.alf{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mut)}.alf .m{white-space:normal}details.dd{border:1px solid var(--line);border-radius:4px;background:var(--pn2)}details.dd summary{cursor:pointer;padding:6px 10px;color:var(--ink);font-size:14px}.ddl{max-height:210px;overflow:auto;border-top:1px solid var(--line);padding:6px 10px}.ddl label{display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--ink);padding:2px 0;white-space:nowrap}
+@media(max-width:560px){.alg{grid-template-columns:1fr;gap:7px}.alf{grid-template-columns:minmax(78px,92px) minmax(0,1fr);gap:6px}.alf>span{font-size:12.5px}details.dd summary{padding:6px 8px}}
+input[type=number]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:4px;background:var(--pn2);color:var(--ink);width:150px}.alg{display:grid;gap:8px 14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));align-items:center}.alg>div{min-width:0}.alt{font-weight:700;color:var(--ac2);margin:0 0 10px;font-size:14px}
+.alf{display:grid;grid-template-columns:minmax(82px,96px) minmax(0,1fr);gap:7px;align-items:center;font-size:13px;color:var(--mut)}.alf>span{min-width:0;line-height:1.15}.alf>div{min-width:0}.alf .m{white-space:normal}details.dd{border:1px solid var(--line);border-radius:4px;background:var(--pn2)}details.dd summary{cursor:pointer;padding:6px 10px;color:var(--ink);font-size:14px}.ddl{max-height:210px;overflow:auto;border-top:1px solid var(--line);padding:6px 10px}.ddl label{display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--ink);padding:2px 0;white-space:nowrap}
 .st{border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:var(--pn2)}.st span{display:block;font-size:12px;color:var(--mut)}.st b{display:block;font-size:19px;margin-top:2px}#alz td{text-align:right}#alz td:first-child{text-align:left}#alz tr.th td{font-size:11.5px;color:var(--mut);font-weight:600}select.al{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--pn2);color:var(--ink);width:100%}
 .tabs button.on{color:var(--ac2);border-bottom-color:var(--red)}.tabs button:hover{color:var(--ac2)}.alt{border-left:4px solid var(--yel);padding-left:8px}.st{border-left:4px solid var(--yel)}
 .alu{display:flex;gap:12px}.alu>.alf{flex:1 1 0;min-width:0}.alu .u{flex-wrap:nowrap;gap:4px;justify-content:flex-start}.alu label.bt,.alu button{padding:6px 10px}.alu .m{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -110,7 +111,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <section class="p gen"><div class="alt">Isian</div><div class="c isi">
 <label>Max item (per zona)<input type="number" id="al_mi" min="0" step="1" inputmode="numeric"></label>
 <label>Max qty (&times; minor)<input type="number" id="al_mq" min="0" step="1" inputmode="numeric"></label>
-<label>% Sisa<input type="number" id="al_ps" min="0" max="100" step="any" inputmode="decimal"></label>
+<label>% Target<input type="number" id="al_ps" min="0" max="100" step="any" inputmode="decimal"></label>
 <button id="al_go">Hitung alokasi</button></div>
 <div class="m" id="al_msg" style="margin-top:12px;white-space:normal"></div><div id="al_res" style="margin-top:12px"></div></section>
 </div>
@@ -444,7 +445,7 @@ async function calcSM(){const[ms,im,tg,np,po]=await Promise.all(['master','item'
  if(po&&tg){const mm=pluMap(tg);for(const r of po){const p=pluOf(r[3],mm);if(p===undefined)continue;
   const M=M0.get(p)||[],I=I0.get(p)||[],fr=NUM(M[3]),ac=NUM(M[4]),pl=String(z(I[1])).trim().toLowerCase(),G=pl==='basic'?SM.b:pl==='terkait'?SM.t:null;if(!G)continue;
   const nat=pl==='terkait'&&N(z(I[3]))==='NATARU',Q=NUM(r[4]),BQ=NUM(r[7]),s=nat?'n':'s',l=String(z(I[2])).trim();
-  hit(G,l,s,'po',p,Q,fr,ac);hit(G,l,s,'bp',p,BQ,fr,ac);hit(G,l,s,'ou',p,Math.max(Q-BQ,0),fr,ac)}}
+  hit(G,l,s,'po',p,Q,fr,ac);hit(G,l,s,'bp',p,BQ,fr,ac);hit(G,l,s,'ou',p,BQ===0?Q:0,fr,ac)}}
  return SM}
 
 let smBusy=0,smAgain=0;async function refreshSum(){if(smBusy){smAgain=1;return}smBusy=1;try{do{smAgain=0;sumShow(await calcSM())}while(smAgain)}catch(e){}smBusy=0}
@@ -520,7 +521,7 @@ function alkSel(id,key,opts,dv,cb){const box=$('#'+id),det=document.createElemen
  let cur=opts.some(o=>o[0]===ALK[key])?ALK[key]:dv;const show=()=>{sum.textContent=opts.find(o=>o[0]===cur)[1]};
  for(const[v,l]of opts){const lb=document.createElement('label'),r=document.createElement('input');r.type='radio';r.name=id;r.checked=v===cur;r.onchange=()=>{cur=v;ALK[key]=v;alkSave();show();det.open=false;cb&&cb()};lb.append(r,' '+l);body.appendChild(lb)}
  show();det.append(sum,body);box.appendChild(det)}
-alkSel('al_ket','ket',[['all','All'],['nataru','Nataru']],'all',()=>alkRender(0));alkSel('al_sa','sa',[['semua','Semua'],['sudah','Sudah alokasi'],['belum','Belum alokasi']],'semua');
+alkSel('al_ket','ket',[['all','All'],['nataru','Nataru']],'all',()=>alkRender(0));alkSel('al_sa','sa',[['semua','Semua'],['belum','Belum alokasi']],'semua');
 // tutup semua daftar pilihan saat klik/tap di luar daftar, atau tekan Esc
 document.addEventListener('pointerdown',e=>{document.querySelectorAll('details.dd[open]').forEach(d=>{if(!d.contains(e.target))d.open=false})},true);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('details.dd[open]').forEach(d=>d.open=false)});
@@ -591,8 +592,10 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
    lolos++;
    const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,sisa=nat?S-AB:Vs-AI;
    if(!(mn>0))continue;
-   // min(minor*x, rounddown((sisa*%sisa)/minor,0)*minor)
-   let q=Math.floor(sisa*ps/100/mn+1e-9)*mn;{const xm=Number(zn)===17?10:mq;if(xm!=null)q=Math.min(mn*xm,q)}
+   // QTY alokasi = SISA - MAX(0, TARGET x % TARGET), lalu dibulatkan turun ke kelipatan MINOR
+   const target=nat?S:Vs;
+   const dasar=Math.max(0,sisa-(target*ps/100));
+   let q=Math.floor(Math.max(0,dasar)/mn+1e-9)*mn;{const xm=Number(zn)===17?10:mq;if(xm!=null)q=Math.min(mn*xm,q)}
    // total alokasi item yang sama tidak boleh melebihi stock; setelah terlewati, baris berikutnya 0
    if(q>0){if(stop.has(pk))q=0;else{const u=(used.get(pk)||0)+q;if(u>stock){stop.add(pk);q=0}else used.set(pk,u)}}
    if(q<=0)continue;
