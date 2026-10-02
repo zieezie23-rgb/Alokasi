@@ -379,9 +379,9 @@ document.addEventListener('click',e=>{if(!e.target.closest('#sm .xm'))xlClose()}
 // ---- pantau rekap latar belakang di server (progres = baris selesai / total)
 async function rekapWatch(){const fl=$('#fl'),jm=$('#jm');$('#bar').style.display='block';
  for(;;){let j;try{j=((await api({action:'rekapstatus'})).job)||{}}catch(e){jm.textContent='Menunggu koneksi... proses tetap berjalan.';await sleep(4000);continue}
-  if(j.state==='running'){fl.style.width=(j.total?100*j.done/j.total:0)+'%';jm.textContent=({npb:'Memperbarui kolom NPB',master:'Memperbarui kolom Master & NPB'}[j.mode]||'Menyimpan rekap')+': '+pc(j.done,j.total)+' (proses tetap berjalan, boleh ditinggal)';await sleep(2000);continue}
+  if(j.state==='running'){fl.style.width=(j.total?100*j.done/j.total:0)+'%';jm.textContent=({npb:'Memperbarui kolom NPB',master:'Memperbarui kolom Master & NPB',diff:'Memperbarui baris yang berubah'}[j.mode]||'Menyimpan rekap')+': '+pc(j.done,j.total)+' (proses tetap berjalan, boleh ditinggal)';await sleep(2000);continue}
   if(j.state==='error')throw Error(j.error||'Gagal menyimpan rekap.');
-  if(j.state==='done'){fl.style.width='100%';jm.textContent=j.mode==='none'?'Data sumber tidak berubah sejak rekap terakhir, hasil rekap sudah terbaru.':'Selesai. Rekap sudah tersimpan.';if(j.url)slink(j.url)}
+  if(j.state==='done'){fl.style.width='100%';jm.textContent=j.mode==='none'?'Data sumber tidak berubah sejak rekap terakhir, hasil rekap sudah terbaru.':j.mode==='diff'?'Selesai. '+fn(j.changed||0)+' dari '+fn(j.total)+' baris diperbarui.':'Selesai. Rekap sudah tersimpan.';if(j.url)slink(j.url)}
   return}}
 // ---- buat rekap
 $('#go').onclick=async()=>{const go=$('#go'),bar=$('#bar'),fl=$('#fl'),jm=$('#jm');go.disabled=true;$('#res').innerHTML='';bar.style.display='block';
