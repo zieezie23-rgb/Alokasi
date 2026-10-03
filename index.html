@@ -66,7 +66,10 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 #sm .rb tr.xy td{background:var(--bt)}
 #sm .rb tr.xp td{background:var(--nt);font-weight:700;color:var(--yel)}
 #sm .tm2{display:flex;justify-content:space-between;align-items:center;gap:6px;margin:0 0 3px;font-weight:700}
-#sm .tm2 span:first-child{color:var(--err)}#sm .tm2 span:last-child{background:rgba(221,217,196,.16);border:1px solid var(--line);color:var(--err);padding:2px 14px;min-width:80px;text-align:center;border-radius:3px}#sm .tm2.e{visibility:hidden}#sm .rb tr.xp td.sl{background:#ffc7ce!important;color:#9c0006!important}#sm .rb tr.xp td.sh{background:#c6efce!important;color:#006100!important}#sm .rb tr.xp td.se{background:#ffeb9c!important;color:#9c5700!important}
+#sm .tm2 span:first-child{color:var(--err)}#sm .tm2 span:last-child{background:rgba(221,217,196,.16);border:1px solid var(--line);color:var(--err);padding:2px 14px;min-width:80px;text-align:center;border-radius:3px}#sm .tm2.e{visibility:hidden}
+
+.tt thead th{text-align:center!important;white-space:normal!important;line-height:1.15;overflow:hidden;max-height:38px;word-break:normal;overflow-wrap:anywhere}.tt thead tr:first-child th{height:auto;min-height:26px;max-height:38px}#trn:empty{display:none}
+.c.k label.md{flex-direction:row;align-items:center;gap:6px;font-size:13px;height:38px}
 </style></head><body><div id="ld" class="on" role="status" aria-live="polite"><div class="sp"></div><div class="t" id="ldt">Membaca database...</div><div class="m" id="ldm">Menghubungkan ke database...</div><button type="button" id="ldr">Sinkron ulang</button></div><main>
 <div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1>
 <nav class="mn" id="mn" hidden><button type="button" id="t2" aria-selected="false">Master</button><button type="button" id="t3" aria-selected="false">Alokasi DPD</button><a href="https://docs.google.com/spreadsheets/d/1sNZO22t6ZnRRiFcIFOpMFJiKqLt9BpcUGDLfw5qrQdg/edit?pli=1&amp;gid=0#gid=0" class="db" target="_blank" rel="noopener">&#9888;&#xFE0E; DATABASE</a></nav></div>
@@ -76,7 +79,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <section class="p gen" style="padding:14px 10px"><div class="alt">Upload</div>
 <div class="c t k">
 <div class="bg"><button class="g" type="button" id="hb" aria-expanded="false" aria-controls="hp" title="Format file yang diupload" style="font-weight:600">?</button><label class="bt" id="ulb">Upload file<input type="file" hidden multiple accept=".xlsx,.xlsm,.csv" id="fa"></label></div>
-<label>Mode NPB<select id="md"><option value="tambah">Tambahkan</option><option value="ganti">Ganti semua</option></select></label>
+<label class="md">Mode NPB<select id="md"><option value="tambah">Tambahkan</option><option value="ganti">Ganti semua</option></select></label>
 <button class="dg" type="button" id="rs" style="margin-left:auto">Reset database</button></div>
 <div id="src" style="margin-top:10px;padding-top:8px;border-top:1px solid var(--line)"></div>
 <div id="hp" class="hp" hidden>
@@ -94,7 +97,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 </div>
 <div id="pg3" hidden>
 <section class="p gen"><div class="alt">Upload</div>
-<div class="c t k"><div class="bg"><button class="g" type="button" id="al_hb" aria-expanded="false" aria-controls="al_hp" title="Format file yang diupload" style="font-weight:600">?</button><label class="bt" id="al_ulb">Upload file<input type="file" hidden multiple accept=".xlsx,.xlsm,.csv" id="al_fa"></label></div></div>
+<div class="c t k"><div class="bg"><button class="g" type="button" id="al_hb" aria-expanded="false" aria-controls="al_hp" title="Format file yang diupload" style="font-weight:600">?</button><label class="bt" id="al_ulb">Upload file<input type="file" hidden multiple accept=".xlsx,.xlsm,.csv" id="al_fa"></label></div><button class="dg" type="button" id="al_rs" style="margin-left:auto">Reset</button></div>
 <div id="al_src" style="margin-top:10px;padding-top:8px;border-top:1px solid var(--line)"></div>
 <div id="al_hp" class="hp" hidden>
 <b>Stock akhir</b><span>Tarikan LWA Stock Akhir</span><div class="hd" data-hd="stock"></div>
@@ -313,10 +316,9 @@ function sumShow(SM){SML=SM;const B=SM.b,T=SM.t,hm=new Date(Date.now()-864e5),Y=
   mt=k=>({tg:[k.ti.size,k.tg[1],k.tg[2]],po:[k.pi.size,k.po[1],k.po[2]],ou:[k.oi.size,k.ou[1],k.ou[2]],bp:[k.gi.size,k.bp[1],k.bp[2]],np:[k.ni.size,k.np[1],k.np[2]]}),
   tr=(l,v,c)=>'<tr'+(c?' class="'+c+'"':'')+'><td>'+l+'</td>'+v.map(x=>'<td>'+x+'</td>').join('')+'</tr>',
   cells=v=>v.map(en),ratio=(a,b)=>a.map((x,i)=>pp(x,b[i])),bar='<tr class="xs"><td colspan="4"></td></tr>',
-  stc=(q,tm)=>{if(tm==null)return'';const a=Math.round((q.tg[2]?q.np[2]/q.tg[2]*100:0)*100),b=Math.round(tm*100);return a<b?'sl':a>b?'sh':'se'},// sl=lebih kecil (merah), sh=lebih besar (hijau), se=sama (kuning)
   box=(t,k,st,tm)=>{const q=mt(k);return '<div class="rb" style="'+st+'"><table><tr class="xh"><td colspan="4">'+t+'</td></tr>'+bar+'<tr class="xc"><td>Ket</td><td>Item</td><td>Ctn</td><td>Nilai</td></tr>'
    +tr('Target',cells(q.tg))+tr('Po',cells(q.po))+tr('Po Outstanding',cells(q.ou))+tr('Bpb',cells(q.bp))+tr('Npb',cells(q.np))+bar
-   +tr('BPB Vs PO',ratio(q.bp,q.po))+tr('NPB Vs BPB',ratio(q.np,q.bp))+tr('PO vs Target',ratio(q.po,q.tg))+tr('BPB vs Target',ratio(q.bp,q.tg),'xy')+(rr=>'<tr class="xp"><td>NPB Vs Target</td><td>'+rr[0]+'</td><td>'+rr[1]+'</td><td class="'+stc(q,tm)+'">'+rr[2]+'</td></tr>')(ratio(q.np,q.tg))+'</table></div>'},
+   +tr('BPB Vs PO',ratio(q.bp,q.po))+tr('NPB Vs BPB',ratio(q.np,q.bp))+tr('PO vs Target',ratio(q.po,q.tg))+tr('BPB vs Target',ratio(q.bp,q.tg),'xy')+(rr=>'<tr class="xp"><td>NPB Vs Target</td><td>'+rr[0]+'</td><td>'+rr[1]+'</td><td>'+rr[2]+'</td></tr>')(ratio(q.np,q.tg))+'</table></div>'},
   tmv=t=>/^TOTAL/i.test(t)?undefined:trAt(t,Y,Mo,D),// persen termin kumulatif sampai tanggal laporan; undefined = kotak total (tanpa baris termin)
   cell=(t,k,st,tm)=>'<div class="rc">'+(tm===undefined?'<div class="tm2 e"><span>&nbsp;</span><span>&nbsp;</span></div>':'<div class="tm2"><span>Termin sd '+t1+'</span><span>'+(tm==null?'-':tm.toFixed(2)+'%')+'</span></div>')+box(t,k,st,tm)+'</div>',
   hd=(a,b,c)=>'<div class="rt"><div><div class="xt1">'+a+'</div><div class="xt2">'+b+'</div></div>'+(c?'<div class="xt3">'+c+'</div>':'')+'</div>',
@@ -327,7 +329,7 @@ function sumShow(SM){SML=SM;const B=SM.b,T=SM.t,hm=new Date(Date.now()-864e5),Y=
   st=order(T,['PRAPUASA','PUASA','LEBARAN','PASCA LEBARAN']).filter(k=>!/^(tdk|tidak)\s*ada$/i.test(k.trim()));
  // panel: {id,file,title,sub,tag,sec,items:[{t,k,st}]}; dipakai untuk render dan export
  SMP=[
-  {id:'basic',title:'Laporan Pencapaian Seasonal Lebaran DC Bogor 1',sub:'Periode Seasonal 2026',tag:t2,sec:'BASIC',
+  {id:'basic',title:'Laporan Pencapaian Seasonal Lebaran DC Bogor 1',sub:'Periode Seasonal 2027',tag:t2,sec:'BASIC',
    items:sb.map(k=>({t:k,k:B.sub.get(k).s,st:PE,tm:tmv(k)})).concat([{t:'TOTAL BASIC',k:B.tot.s,st:TOT,tm:tmv('TOTAL BASIC')}])},
   {id:'terkait',title:'Laporan Pencapaian Seasonal Lebaran DC Bogor 1',sub:'Periode Nataru 2026 & Seasonal Terkait 2027',tag:'',sec:'TERKAIT',
    items:[{t:'NATARU',k:T.tot.n,st:NT,tm:tmv('NATARU')}].concat(st.map(k=>({t:k,k:T.sub.get(k).s,st:PE,tm:tmv(k)})),[{t:'TOTAL TERKAIT LEBARAN',k:T.tot.s,st:TOT,tm:tmv('TOTAL TERKAIT LEBARAN')}])}];
@@ -360,7 +362,7 @@ async function smXlsx(P){await loadX();
   ['Ket','Item','Ctn','Nilai'].forEach((l,j)=>put(r0+2,c0+j,l,{f:{color:ar('#555555')},al:{horizontal:'center'},bd:BD}));
   [['Target','tg'],['Po','po'],['Po Outstanding','ou'],['Bpb','bp'],['Npb','np']].forEach(([l,f],j)=>{put(r0+3+j,c0,l,{bd:BD});q[f].forEach((v,m)=>put(r0+3+j,c0+1+m,Math.round(v),{nf:NF,al:{horizontal:'right'},bd:BD}))});
   [['BPB Vs PO','bp','po'],['NPB Vs BPB','np','bp'],['PO vs Target','po','tg'],['BPB vs Target','bp','tg'],['NPB Vs Target','np','tg']].forEach(([l,a,b],j)=>{const bg=j===3?bt:j===4?nt:null,f=j===4?{bold:true}:null;
-   put(r0+9+j,c0,l,{bd:BD,bg,f});q[a].forEach((v,m)=>{let bg2=bg,f2=f;if(j===4&&m===2&&x.tm!=null){const A=Math.round(pr(q.np[2],q.tg[2])*1e4),B=Math.round(x.tm*100),C=A<B?['#ffc7ce','#9c0006']:A>B?['#c6efce','#006100']:['#ffeb9c','#9c5700'];bg2=C[0];f2={bold:true,color:ar(C[1])}}
+   put(r0+9+j,c0,l,{bd:BD,bg,f});q[a].forEach((v,m)=>{let bg2=bg,f2=f;
     put(r0+9+j,c0+1+m,pr(v,q[b][m]),{nf:'0.00%',al:{horizontal:'right'},bd:BD,bg:bg2,f:f2})})})});
  for(let c=1;c<=mm;c++)ws.getColumn(c).width=(c-1)%W===0?16:(c-1)%W===4?3:14;
  smSave(new Blob([await wb.xlsx.writeBuffer()],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),smName(P,'xlsx'))}
@@ -503,6 +505,11 @@ async function alkStat(){const box=$('#al_src');box.innerHTML='';
   box.appendChild(el);const hd=document.querySelector(`#al_hp [data-hd="${k}"]`);if(hd)hd.innerHTML=D&&k!=='stock'?`<button type="button" class="g" data-dl="${k}" title="Unduh data ${ALKN[k][0]}">Unduh</button>`:''}}
 $('#al_hp').onclick=async e=>{const u=e.target.closest('button[data-dl]');if(!u)return;const D=await get('alk_'+u.dataset.dl);if(D)dlCsv(ALKN[u.dataset.dl][0].replace(/ /g,'_')+'.csv',null,D.rows)};
 $('#al_src').onclick=async e=>{const b=e.target.closest('button[data-k]');if(!b)return;await tx('readwrite',s=>s.delete('alk_'+b.dataset.k));alkStat()};
+let art;$('#al_rs').onclick=async()=>{const b=$('#al_rs');
+ if(!b.classList.contains('ask')){b.classList.add('ask');b.textContent='Yakin? Klik lagi';clearTimeout(art);art=setTimeout(()=>{b.classList.remove('ask');b.textContent='Reset'},5000);return}
+ clearTimeout(art);b.classList.remove('ask');b.textContent='Reset';b.disabled=true;
+ try{for(const k of AKEYS)await tx('readwrite',s=>s.delete('alk_'+k));$('#al_res').innerHTML='';$('#al_msg').textContent='';$('#al_um').textContent='';$('#al_ul').innerHTML='';await alkStat()}catch(e){$('#al_um').textContent='Gagal reset: '+(e.message||e)}
+ b.disabled=false};
 $('#al_hb').onclick=()=>{const h=$('#al_hp');h.hidden=!h.hidden;$('#al_hb').setAttribute('aria-expanded',String(!h.hidden))};
 // jenis file dikenali dari nama file, lalu dari kolomnya
 function alkDetect(f,r){const n=f.name.toLowerCase();
@@ -657,7 +664,7 @@ function trDraw(){const d=TR.data;if(!d)return;
   return '<tr class="'+(r.w1?'w1':'')+(r.t===tc?' cur':'')+'"><td>'+lb+'</td><td class="wk">'+r.wk+'</td>'+vs.map((v,i)=>r.n>en[i]?'<td></td>':v>0?'<td style="background:rgba(106,169,255,'+(.06+.34*Math.min(1,v/top)).toFixed(3)+')">'+f(v)+'</td>':'<td class="z">-</td>').join('')+'</tr>'}).join('');
  $('#trw').innerHTML='<table class="tt"><thead><tr><th rowspan="2">Tanggal</th><th rowspan="2">Mgg</th>'+g1+'</tr><tr>'+g2+'</tr></thead><tbody>'+body+'</tbody></table>';
  const e=new Date(t0+(nW*7-1)*MS);
- $('#trn').textContent=(kum?'Termin kumulatif (%) sampai tanggal tersebut':'Kenaikan persen per hari')+' · '+String(new Date(t0).getUTCDate()).padStart(2,'0')+' '+TRM[new Date(t0).getUTCMonth()]+' '+new Date(t0).getUTCFullYear()+' s.d. '+String(e.getUTCDate()).padStart(2,'0')+' '+TRM[e.getUTCMonth()]+' '+e.getUTCFullYear()+' · persen minggu ÷ 7 per hari'+(TR.warn&&TR.warn.length?' · PERINGATAN jumlah bukan 100%: '+TR.warn.join(', '):'')}
+ $('#trn').textContent=TR.warn&&TR.warn.length?'PERINGATAN jumlah bukan 100%: '+TR.warn.join(', '):''}
 $('#pg4').addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(!b)return;TR.view=b.dataset.v;document.querySelectorAll('#pg4 .sg button').forEach(x=>x.classList.toggle('on',x===b));trDraw()});
 const mb=$('#mb'),mn=$('#mn'),mc=()=>{mn.hidden=true;mb.setAttribute('aria-expanded','false')};
 mb.onclick=e=>{e.stopPropagation();const o=mn.hidden;mn.hidden=!o;mb.setAttribute('aria-expanded',String(o))};
