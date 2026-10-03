@@ -590,10 +590,11 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
    if(nat&&N(z(I[3]))!=='NATARU')continue;
    if(DN){const has=DN.has(gab);if(sa==='sudah'&&!has||sa==='belum'&&has)continue}
    lolos++;
-   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,sisa=nat?S-AB:Vs-AI;
+   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,sisa=nat?S-AB:(S+Vs)-(AB+AI);
    if(!(mn>0))continue;
+   // Nataru: TARGET=QTY_NAT, SISA=QTY_NAT-NPB nataru | Semua: TARGET=QTY_TGT (NAT+SEA), SISA=QTY_TGT-NPB total
    // QTY alokasi = SISA - MAX(0, TARGET x % TARGET), lalu dibulatkan turun ke kelipatan MINOR
-   const target=nat?S:Vs;
+   const target=nat?S:S+Vs;
    const dasar=Math.max(0,sisa-(target*ps/100));
    let q=Math.floor(Math.max(0,dasar)/mn+1e-9)*mn;{const xm=Number(zn)===17?10:mq;if(xm!=null)q=Math.min(mn*xm,q)}
    // total alokasi item yang sama tidak boleh melebihi stock; setelah terlewati, baris berikutnya 0
