@@ -68,8 +68,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 #sm .tm2{display:flex;justify-content:space-between;align-items:center;gap:6px;margin:0 0 3px;font-weight:700}
 #sm .tm2 span:first-child{color:var(--err)}#sm .tm2 span:last-child{background:rgba(221,217,196,.16);border:1px solid var(--line);color:var(--err);padding:2px 14px;min-width:80px;text-align:center;border-radius:3px}#sm .tm2.e{visibility:hidden}
 
-.tt thead th{text-align:center!important;white-space:normal!important;line-height:1.15;overflow:hidden;max-height:38px;word-break:normal;overflow-wrap:anywhere}.tt thead tr:first-child th{height:auto;min-height:26px;max-height:38px}#trn:empty{display:none}
-.c.k label.md{flex-direction:row;align-items:center;gap:6px;font-size:13px;height:38px}
+.tt thead th{text-align:center!important}.tt thead tr:first-child th{height:26px;white-space:nowrap}.tt thead tr:nth-child(2) th{height:38px;white-space:normal;padding-top:2px;padding-bottom:2px}.tt thead tr:nth-child(2) th:first-child{left:auto}.tt thead .hc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.15}#trn:empty{display:none}
 </style></head><body><div id="ld" class="on" role="status" aria-live="polite"><div class="sp"></div><div class="t" id="ldt">Membaca database...</div><div class="m" id="ldm">Menghubungkan ke database...</div><button type="button" id="ldr">Sinkron ulang</button></div><main>
 <div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1>
 <nav class="mn" id="mn" hidden><button type="button" id="t2" aria-selected="false">Master</button><button type="button" id="t3" aria-selected="false">Alokasi DPD</button><a href="https://docs.google.com/spreadsheets/d/1sNZO22t6ZnRRiFcIFOpMFJiKqLt9BpcUGDLfw5qrQdg/edit?pli=1&amp;gid=0#gid=0" class="db" target="_blank" rel="noopener">&#9888;&#xFE0E; DATABASE</a></nav></div>
@@ -500,8 +499,7 @@ async function alkStat(){const box=$('#al_src');box.innerHTML='';
   const n=D?((String(D.lb||'').match(/^[\d.,]+/)||[fn(Math.max(0,D.rows.length-1))])[0]):'';
   el.innerHTML=`<div class="n">${ALKN[k][0]}</div>
   <div class="m" title="${D?D.name+' · '+D.time:''}">${D?fdt(D.time):''}</div>
-  <div>${D?`<b>${n}</b> ${ALKN[k][1]}`:'<span class="e">Belum ada data</span>'}</div>
-  <div>${D?`<button type="button" class="g" data-k="${k}" title="Hapus file">&times;</button>`:''}</div>`;
+  ${D?`<div><b>${n}</b> ${ALKN[k][1]}</div><div><button type="button" class="g" data-k="${k}" title="Hapus file">&times;</button></div>`:'<div style="grid-column:3/-1;text-align:right"><span class="e">Belum ada data</span></div>'}`;
   box.appendChild(el);const hd=document.querySelector(`#al_hp [data-hd="${k}"]`);if(hd)hd.innerHTML=D&&k!=='stock'?`<button type="button" class="g" data-dl="${k}" title="Unduh data ${ALKN[k][0]}">Unduh</button>`:''}}
 $('#al_hp').onclick=async e=>{const u=e.target.closest('button[data-dl]');if(!u)return;const D=await get('alk_'+u.dataset.dl);if(D)dlCsv(ALKN[u.dataset.dl][0].replace(/ /g,'_')+'.csv',null,D.rows)};
 $('#al_src').onclick=async e=>{const b=e.target.closest('button[data-k]');if(!b)return;await tx('readwrite',s=>s.delete('alk_'+b.dataset.k));alkStat()};
@@ -659,7 +657,7 @@ function trDraw(){const d=TR.data;if(!d)return;
  const en=d.pola.map(p=>{let l=-1;p.persen.forEach((v,k)=>{if((+v||0)>0)l=k});return(l+1)*7-1});
  const f=v=>v.toFixed(2)+'%',kum=TR.view==='k',top=kum?100:mx||1;
  let g1='',i=0;while(i<d.pola.length){let n=1;while(i+n<d.pola.length&&d.pola[i+n].grup===d.pola[i].grup)n++;g1+='<th colspan="'+n+'">'+d.pola[i].grup+'</th>';i+=n}
- const g2=d.pola.map(p=>'<th'+(p.nama==='NATARU'?' class="nt"':'')+'>'+p.nama+'</th>').join('');
+ const g2=d.pola.map(p=>'<th'+(p.nama==='NATARU'?' class="nt"':'')+'><div class="hc">'+p.nama+'</div></th>').join('');
  const body=rows.map(r=>{const dt=new Date(r.t),lb=TRB[dt.getUTCDay()]+', '+String(dt.getUTCDate()).padStart(2,'0')+' '+TRM[dt.getUTCMonth()]+' '+String(dt.getUTCFullYear()).slice(-2),vs=kum?r.cu:r.dy;
   return '<tr class="'+(r.w1?'w1':'')+(r.t===tc?' cur':'')+'"><td>'+lb+'</td><td class="wk">'+r.wk+'</td>'+vs.map((v,i)=>r.n>en[i]?'<td></td>':v>0?'<td style="background:rgba(106,169,255,'+(.06+.34*Math.min(1,v/top)).toFixed(3)+')">'+f(v)+'</td>':'<td class="z">-</td>').join('')+'</tr>'}).join('');
  $('#trw').innerHTML='<table class="tt"><thead><tr><th rowspan="2">Tanggal</th><th rowspan="2">Mgg</th>'+g1+'</tr><tr>'+g2+'</tr></thead><tbody>'+body+'</tbody></table>';
