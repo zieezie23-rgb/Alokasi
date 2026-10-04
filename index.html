@@ -263,44 +263,53 @@ function dlCsv(nm,H,rows){const f=x=>x==null?'':typeof x==='number'?String(x):/[
  u=URL.createObjectURL(new Blob(['\ufeff'+(H?[H,...rows]:rows).map(r=>r.map(f).join(',')).join('\n')+'\n'],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');
  a.href=u;a.download=nm;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
 const DLH={toko:['KODE TOKO','NAMA TOKO','AM','KECAMATAN','KOTA'],item:['PLU','DESC','POLA1','POLA2','KET NATARU'],target:['TOKO','PRDCD','QTY_NAT','QTY_SEA'],npb:['GAB','QTY_NATARU','QTY_TOTAL'],pomgg:POH};
-// unduh POMGG sebagai Excel 3 sheet: Detail, Basic, Terkait. RECID '1' tidak ikut.
-// PO = QTY recid R+H; BPB = BPB_QTY recid R; PO OUT = QTY recid kosong. Per tanggal PO, per PRDCD, pola 1 Basic / Terkait
-function pomggBook(D,tg,im){
+// unduh PO + NPB sebagai Excel 4 sheet: Detail PO, Detail NPB, Basic, Terkait. RECID '1' (PO) tidak ikut.
+// Per tanggal: PO = QTY recid R+H; BPB = BPB_QTY recid R (tanggal PO); NPB = QTY ALOK (tanggal NPB). TOTAL: PO, BPB, NPB, PO OUT (QTY recid kosong)
+function pomggBook(D,R,tg,im){
  const I0=im||new Map(),mm=tg?pluMap(tg):new Map(),rows=D.filter(r=>String(r[0]??'').trim()!=='1'),
   MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],
   dk=s=>{const m=String(s||'').match(/^(\d+)\/(\d+)\/(\d+)$/);return m?+m[3]*10000+ +m[1]*100+ +m[2]:0},
-  dl=k=>k?String(k%100).padStart(2,'0')+' '+MB[Math.floor(k/100)%100-1]+' '+String(Math.floor(k/10000)).slice(-2):'(tanpa tanggal)',
-  build=pl=>{const P=new Map(),DS=new Set();
-   for(const r of rows){const p=pluOf(r[3],mm);if(p===undefined)continue;const I=I0.get(p)||[];if(String(z(I[1])).trim().toLowerCase()!==pl)continue;
-    const rc=String(r[0]??'').trim().toUpperCase(),q=NUM(r[4]),bq=NUM(r[7]),d=dk(r[5]);let po=0,bp=0,ou=0;
-    if(rc==='R'||rc==='H')po=q;if(rc==='R')bp=bq;if(rc==='')ou=q;
-    if(!po&&!bp&&!ou)continue;
-    DS.add(d);let o=P.get(p);if(!o)P.set(p,o=new Map());let c=o.get(d);if(!c)o.set(d,c=[0,0,0]);c[0]+=po;c[1]+=bp;c[2]+=ou}
-   const ds=[...DS].sort((a,b)=>a-b),h1=['PRDCD'],h2=[''],mg=[{s:{r:0,c:0},e:{r:1,c:0}}],nz=v=>v?v:null;
-   ds.forEach((d,i)=>{const c=1+i*3;h1.push(dl(d),'','');h2.push('PO','BPB','PO OUT');mg.push({s:{r:0,c},e:{r:0,c:c+2}})});
-   const ct=1+ds.length*3;h1.push('TOTAL','','');h2.push('PO','BPB','PO OUT');mg.push({s:{r:0,c:ct},e:{r:0,c:ct+2}});
-   const body=[...P.keys()].sort((a,b)=>String(a).localeCompare(String(b),'id',{numeric:true})).map(p=>{const o=P.get(p),t=[0,0,0],row=[p];
-    for(const d of ds){const c=o.get(d)||[0,0,0];for(let j=0;j<3;j++){t[j]+=c[j];row.push(nz(c[j]))}}row.push(t[0],t[1],t[2]);return row});
-   return{aoa:[h1,h2,...body],mg,w:[12,...Array(ds.length*3+3).fill(10)]}};
- return{Detail:{aoa:[POH,...rows],mg:[],w:[8,14,12,12,8,12,12,10,14,16]},Basic:build('basic'),Terkait:build('terkait')}}
-async function dlPomgg(D){
+  nk=s=>{const m=String(s||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return m?+m[1]*10000+ +m[2]*100+ +m[3]:0},
+  dl=k=>String(k%100).padStart(2,'0')+' '+MB[Math.floor(k/100)%100-1]+' '+String(Math.floor(k/10000)).slice(-2),
+  dt=k=>Date.UTC(Math.floor(k/10000),Math.floor(k/100)%100-1,k%100),
+  G={basic:new Map(),terkait:new Map()},pol=p=>String(z((I0.get(p)||[])[1])).trim().toLowerCase(),ok=pl=>pl==='basic'||pl==='terkait',
+  // i: 0 PO, 1 BPB, 2 NPB, 3 PO OUT (PO OUT hanya masuk TOTAL). Tanpa tanggal hanya masuk TOTAL
+  add=(pl,p,d,i,q)=>{const m=G[pl];let o=m.get(p);if(!o)m.set(p,o={t:[0,0,0,0],d:new Map()});o.t[i]+=q;if(d>0&&i<3){let c=o.d.get(d);if(!c)o.d.set(d,c=[0,0,0]);c[i]+=q}};
+ for(const r of rows){const p=pluOf(r[3],mm);if(p===undefined)continue;const pl=pol(p);if(!ok(pl))continue;
+  const rc=String(r[0]??'').trim().toUpperCase(),q=NUM(r[4]),bq=NUM(r[7]),d=dk(r[5]);
+  if((rc==='R'||rc==='H')&&q)add(pl,p,d,0,q);if(rc==='R'&&bq)add(pl,p,d,1,bq);if(rc===''&&q)add(pl,p,d,3,q)}
+ if(R&&tg)for(const x of R.rows){const t=tg.get(K(x[0]));if(!t)continue;const p=t[1],pl=pol(p);if(!ok(pl))continue;const q=NUM(x[2]);if(q)add(pl,p,nk(x[1]),2,q)}
+ // semua tanggal dari awal sampai akhir, tanggal kosong tetap ada
+ let mn=0,mx=0;for(const m of Object.values(G))for(const o of m.values())for(const d of o.d.keys()){if(!mn||d<mn)mn=d;if(d>mx)mx=d}
+ const ds=[];if(mn)for(let t=dt(mn);t<=dt(mx);t+=864e5){const u=new Date(t);ds.push(u.getUTCFullYear()*10000+(u.getUTCMonth()+1)*100+u.getUTCDate())}
+ const sheet=m=>{const h1=['PRDCD'],h2=[''],mg=[{s:{r:0,c:0},e:{r:1,c:0}}],nz=v=>v?v:null;
+  ds.forEach((d,i)=>{const c=1+i*3;h1.push(dl(d),'','');h2.push('PO','BPB','NPB');mg.push({s:{r:0,c},e:{r:0,c:c+2}})});
+  const ct=1+ds.length*3;h1.push('TOTAL','','','');h2.push('PO','BPB','NPB','PO OUT');mg.push({s:{r:0,c:ct},e:{r:0,c:ct+3}});
+  const body=[...m.keys()].sort((a,b)=>String(a).localeCompare(String(b),'id',{numeric:true})).map(p=>{const o=m.get(p),row=[p];
+   for(const d of ds){const c=o.d.get(d)||[0,0,0];for(let j=0;j<3;j++)row.push(nz(c[j]))}row.push(o.t[0],o.t[1],o.t[2],o.t[3]);return row});
+  return{aoa:[h1,h2,...body],mg,w:[12,...Array(ds.length*3+4).fill(9)]}};
+ return{'Detail PO':{aoa:[POH,...rows],mg:[],w:[8,14,12,12,8,12,12,10,14,16]},'Detail NPB':{aoa:[DH,...(R?R.rows:[])],mg:[],w:[20,12,10,12]},Basic:sheet(G.basic),Terkait:sheet(G.terkait)}}
+async function dlPomgg(){
  if(!window.XLSX)throw Error('Library Excel belum termuat. Cek koneksi internet lalu coba lagi.');
- const[tg,im]=await Promise.all([get('target'),get('item')]),S=pomggBook(D,tg,im),wb=XLSX.utils.book_new();
+ const[D,R,N,tg,im]=await Promise.all(['pomgg','npb_raw','npb','target','item'].map(get));
+ if(N&&N.m&&N.m.size&&!(R&&R.rows.length))throw Error('Data NPB belum menyimpan tanggal dan KETER (diupload sebelum pembaruan). Upload ulang file NPB dengan mode "Ganti semua", lalu unduh lagi.');
+ const S=pomggBook(D||[],R,tg,im),wb=XLSX.utils.book_new();
  for(const nm in S){const s=S[nm],ws=XLSX.utils.aoa_to_sheet(s.aoa);if(s.mg.length)ws['!merges']=s.mg;ws['!cols']=s.w.map(wch=>({wch}));XLSX.utils.book_append_sheet(wb,ws,nm)}
- smSave(new Blob([XLSX.write(wb,{bookType:'xlsx',type:'array'})],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),'POMGG.xlsx')}
-$('#hp').onclick=async e=>{const b=e.target.closest('button[data-dl]');if(!b)return;const k=b.dataset.dl,D=await get(k);if(!D)return;
- if(k==='pomgg'){try{await dlPomgg(D)}catch(x){const um=$('#um');um.className='m e';um.textContent='Gagal membuat Excel POMGG: '+(x.message||x)}return}
+ smSave(new Blob([XLSX.write(wb,{bookType:'xlsx',type:'array'})],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),'POMGG_NPB.xlsx')}
+$('#hp').onclick=async e=>{const b=e.target.closest('button[data-dl]');if(!b)return;const k=b.dataset.dl;
+ if(k==='pomgg'){try{await dlPomgg()}catch(x){const um=$('#um');um.className='m e';um.textContent='Gagal membuat Excel PO & NPB: '+(x.message||x)}return}
+ const D=await get(k);if(!D)return;
  if(k==='npb'){const R=await get('npb_raw');if(R){dlCsv('NPB.csv',R.l,R.rows.map(r=>R.l.map((_,i)=>r[i])));return}
   const um=$('#um');um.className='m';um.textContent='Data NPB ini belum menyimpan tanggal dan KETER (diupload sebelum pembaruan). Upload ulang file NPB dengan mode "Ganti semua". Yang terunduh masih total per GAB.'}
  dlCsv(SRC[k][0]+'.csv',DLH[k],k==='npb'?[...D.m].map(([g,a])=>[g,a[0],a[1]]):CV[k].to(D))};
-async function draw(){const meta=(await get('meta'))||{},box=$('#src');box.innerHTML='';
+async function draw(){const meta=(await get('meta'))||{},box=$('#src');box.innerHTML='';let nbn=0;
  for(const k in SRC){const D=await get(k),n=k==='npb'?(D?D.m.size:0):(D?(D.size??D.length):0),mt=meta[k]||{};
   const el=document.createElement('div');el.className='r';
   el.innerHTML=`<div class="n">${SRC[k][0]}</div>
   <div class="m" title="${(mt.file||'')+' · '+(mt.time||'')}">${n&&mt.time?fdt(mt.time):''}</div>
   <div>${n?`<b>${fn(n)}</b> ${k==='npb'?'GAB':'baris'}`:'<span class="e">Belum ada data</span>'}</div>
   `;
-  box.appendChild(el);const hd=document.querySelector(`#hp [data-hd="${k}"]`);if(hd)hd.innerHTML=n&&k!=='master'?`<button type="button" class="g" data-dl="${k}" title="Unduh data ${SRC[k][0]}">Unduh</button>`:''}}
+  if(k==='npb')nbn=n;box.appendChild(el);const hd=document.querySelector(`#hp [data-hd="${k}"]`);if(hd)hd.innerHTML=k==='pomgg'?((n||nbn)?`<button type="button" class="g" data-dl="pomgg" title="Unduh data PO dan NPB (Excel)">Unduh PO &amp; NPB</button>`:''):(n&&k!=='master'&&k!=='npb'?`<button type="button" class="g" data-dl="${k}" title="Unduh data ${SRC[k][0]}">Unduh</button>`:'')}}
 // ---- upload banyak file sekaligus (jenis file dikenali dari nama file / nama sheet)
 async function detect(f){const n=f.name.toLowerCase();for(const k in SRC)if(n.includes(k))return k;
  if(/\.xls[xm]$/.test(n)){try{const w=XLSX.read(await f.arrayBuffer(),{type:'array',bookSheets:true});for(const k in SRC)if(w.SheetNames.some(s=>s.trim().toLowerCase()===k))return k}catch(e){}}
