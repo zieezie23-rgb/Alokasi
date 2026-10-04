@@ -109,6 +109,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <div class="alf"><span>Pola 2</span><div id="al_pola2"></div></div>
 <div class="alf"><span>Zona</span><div id="al_zona"></div></div>
 <div class="alf"><span>Status alokasi</span><div id="al_sa"></div></div>
+<div class="alf"><span>Cocokkan sudah alokasi</span><div id="al_dm"></div></div>
 </div></section>
 <section class="p gen"><div class="alt">Isian</div><div class="c isi">
 <label>Max item (per zona)<input type="number" id="al_mi" min="0" step="1" inputmode="numeric"></label>
@@ -262,7 +263,33 @@ function dlCsv(nm,H,rows){const f=x=>x==null?'':typeof x==='number'?String(x):/[
  u=URL.createObjectURL(new Blob(['\ufeff'+(H?[H,...rows]:rows).map(r=>r.map(f).join(',')).join('\n')+'\n'],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');
  a.href=u;a.download=nm;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
 const DLH={toko:['KODE TOKO','NAMA TOKO','AM','KECAMATAN','KOTA'],item:['PLU','DESC','POLA1','POLA2','KET NATARU'],target:['TOKO','PRDCD','QTY_NAT','QTY_SEA'],npb:['GAB','QTY_NATARU','QTY_TOTAL'],pomgg:POH};
+// unduh POMGG sebagai Excel 3 sheet: Detail, Basic, Terkait. RECID '1' tidak ikut.
+// PO = QTY recid R+H; BPB = BPB_QTY recid R; PO OUT = QTY recid kosong. Per tanggal PO, per PRDCD, pola 1 Basic / Terkait
+function pomggBook(D,tg,im){
+ const I0=im||new Map(),mm=tg?pluMap(tg):new Map(),rows=D.filter(r=>String(r[0]??'').trim()!=='1'),
+  MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],
+  dk=s=>{const m=String(s||'').match(/^(\d+)\/(\d+)\/(\d+)$/);return m?+m[3]*10000+ +m[1]*100+ +m[2]:0},
+  dl=k=>k?String(k%100).padStart(2,'0')+' '+MB[Math.floor(k/100)%100-1]+' '+String(Math.floor(k/10000)).slice(-2):'(tanpa tanggal)',
+  build=pl=>{const P=new Map(),DS=new Set();
+   for(const r of rows){const p=pluOf(r[3],mm);if(p===undefined)continue;const I=I0.get(p)||[];if(String(z(I[1])).trim().toLowerCase()!==pl)continue;
+    const rc=String(r[0]??'').trim().toUpperCase(),q=NUM(r[4]),bq=NUM(r[7]),d=dk(r[5]);let po=0,bp=0,ou=0;
+    if(rc==='R'||rc==='H')po=q;if(rc==='R')bp=bq;if(rc==='')ou=q;
+    if(!po&&!bp&&!ou)continue;
+    DS.add(d);let o=P.get(p);if(!o)P.set(p,o=new Map());let c=o.get(d);if(!c)o.set(d,c=[0,0,0]);c[0]+=po;c[1]+=bp;c[2]+=ou}
+   const ds=[...DS].sort((a,b)=>a-b),h1=['PRDCD'],h2=[''],mg=[{s:{r:0,c:0},e:{r:1,c:0}}],nz=v=>v?v:null;
+   ds.forEach((d,i)=>{const c=1+i*3;h1.push(dl(d),'','');h2.push('PO','BPB','PO OUT');mg.push({s:{r:0,c},e:{r:0,c:c+2}})});
+   const ct=1+ds.length*3;h1.push('TOTAL','','');h2.push('PO','BPB','PO OUT');mg.push({s:{r:0,c:ct},e:{r:0,c:ct+2}});
+   const body=[...P.keys()].sort((a,b)=>String(a).localeCompare(String(b),'id',{numeric:true})).map(p=>{const o=P.get(p),t=[0,0,0],row=[p];
+    for(const d of ds){const c=o.get(d)||[0,0,0];for(let j=0;j<3;j++){t[j]+=c[j];row.push(nz(c[j]))}}row.push(t[0],t[1],t[2]);return row});
+   return{aoa:[h1,h2,...body],mg,w:[12,...Array(ds.length*3+3).fill(10)]}};
+ return{Detail:{aoa:[POH,...rows],mg:[],w:[8,14,12,12,8,12,12,10,14,16]},Basic:build('basic'),Terkait:build('terkait')}}
+async function dlPomgg(D){
+ if(!window.XLSX)throw Error('Library Excel belum termuat. Cek koneksi internet lalu coba lagi.');
+ const[tg,im]=await Promise.all([get('target'),get('item')]),S=pomggBook(D,tg,im),wb=XLSX.utils.book_new();
+ for(const nm in S){const s=S[nm],ws=XLSX.utils.aoa_to_sheet(s.aoa);if(s.mg.length)ws['!merges']=s.mg;ws['!cols']=s.w.map(wch=>({wch}));XLSX.utils.book_append_sheet(wb,ws,nm)}
+ smSave(new Blob([XLSX.write(wb,{bookType:'xlsx',type:'array'})],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),'POMGG.xlsx')}
 $('#hp').onclick=async e=>{const b=e.target.closest('button[data-dl]');if(!b)return;const k=b.dataset.dl,D=await get(k);if(!D)return;
+ if(k==='pomgg'){try{await dlPomgg(D)}catch(x){const um=$('#um');um.className='m e';um.textContent='Gagal membuat Excel POMGG: '+(x.message||x)}return}
  if(k==='npb'){const R=await get('npb_raw');if(R){dlCsv('NPB.csv',R.l,R.rows.map(r=>R.l.map((_,i)=>r[i])));return}
   const um=$('#um');um.className='m';um.textContent='Data NPB ini belum menyimpan tanggal dan KETER (diupload sebelum pembaruan). Upload ulang file NPB dengan mode "Ganti semua". Yang terunduh masih total per GAB.'}
  dlCsv(SRC[k][0]+'.csv',DLH[k],k==='npb'?[...D.m].map(([g,a])=>[g,a[0],a[1]]):CV[k].to(D))};
@@ -526,7 +553,7 @@ function alkSel(id,key,opts,dv,cb){const box=$('#'+id),det=document.createElemen
  let cur=opts.some(o=>o[0]===ALK[key])?ALK[key]:dv;const show=()=>{sum.textContent=opts.find(o=>o[0]===cur)[1]};
  for(const[v,l]of opts){const lb=document.createElement('label'),r=document.createElement('input');r.type='radio';r.name=id;r.checked=v===cur;r.onchange=()=>{cur=v;ALK[key]=v;alkSave();show();det.open=false;cb&&cb()};lb.append(r,' '+l);body.appendChild(lb)}
  show();det.append(sum,body);box.appendChild(det)}
-alkSel('al_ket','ket',[['all','All'],['nataru','Nataru']],'all',()=>alkRender(0));alkSel('al_sa','sa',[['semua','Semua'],['belum','Belum alokasi']],'semua');
+alkSel('al_ket','ket',[['all','All'],['nataru','Nataru']],'all',()=>alkRender(0));alkSel('al_sa','sa',[['semua','Semua'],['belum','Belum alokasi']],'semua');alkSel('al_dm','dm',[['gab','GAB'],['plu','PLU']],'gab');
 // tutup semua daftar pilihan saat klik/tap di luar daftar, atau tekan Esc
 document.addEventListener('pointerdown',e=>{document.querySelectorAll('details.dd[open]').forEach(d=>{if(!d.contains(e.target))d.open=false})},true);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('details.dd[open]').forEach(d=>d.open=false)});
@@ -551,15 +578,16 @@ function alkBook(items,per){
   rw=(r,cells,ht)=>'<row r="'+r+'"'+(ht?' ht="'+ht+'" customHeight="1"':'')+'>'+cells+'</row>',rl=c=>c>=10&&c<=12,
   mg=['K4:M4'];let R='',a='',b='';
  R+=rw(1,cs(1,0,'List Item Pemasangan Alokasi DPD',1),24)+rw(2,cs(2,0,'Periode   '+per,0));
- for(let c=0;c<15;c++){if(rl(c)){a+=c===10?cs(4,c,'REAL',3):ce(4,c,3);b+=cs(5,c,H[c],3)}else{a+=cs(4,c,H[c],3);b+=ce(5,c,3);mg.push(L(c)+'4:'+L(c)+'5')}}
+ for(let c=0;c<16;c++){if(c===13)continue;const hi=c>13?c-1:c;if(rl(c)){a+=c===10?cs(4,c,'REAL',3):ce(4,c,3);b+=cs(5,c,H[hi],3)}else{a+=cs(4,c,H[hi],3);b+=ce(5,c,3);mg.push(L(c)+'4:'+L(c)+'5')}}
  R+=rw(4,a,20)+rw(5,b,20);
- let r=6,tq=0,tc=0,tr=0;
+ let r=7,tq=0,tc=0,tr=0;
  items.forEach((g,i)=>{tq+=g.q;tc+=g.c;tr+=g.rp;
-  R+=rw(r,cn(r,0,i+1,10)+cs(r,1,g.p,5)+cs(r,2,g.desc,4)+cs(r,3,g.pola,5)+cs(r,4,g.zn,5)+cs(r,5,g.al,5)+cn(r,6,g.fr,10)+cn(r,7,g.mn,10)+cn(r,8,g.ac,6)+cn(r,9,g.st,6)+cn(r,10,g.q,6)+cn(r,11,g.c,6)+cn(r,12,g.rp,6)+cn(r,13,g.tk.size,10)+cn(r,14,g.tk.size?g.c/g.tk.size:0,7));r++});
- let gt=cs(r,0,'GRAND TOTAL',8);for(let c=1;c<10;c++)gt+=ce(r,c,8);gt+=cn(r,10,tq,9)+cn(r,11,tc,9)+cn(r,12,tr,9)+ce(r,13,8)+ce(r,14,8);
+  R+=rw(r,cn(r,0,i+1,10)+cs(r,1,g.p,5)+cs(r,2,g.desc,4)+cs(r,3,g.pola,5)+cs(r,4,g.zn,5)+cs(r,5,g.al,5)+cn(r,6,g.fr,10)+cn(r,7,g.mn,10)+cn(r,8,g.ac,6)+cn(r,9,g.st,6)+cn(r,10,g.q,6)+cn(r,11,g.c,6)+cn(r,12,g.rp,6)+cn(r,14,g.tk.size,10)+cn(r,15,g.tk.size?g.c/g.tk.size:0,7));r++});
+ r++;
+ let gt=cs(r,0,'GRAND TOTAL',8);for(let c=1;c<10;c++)gt+=ce(r,c,8);gt+=cn(r,10,tq,9)+cn(r,11,tc,9)+cn(r,12,tr,9)+ce(r,14,8)+ce(r,15,8);
  R+=rw(r,gt,22);mg.push('A'+r+':J'+r);
- const W=[5,11,46,16,7,11,7,8,11,10,11,10,15,10,14],
- sheet='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0" showGridLines="0"><pane ySplit="5" topLeftCell="A6" activePane="bottomLeft" state="frozen"/><selection pane="bottomLeft"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols>'
+ const W=[5,11,46,16,7,11,7,8,11,10,11,10,15,2,10,14],
+ sheet='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0" showGridLines="0"><pane ySplit="6" topLeftCell="A7" activePane="bottomLeft" state="frozen"/><selection pane="bottomLeft"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols>'
   +W.map((w,i)=>'<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>').join('')+'</cols><sheetData>'+R+'</sheetData><mergeCells count="'+mg.length+'">'+mg.map(m=>'<mergeCell ref="'+m+'"/>').join('')+'</mergeCells><pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup orientation="landscape" fitToWidth="1" fitToHeight="0"/></worksheet>',
  xf=(n,f,fl,bd,al)=>'<xf numFmtId="'+n+'" fontId="'+f+'" fillId="'+fl+'" borderId="'+bd+'" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment '+al+'/></xf>',
  V='vertical="center"',
@@ -584,16 +612,17 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
   if(!sk)throw Error('Upload Stock akhir dulu.');if(!pl)throw Error('Upload Plan picking dulu.');
   const sa=ALK.sa||'semua';if(sa!=='semua'&&!dn)throw Error('Pilihan Sudah/Belum alokasi butuh file Sudah alokasi. Upload dulu.');
   jm.textContent='Menghitung alokasi...';await tick();
-  const ST=alkStock(sk.rows),ST7=alkStock7(ST),PL=alkPlan(pl.rows),DN=dn?alkDone(dn.rows):null,T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
+  const dm=ALK.dm||'gab';const ST=alkStock(sk.rows),ST7=alkStock7(ST),PL=alkPlan(pl.rows),DN=dn?alkDone(dn.rows):null,T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
    XZ=new Set(ALK.ex.zona),X1=new Set(ALK.ex.pola1),X2=new Set(ALK.ex.pola2),nat=(ALK.ket||'all')==='nataru',mq=ALK.mq>0?ALK.mq:null,mi=ALK.mi>0?ALK.mi:null,ps=ALK.ps>0?ALK.ps:100,
    used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim();let i=0,lolos=0;
+  const DNP=new Set();if(DN&&dm==='plu'&&tg.size){const L=K(tg.values().next().value[0]).length;for(const g of DN)DNP.add(PK(g.slice(L)))}
   for(const[gab,[t,p,S,Vs]]of tg){
    if(++i%50000===0){jm.textContent='Menghitung: '+pc(i,tg.size);await tick()}
    const pk=PK(p);let stock=ST.get(pk);if(stock===undefined&&K(p).length<=7)stock=ST7.get(PK(K(p).slice(-7)));seen.add(pk);if(stock!=null)hit.add(pk);if(!(stock>=100)||!PL.has(K(t).toUpperCase()))continue;
    const M=M0.get(p)||[],I=I0.get(p)||[],zn=t2(M[1]),p1=t2(I[1]),p2=t2(I[2]);
    if(XZ.has(zk(zn))||X1.has(p1)||X2.has(p2))continue;
    if(nat&&N(z(I[3]))!=='NATARU')continue;
-   if(DN){const has=DN.has(gab);if(sa==='sudah'&&!has||sa==='belum'&&has)continue}
+   if(DN){const has=dm==='plu'?DNP.has(PK(p)):DN.has(gab);if(sa==='sudah'&&!has||sa==='belum'&&has)continue}
    lolos++;
    const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,sisa=nat?S-AB:(S+Vs)-(AB+AI);
    if(!(mn>0))continue;
