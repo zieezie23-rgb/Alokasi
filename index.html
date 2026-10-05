@@ -69,6 +69,14 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 #sm .tm2 span:first-child{color:var(--err)}#sm .tm2 span:last-child{background:rgba(221,217,196,.16);border:1px solid var(--line);color:var(--err);padding:2px 14px;min-width:80px;text-align:center;border-radius:3px}#sm .tm2.e{visibility:hidden}
 
 .tt thead th{text-align:center!important}.tt thead tr:first-child th{height:26px;white-space:nowrap}.tt thead tr:nth-child(2) th{height:38px;white-space:normal;padding-top:2px;padding-bottom:2px}.tt thead tr:nth-child(2) th:first-child{left:auto}.tt thead .hc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.15}#trn:empty{display:none}
+.alr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px 18px;align-items:start}
+.alrt{overflow-x:auto}.alrt #alz{width:100%;margin:0;border-collapse:collapse}
+.alrs{display:flex;flex-direction:column;gap:12px}
+.alrs .st{text-align:right;padding:14px 16px}.alrs .st span{font-size:15px}.alrs .st b{font-size:26px;margin-top:8px}
+.alrd{display:flex;justify-content:center}.alrd a.dl{margin:4px 0 0;padding:16px 28px;font-size:18px}
+@media(max-width:620px){.alr{grid-template-columns:1fr}.alrs{order:-1;display:grid;grid-template-columns:1fr 1fr;gap:8px}.alrs .st{padding:10px 12px}.alrs .st span{font-size:13px}.alrs .st b{font-size:20px;margin-top:4px}.alrd{grid-column:1/-1}.alrd a.dl{padding:12px 24px;font-size:16px}}
+.c.k label.ck{flex-direction:row;align-items:center;gap:5px;align-self:flex-end;height:38px;box-sizing:border-box;white-space:nowrap;font-size:13px;cursor:pointer}.c.k label.ck input{width:18px;height:18px;margin:0;accent-color:var(--yel,#fc0)}
+@media(max-width:560px){.c.t.k{flex-wrap:wrap;row-gap:8px}}
 </style></head><body><div id="ld" class="on" role="status" aria-live="polite"><div class="sp"></div><div class="t" id="ldt">Membaca database...</div><div class="m" id="ldm">Menghubungkan ke database...</div><button type="button" id="ldr">Sinkron ulang</button></div><main>
 <div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1>
 <nav class="mn" id="mn" hidden><button type="button" id="t2" aria-selected="false">Master</button><button type="button" id="t3" aria-selected="false">Alokasi DPD</button><a href="https://docs.google.com/spreadsheets/d/1sNZO22t6ZnRRiFcIFOpMFJiKqLt9BpcUGDLfw5qrQdg/edit?pli=1&amp;gid=0#gid=0" class="db" target="_blank" rel="noopener">&#9888;&#xFE0E; DATABASE</a></nav></div>
@@ -79,6 +87,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <div class="c t k">
 <div class="bg"><button class="g" type="button" id="hb" aria-expanded="false" aria-controls="hp" title="Format file yang diupload" style="font-weight:600">?</button><label class="bt" id="ulb">Upload file<input type="file" hidden multiple accept=".xlsx,.xlsm,.csv" id="fa"></label></div>
 <label class="md">Mode NPB<select id="md"><option value="tambah">Tambahkan</option><option value="ganti">Ganti semua</option></select></label>
+<label class="ck" title="Isi KETER NPB dari KET NATARU di data Item"><input type="checkbox" id="nk">Nataru</label>
 <button class="dg" type="button" id="rs" style="margin-left:auto">Reset database</button></div>
 <div id="src" style="margin-top:10px;padding-top:8px;border-top:1px solid var(--line)"></div>
 <div id="hp" class="hp" hidden>
@@ -208,8 +217,8 @@ async function syncAll(nodraw){if(!cloudOn())return;const{meta:cm}=await api({ac
 let SYNCED=0;
 // detail NPB (GAB, TANGGAL, QTY ALOK, KETER) disimpan terpisah dari total per GAB; tanggal Excel diubah jadi YYYY-MM-DD
 const DTC=/TGL|TANGGAL|DATE/,DH=['GAB','TANGGAL','QTY ALOK','KETER'],xd=v=>{if(typeof v!=='number'||v<20000||v>80000)return v;const t=new Date(Date.UTC(1899,11,30)+Math.round(v*864e5)),p=n=>String(n).padStart(2,'0'),s=t.getUTCFullYear()+'-'+p(t.getUTCMonth()+1)+'-'+p(t.getUTCDate());return v%1?s+' '+p(t.getUTCHours())+':'+p(t.getUTCMinutes())+':'+p(t.getUTCSeconds()):s};
-function npbDetail(dt,c,q,ke){const dk=Object.keys(c).find(n=>DTC.test(n)),di=dk==null?-1:c[dk],o=[];
- for(const x of dt){const g=K(x[c.GAB]);if(!g)continue;o.push([g,di<0?'':String(xd(x[di])??'').trim(),NUM(x[q]),String(x[ke]??'').trim()])}return o}
+function npbDetail(dt,c,q,ke,ov){const dk=Object.keys(c).find(n=>DTC.test(n)),di=dk==null?-1:c[dk],o=[];
+ for(const x of dt){const g=K(x[c.GAB]);if(!g)continue;const kv=(ov&&ov(g))||x[ke];o.push([g,di<0?'':String(xd(x[di])??'').trim(),NUM(x[q]),String(kv??'').trim()])}return o}
 async function npbRawSave(rows,replace){const R=(replace?null:await get('npb_raw'))||{l:DH,rows:[]};for(const r of rows)R.rows.push(r);R.l=DH;await put('npb_raw',R)}
 async function upload(k,f,mode){
  const cl=cloudOn(),mp=$('#um'),prog=(a,b)=>{mp.textContent='Mengirim data: '+pc(a,b)};
@@ -254,8 +263,9 @@ async function upload(k,f,mode){
  }else{const[c,dt]=hdr(r,['GAB']);const q=col(c,'QTY ALOK','QTY_ALOK','QTY'),ke=col(c,'KETER','KET');
   const h=await sha(buf);let o=(mode==='ganti'?null:await get('npb'))||{m:new Map(),f:[]};
   if(o.f.some(x=>x.h===h))throw Error('File ini sudah pernah diupload. Dibatalkan agar qty tidak terhitung dua kali. Pilih "Ganti semua" untuk mengulang dari awal.');
-  const dl=new Map();let n=0;for(const x of dt){const g=K(x[c.GAB]);if(!g)continue;const v=NUM(x[q]),e=dl.get(g)||[0,0];if(N(x[ke])==='NATARU')e[0]+=v;e[1]+=v;dl.set(g,e);n++}
-  const dr=npbDetail(dt,c,q,ke);if(cl&&!(await caps()).detail)throw Error('Code.gs belum diperbarui. Tempel Code.gs terbaru lalu deploy versi baru.');
+  let ov=null;if($('#nk')&&$('#nk').checked){const im=await get('item');if(!im||!im.size)throw Error('Data Item belum ada, jadi KET NATARU belum bisa dipakai. Upload Item dulu, atau hilangkan centang Nataru.');const pm=new Map();for(const[p,a]of im)pm.set(PK(p),a[3]);ov=g=>g.length>4?(pm.get(PK(g.slice(4)))||''):''}
+  const dl=new Map();let n=0;for(const x of dt){const g=K(x[c.GAB]);if(!g)continue;const v=NUM(x[q]),e=dl.get(g)||[0,0];if(N((ov&&ov(g))||x[ke])==='NATARU')e[0]+=v;e[1]+=v;dl.set(g,e);n++}
+  const dr=npbDetail(dt,c,q,ke,ov);if(cl&&!(await caps()).detail)throw Error('Code.gs belum diperbarui. Tempel Code.gs terbaru lalu deploy versi baru.');
   if(cl){ver=(await push('npb',mode==='ganti'?'replace':'merge',[...dl].map(([g,a])=>[g,a[0],a[1]]),{hash:h,file:f.name,time:tm,files:[{hash:h,name:f.name,n,time:tm}]},prog)).ver;await push('npbdetail',mode==='ganti'?'replace':'merge',dr,{file:f.name,time:tm},prog)}
   for(const[g,a]of dl){const e=o.m.get(g)||[0,0];e[0]+=a[0];e[1]+=a[1];o.m.set(g,e)}
   await npbRawSave(dr,mode==='ganti');o.f.push({h,name:f.name,n});await put('npb',o);msg=`NPB ${mode==='ganti'?'diganti':'ditambahkan'}: ${fn(n)} baris. Total ${o.f.length} file.`}
@@ -691,9 +701,9 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
   const nz=nm.replace(/^Alokasi_/,'Alokasi_CSV_per_item_').replace(/\.csv$/,'.zip');
   if(alkUrl3)URL.revokeObjectURL(alkUrl3);alkUrl3=URL.createObjectURL(zipStore([...PF.values()].map(g=>[g.n+'.csv','PLU,TOKO,QTY\r\n'+g.l.join('\r\n')+'\r\n']),'application/zip'));
   const zr=[...Z].sort((a,b)=>a[0]<b[0]?-1:1).map(([zn,g])=>'<tr><td>'+esc(zn||'-')+'</td><td>'+nf(g.it.size)+'</td><td>'+nf(g.q)+'</td><td>'+nf(g.c,2)+'</td><td>'+nf(g.r)+'</td></tr>').join('');
-  out.innerHTML='<div class="alg"><div class="st"><span>Jumlah item</span><b>'+nf(A.size)+'</b></div><div class="st"><span>Total qty</span><b>'+nf(tq)+'</b></div><div class="st"><span>Total ctn</span><b>'+nf(tc,2)+'</b></div><div class="st"><span>Total Rp</span><b>'+nf(tr)+'</b></div></div>'
-   +'<table id="alz" style="margin-top:14px"><tr class="th"><td>Zona</td><td>Item</td><td>Qty</td><td>CTN</td><td>Rp</td></tr>'+zr+'</table>'
-   +'<div class="ac" style="margin-top:12px"><a class="dl" href="#" id="al_dl">Unduh</a></div>';
+  out.innerHTML='<div class="alr"><div class="alrt"><table id="alz"><tr class="th"><td>Zona</td><td>Item</td><td>Qty</td><td>CTN</td><td>Rp</td></tr>'+zr+'</table></div>'
+   +'<div class="alrs"><div class="st"><span>Jumlah item</span><b>'+nf(A.size)+'</b></div><div class="st"><span>Total qty</span><b>'+nf(tq)+'</b></div><div class="st"><span>Total ctn</span><b>'+nf(tc,2)+'</b></div><div class="st"><span>Total Rp</span><b>'+nf(tr)+'</b></div>'
+   +'<div class="alrd"><a class="dl" href="#" id="al_dl">Unduh</a></div></div></div>';
   $('#al_dl').onclick=e=>{e.preventDefault();alkDlAll([[alkUrl,nm],[alkUrl2,nx],[alkUrl3,nz]],PL)};
   jm.textContent='Selesai. '+nf(res.length)+' baris alokasi.'+dg}
  catch(e){jm.className='m e';jm.textContent=e.message}
