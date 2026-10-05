@@ -596,30 +596,34 @@ function zipStore(files,type){const te=new TextEncoder(),parts=[],cd=[];let off=
 // items: satu baris per PRDCD. Gaya: header hijau + kotak, grand total hijau (seperti contoh List Item Pemasangan Alokasi)
 function alkBook(items,per){
  const X=t=>String(t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])),L=i=>String.fromCharCode(65+i),
-  H=['No.','PRDCD','Desc','POLA','ZONA','ALAMAT','Frac','Minor','ACOST','Stock','QTY','Ctn','Rp','JML TOKO','AVG CTN/TOKO'],
-  cs=(r,c,v,st)=>'<c r="'+L(c)+r+'" s="'+st+'" t="inlineStr"><is><t xml:space="preserve">'+X(v)+'</t></is></c>',
-  cn=(r,c,v,st)=>'<c r="'+L(c)+r+'" s="'+st+'"><v>'+(+v)+'</v></c>',ce=(r,c,st)=>'<c r="'+L(c)+r+'" s="'+st+'"/>',
+  H=['No.','PRDCD','Desc','POLA','ZONA','ALAMAT','Frac','Minor','ACOST','Stock (PCS)','Pcs','Ctn','Rp','JML TOKO','AVG PB CTN PER TOKO'],
+  cs=(r,c,v,st)=>'<c r="'+L(c+1)+r+'" s="'+st+'" t="inlineStr"><is><t xml:space="preserve">'+X(v)+'</t></is></c>',
+  cn=(r,c,v,st)=>'<c r="'+L(c+1)+r+'" s="'+st+'"><v>'+(+v)+'</v></c>',ce=(r,c,st)=>'<c r="'+L(c+1)+r+'" s="'+st+'"/>',
   rw=(r,cells,ht)=>'<row r="'+r+'"'+(ht?' ht="'+ht+'" customHeight="1"':'')+'>'+cells+'</row>',rl=c=>c>=10&&c<=12,
-  mg=['K4:M4'];let R='',a='',b='';
+  mg=['L4:N4'];let R='',a='',b='';
  R+=rw(1,cs(1,0,'List Item Pemasangan Alokasi DPD',1),24)+rw(2,cs(2,0,'Periode   '+per,0));
- for(let c=0;c<16;c++){if(c===13)continue;const hi=c>13?c-1:c;if(rl(c)){a+=c===10?cs(4,c,'REAL',3):ce(4,c,3);b+=cs(5,c,H[hi],3)}else{a+=cs(4,c,H[hi],3);b+=ce(5,c,3);mg.push(L(c)+'4:'+L(c)+'5')}}
+ for(let c=0;c<16;c++){if(c===13)continue;const hi=c>13?c-1:c;if(rl(c)){a+=c===10?cs(4,c,'REAL',3):ce(4,c,3);b+=cs(5,c,H[hi],3)}else{a+=cs(4,c,H[hi],3);b+=ce(5,c,3);mg.push(L(c+1)+'4:'+L(c+1)+'5')}}
  R+=rw(4,a,20)+rw(5,b,20);
- let r=7,tq=0,tc=0,tr=0;
- items.forEach((g,i)=>{tq+=g.q;tc+=g.c;tr+=g.rp;
-  R+=rw(r,cn(r,0,i+1,10)+cs(r,1,g.p,5)+cs(r,2,g.desc,4)+cs(r,3,g.pola,5)+cs(r,4,g.zn,5)+cs(r,5,g.al,5)+cn(r,6,g.fr,10)+cn(r,7,g.mn,10)+cn(r,8,g.ac,6)+cn(r,9,g.st,6)+cn(r,10,g.q,6)+cn(r,11,g.c,6)+cn(r,12,g.rp,6)+cn(r,14,g.tk.size,10)+cn(r,15,g.tk.size?g.c/g.tk.size:0,7));r++});
- r++;
- let gt=cs(r,0,'GRAND TOTAL',8);for(let c=1;c<10;c++)gt+=ce(r,c,8);gt+=cn(r,10,tq,9)+cn(r,11,tc,9)+cn(r,12,tr,9)+ce(r,14,8)+ce(r,15,8);
- R+=rw(r,gt,22);mg.push('A'+r+':J'+r);
- const W=[5,11,46,16,7,11,7,8,11,10,11,10,15,2,10,14],
+ let r=7,no=0,tq=0,tc=0,tr=0;
+ const gtRow=(q,c,p,lb)=>{let t=cs(r,0,lb,8);for(let k=1;k<10;k++)t+=ce(r,k,8);t+=cn(r,10,q,9)+cn(r,11,c,9)+cn(r,12,p,9)+ce(r,14,8)+ce(r,15,8);R+=rw(r,t,22);mg.push('B'+r+':K'+r);r++},
+ grp=(list,lb)=>{let q=0,c=0,p=0;list.forEach(g=>{no++;q+=g.q;c+=g.c;p+=g.rp;
+  R+=rw(r,cn(r,0,no,10)+cs(r,1,g.p,5)+cs(r,2,g.desc,4)+cs(r,3,g.pola,5)+cs(r,4,g.zn,5)+cs(r,5,g.al,5)+cn(r,6,g.fr,10)+cn(r,7,g.mn,10)+cn(r,8,g.ac,6)+cn(r,9,g.st,6)+cn(r,10,g.q,6)+cn(r,11,g.c,6)+cn(r,12,g.rp,6)+cn(r,14,g.tk.size,10)+cn(r,15,g.tk.size?g.c/g.tk.size:0,7));r++});
+  if(list.length){gtRow(q,c,p,lb);tq+=q;tc+=c;tr+=p}};
+ const NR=items.filter(g=>!g.rk),RK=items.filter(g=>g.rk);
+ grp(NR,'Total non Rokok');if(NR.length&&RK.length)r++;grp(RK,'Total Rokok');
+ gtRow(tq,tc,tr,'GRAND TOTAL');
+ r++;R+=rw(r,cs(r,2,'Mengetahui,',11));r+=5;
+ R+=rw(r,cs(r,2,'( DCM/DDCM )',11)+cs(r,7,'( SPV Warehouse )',11)+cs(r,12,'( SPV ADM )',11));
+ const W=[2,5,11,46,16,7,11,7,8,11,10,11,10,15,2,10,14],
  sheet='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0" showGridLines="0"><pane ySplit="6" topLeftCell="A7" activePane="bottomLeft" state="frozen"/><selection pane="bottomLeft"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols>'
   +W.map((w,i)=>'<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>').join('')+'</cols><sheetData>'+R+'</sheetData><mergeCells count="'+mg.length+'">'+mg.map(m=>'<mergeCell ref="'+m+'"/>').join('')+'</mergeCells><pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup orientation="landscape" fitToWidth="1" fitToHeight="0"/></worksheet>',
  xf=(n,f,fl,bd,al)=>'<xf numFmtId="'+n+'" fontId="'+f+'" fillId="'+fl+'" borderId="'+bd+'" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment '+al+'/></xf>',
  V='vertical="center"',
- styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="164" formatCode="#,##0.0"/></numFmts><fonts count="3"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="16"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF92D050"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF000000"/></left><right style="thin"><color rgb="FF000000"/></right><top style="thin"><color rgb="FF000000"/></top><bottom style="thin"><color rgb="FF000000"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="11">'
+ styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="164" formatCode="#,##0.0"/></numFmts><fonts count="3"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="16"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF92D050"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF000000"/></left><right style="thin"><color rgb="FF000000"/></right><top style="thin"><color rgb="FF000000"/></top><bottom style="thin"><color rgb="FF000000"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="12">'
   +xf(0,0,0,0,'')+xf(0,2,0,0,V)+xf(0,0,0,0,'')
   +xf(0,1,2,1,'horizontal="center" '+V+' wrapText="1"')+xf(0,0,0,1,V+' indent="1"')+xf(0,0,0,1,'horizontal="center" '+V)
   +xf(3,0,0,1,'horizontal="right" '+V)+xf(164,0,0,1,'horizontal="center" '+V)
-  +xf(0,1,2,1,'horizontal="center" '+V)+xf(3,1,2,1,'horizontal="right" '+V)+xf(3,0,0,1,'horizontal="center" '+V)
+  +xf(0,1,2,1,'horizontal="center" '+V)+xf(3,1,2,1,'horizontal="right" '+V)+xf(3,0,0,1,'horizontal="center" '+V)+xf(0,1,0,0,'horizontal="center" '+V)
   +'</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>',
  NS='xmlns="http://schemas.openxmlformats.org/package/2006/relationships"',HD='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
  return zipStore([
@@ -656,11 +660,11 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
    // QTY alokasi = MAX(0, TARGET x % TARGET - NPB), lalu dibulatkan turun ke kelipatan MINOR
    const target=nat?S:S+Vs;
    const dasar=Math.max(0,target*ps/100-(target-sisa));
-   let q=Math.floor(Math.max(0,dasar)/mn+1e-9)*mn;{const xm=Number(zn)===17?10:mq;if(xm!=null)q=Math.min(mn*xm,q)}
+   let q=Math.floor(Math.max(0,dasar)/mn+1e-9)*mn;{const xm=Number(zn)===17?Math.max(10,mq||0):mq;if(xm!=null)q=Math.min(mn*xm,q)}
    // total alokasi item yang sama tidak boleh melebihi stock; setelah terlewati, baris berikutnya 0
    if(q>0){if(stop.has(pk))q=0;else{const u=(used.get(pk)||0)+q;if(u>stock){stop.add(pk);q=0}else used.set(pk,u)}}
    if(q<=0)continue;
-   const T=T0.get(t)||[];rows.push({al:z(M[2]),am:z(T[1]),kota:z(T[3]),t,nt:z(T[0]),gab,p,pk,desc:z(M[0]),zn,p1,p2,kt:z(I[3]),fr,mn,ac,stock,sisa,q,ctn:d(q,fr),rp:q*ac})}
+   const T=T0.get(t)||[];rows.push({al:z(M[2]),am:z(T[1]),kota:z(T[3]),t,nt:z(T[0]),gab,p,pk,desc:z(M[0]),zn,p1,p2,kt:z(I[3]),fr,mn,ac,stock,tg:target,npb:nat?AB:AB+AI,sisa,q,ctn:d(q,fr),rp:q*ac})}
   // max item per zona, urut total qty alokasi terbesar
   // Min Rp: total Rp alokasi satu PLU (semua toko) harus >= isian; PLU di bawahnya dibuang sebelum Max item
   let res=rows;
@@ -673,12 +677,12 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
   const A=new Set(),Z=new Map();let tq=0,tc=0,tr=0;
   for(const r of res){A.add(r.pk);tq+=r.q;tc+=r.ctn;tr+=r.rp;let g=Z.get(r.zn);if(!g)Z.set(r.zn,g={it:new Set(),q:0,c:0,r:0});g.it.add(r.pk);g.q+=r.q;g.c+=r.ctn;g.r+=r.rp}
   const nf=(v,dc=0)=>Number(v).toLocaleString('id-ID',{maximumFractionDigits:dc});
-  const H=['AM','KOTA','TOKO','NAMA TOKO','GAB','PLU','DESC','ZONA','POLA1','POLA2','KET NATARU','FRAC','MINOR','ACOST','STOCK_AKHIR','SISA','QTY_ALOKASI','CTN_ALOKASI','RP_ALOKASI'],
+  const H=['AM','KOTA','TOKO','NAMA TOKO','GAB','PLU','DESC','ZONA','POLA1','POLA2','KET NATARU','FRAC','MINOR','ACOST','STOCK_AKHIR',nat?'QTY_NAT':'QTY_SEA','QTY_NPB','SISA','QTY_ALOKASI','CTN_ALOKASI','RP_ALOKASI'],
    f=x=>typeof x==='number'?String(x):/[;,"\n]/.test(x)?'"'+String(x).replace(/"/g,'""')+'"':String(x),parts=['\ufeff'+H.join(',')+'\n'];let buf=[];
-  for(const r of res)buf.push([r.am,r.kota,r.t,r.nt,r.gab,r.p,r.desc,r.zn,r.p1,r.p2,r.kt,r.fr,r.mn,r.ac,r.stock,r.sisa,r.q,+r.ctn.toFixed(4),+r.rp.toFixed(2)].map(f).join(','));
+  for(const r of res)buf.push([r.am,r.kota,r.t,r.nt,r.gab,r.p,r.desc,r.zn,r.p1,r.p2,r.kt,r.fr,r.mn,r.ac,r.stock,r.tg,r.npb,r.sisa,r.q,+r.ctn.toFixed(4),+r.rp.toFixed(2)].map(f).join(','));
   parts.push(buf.join('\n')+'\n');if(alkUrl)URL.revokeObjectURL(alkUrl);alkUrl=URL.createObjectURL(new Blob(parts,{type:'text/csv;charset=utf-8'}));
   const dt=new Date(),nm='Alokasi_'+(($('#gd').value||'G113').replace(/[^\w-]/g,'')||'G113')+'_'+String(dt.getDate()).padStart(2,'0')+'_'+['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'][dt.getMonth()]+'_'+String(dt.getFullYear()).slice(-2)+'.csv';
-  const IT=new Map();for(const r of res){let g=IT.get(r.pk);if(!g)IT.set(r.pk,g={p:r.p,desc:r.desc,pola:r.p2,zn:r.zn,al:r.al,fr:r.fr,mn:r.mn,ac:r.ac,st:r.stock,q:0,c:0,rp:0,tk:new Set()});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp;g.tk.add(r.t)}
+  const IT=new Map();for(const r of res){let g=IT.get(r.pk);if(!g)IT.set(r.pk,g={p:r.p,desc:r.desc,pola:nat?'NATARU':r.p2,rk:Number(r.zn)===17,zn:r.zn,al:r.al,fr:r.fr,mn:r.mn,ac:r.ac,st:r.stock,q:0,c:0,rp:0,tk:new Set()});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp;g.tk.add(r.t)}
   const items=[...IT.values()].sort((a,b)=>String(a.zn).localeCompare(String(b.zn),'id',{numeric:true})||b.q-a.q),
    MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],bs=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1),per=String(bs.getDate()).padStart(2,'0')+' '+MB[bs.getMonth()]+' '+String(bs.getFullYear()).slice(-2),
    nx=nm.replace(/^Alokasi_/,'Rekap_Alokasi_').replace(/\.csv$/,'.xlsx');
