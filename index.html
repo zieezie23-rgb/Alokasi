@@ -136,10 +136,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <b>Rekap Toko</b><span>TOKO (opsional: NAMA TOKO, RITASE, CAR, JADWAL, ZN, GR, Kota/Kab, Kec)</span>
 <b>Sudah alokasi</b><span>GAB (12 karakter), PLU (8), atau TOKO (4). Yang ada di file ini tidak ikut dialokasi</span></div>
 <div class="m" id="kv_um" style="margin-top:8px;white-space:normal"></div><div id="kv_ul" style="margin-top:6px"></div></section>
-<section class="p gen"><div class="alt">Pilihan</div><div class="alg">
-<div class="alf"><span>Ket Nataru</span><div id="kv_ket"></div></div>
-<div class="alf"><span>Zona</span><div id="kv_zona"></div></div>
-</div></section>
+<section class="p gen"><div class="alt">Pilihan</div><div class="c k"><label class="ck" title="Pola 1 Terkait: tercentang = QTY_NAT − NPB, tidak = QTY_SEA − NPB"><input type="checkbox" id="kv_nat">Nataru</label></div></section>
 <section class="p gen"><div class="alt">Isian</div><div class="c isi">
 <label>Max item (per rit)<input type="number" id="kv_mi" min="0" step="1" inputmode="numeric"></label>
 <label>Min CTN sisa<input type="number" id="kv_mc" min="0" step="1" inputmode="numeric"></label>
@@ -734,7 +731,7 @@ const alkKel=s=>dlCsv('KELSEASONAL.CSV',['kdtoko','kelompok'],[...s].map(t=>[t,'
 function alkDlAll(fs,pl){const go=[()=>alkKel(pl),...fs.map(([u,n])=>()=>{const a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();a.remove()})];go.forEach((f,i)=>setTimeout(f,i*700))}
 $('#al_go').onclick=alkCalc;
 // ======== ALOKASI KANVAS ========
-const KV=(()=>{try{return JSON.parse(localStorage.getItem('kv')||'{}')||{}}catch(e){return{}}})();KV.ex=KV.ex||{};KV.ex.zona=(KV.ex.zona||[]).filter(v=>v!=='0');
+const KV=(()=>{try{return JSON.parse(localStorage.getItem('kv')||'{}')||{}}catch(e){return{}}})();
 const kvSave=()=>{try{localStorage.setItem('kv',JSON.stringify(KV))}catch(e){}};
 const KVK=['stock','toko','done'],KVN={stock:['Stock akhir','PLU'],toko:['Rekap Toko','toko'],done:['Sudah alokasi','baris']};
 // Rekap Toko: kolom TOKO wajib, kolom lain dibaca bila ada
@@ -764,17 +761,14 @@ $('#kv_fa').onchange=async e=>{const inp=e.target,fs=[...inp.files],um=$('#kv_um
   const k=kvDetect(f,r);if(!k)throw Error('jenis file tidak dikenali. Tambahkan kata Stock / Rekap Toko / Sudah pada nama file.');
   const lbl=KPAR[k](r);await put('kv_'+k,{name:f.name,time:new Date().toLocaleString('id-ID'),rows:r,lb:lbl});
   return'['+KVN[k][0]+'] '+lbl},kvStat)};
-function kvRender(){const nat=(KV.ket||'all')==='nataru',U=nat?ALKU.filter(x=>x.k==='NATARU'):ALKU;
- alkDD('zona',[...new Set(U.map(x=>x.z).filter(Boolean))].sort((a,b)=>ZO.indexOf(a)-ZO.indexOf(b)),null,'kv_',KV,kvSave)}
-const kvSels=()=>alkSel('kv_ket','ket',[['all','All'],['nataru','Nataru']],'all',kvRender,KV,kvSave);kvSels();
-if(KV.kl===undefined)KV.kl=5;
+const kvN=$('#kv_nat');kvN.checked=!!KV.nat;kvN.onchange=()=>{KV.nat=kvN.checked;kvSave()};
 for(const[id,k]of[['kv_mi','mi'],['kv_mc','mc'],['kv_kl','kl']]){const e=$('#'+id);if(KV[k]!=null)e.value=KV[k];e.oninput=()=>{KV[k]=e.value===''?null:Math.max(0,Math.floor(+e.value));kvSave()}}
 let kvArt;$('#kv_rs').onclick=async()=>{const b=$('#kv_rs');
  if(!b.classList.contains('ask')){b.classList.add('ask');b.textContent='Yakin? Klik lagi';clearTimeout(kvArt);kvArt=setTimeout(()=>{b.classList.remove('ask');b.textContent='Reset'},5000);return}
  clearTimeout(kvArt);b.classList.remove('ask');b.textContent='Reset';b.disabled=true;
  try{for(const k of KVK)await tx('readwrite',s=>s.delete('kv_'+k));$('#kv_res').innerHTML='';$('#kv_msg').textContent='';$('#kv_msg').className='m';$('#kv_um').textContent='';$('#kv_ul').innerHTML='';
-  for(const k of Object.keys(KV))delete KV[k];KV.ex={};kvSave();for(const id of['kv_mi','kv_mc'])$('#'+id).value='';KV.kl=5;$('#kv_kl').value=5;kvSave();
-  for(const u of kvUrls)if(u)URL.revokeObjectURL(u);kvUrls=[];kvSels();kvRender();await kvStat()}catch(e){$('#kv_um').textContent='Gagal reset: '+(e.message||e)}
+  for(const k of Object.keys(KV))delete KV[k];kvSave();for(const id of['kv_mi','kv_mc'])$('#'+id).value='';KV.kl=5;$('#kv_kl').value=5;kvSave();
+  for(const u of kvUrls)if(u)URL.revokeObjectURL(u);kvUrls=[];kvN.checked=false;await kvStat()}catch(e){$('#kv_um').textContent='Gagal reset: '+(e.message||e)}
  b.disabled=false};
 let kvUrls=[];
 // qty alokasi (ctn) = min(Min CTN sisa, rounddown(ctn sisa)); bila hasilnya di atas Kelipatan CTN, dibulatkan turun ke kelipatan itu (isian kosong = tanpa pembulatan, awal = 5)
@@ -803,23 +797,24 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   if(!sk)throw Error('Upload Stock akhir dulu.');if(!rk)throw Error('Upload Rekap Toko dulu.');
   jm.textContent='Menghitung alokasi...';await tick();
   const ST=alkStock(sk.rows),ST7=alkStock7(ST),RK=kvToko(rk.rows),DN=dn?alkDone(dn.rows):null,T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
-   XZ=new Set(KV.ex.zona),nat=(KV.ket||'all')==='nataru',mi=KV.mi>0?KV.mi:null,mc=KV.mc>0?KV.mc:null,kl=KV.kl>1?KV.kl:null,
+   nat=!!KV.nat,mi=KV.mi>0?KV.mi:null,mc=KV.mc>0?KV.mc:null,kl=KV.kl>1?KV.kl:null,
    used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim();let i=0,lolos=0;
   const DNP=new Set(),DNT=new Set();if(DN)for(const g of DN){if(g.length===8)DNP.add(PK(g));else if(g.length===4)DNT.add(g.toUpperCase())}
   for(const[gab,[t,p,S,Vs]]of tg){
    if(++i%50000===0){jm.textContent='Menghitung: '+pc(i,tg.size);await tick()}
    const pk=PK(p),tu=K(t).toUpperCase();let stock=ST.get(pk);if(stock===undefined&&K(p).length<=7)stock=ST7.get(PK(K(p).slice(-7)));seen.add(pk);if(stock!=null)hit.add(pk);if(!(stock>=100)||!RK.has(tu))continue;
    const M=M0.get(p)||[],I=I0.get(p)||[],zn=t2(M[1]);
-   if(XZ.has(zk(zn)))continue;
-   if(nat&&N(z(I[3]))!=='NATARU')continue;
+   // Pola 1 Terkait: hanya zona 14 dan 15. Pola 1 Basic: semua zona kecuali yang tidak punya zona (kosong / 0). Pola 1 lain tidak diikutkan
+   const p1=String(z(I[1])).trim().toLowerCase(),zc=Number(zn);
+   if(p1==='terkait'){if(zc!==14&&zc!==15)continue}else if(p1==='basic'){if(zn===''||zc===0)continue}else continue;
    if(DN&&(DN.has(gab)||DNP.has(PK(p))||DNT.has(tu)))continue;
    lolos++;
-   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,target=nat?S:S+Vs,sisa=nat?S-AB:(S+Vs)-(AB+AI);
+   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,target=p1==='basic'?S+Vs:nat?S:Vs,npx=p1==='basic'?AB+AI:nat?AB:AI,sisa=target-npx;
    if(!(mn>0)||!(fr>0))continue;
    const cs=d(sisa,fr),qc=kvQc(cs,mc,kl);let q=qc*fr;
    if(q>0){if(stop.has(pk))q=0;else{const u=(used.get(pk)||0)+q;if(u>stock){stop.add(pk);q=0}else used.set(pk,u)}}
    if(q<=0)continue;
-   const T=T0.get(t)||[],R=RK.get(tu)||{};rows.push({al:z(M[2]),am:z(T[1]),kota:z(T[3])||R.kota||'',t,nt:z(T[0])||R.nm||'',rit:R.rit||'',car:R.car||'',jad:R.jad||'',zg:(R.zn||'')+(R.gr||''),gab,p,pk,desc:z(M[0]),zn,kt:z(I[3]),fr,mn,ac,stock,tg:target,npb:nat?AB:AB+AI,sisa,cs,q,ctn:d(q,fr),rp:q*ac})}
+   const T=T0.get(t)||[],R=RK.get(tu)||{};rows.push({al:z(M[2]),am:z(T[1]),kota:z(T[3])||R.kota||'',t,nt:z(T[0])||R.nm||'',rit:R.rit||'',car:R.car||'',jad:R.jad||'',zg:(R.zn||'')+(R.gr||''),gab,p,pk,desc:z(M[0]),zn,kt:z(I[3]),fr,mn,ac,stock,tg:target,npb:npx,p1:p1.toUpperCase(),sisa,cs,q,ctn:d(q,fr),rp:q*ac})}
   // Max item berlaku per RIT: PLU dengan total qty alokasi terbesar di tiap ritase
   let res=rows;
   if(mi!=null){const m=new Map();for(const r of res){let g=m.get(r.rit);if(!g)m.set(r.rit,g=new Map());g.set(r.pk,(g.get(r.pk)||0)+r.q)}
@@ -838,15 +833,15 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   const A=new Set(),Z=new Map();let tq=0,tc=0,tr=0;
   for(const r of res){A.add(r.pk);tq+=r.q;tc+=r.ctn;tr+=r.rp;let g=Z.get(r.zn);if(!g)Z.set(r.zn,g={it:new Set(),q:0,c:0,r:0});g.it.add(r.pk);g.q+=r.q;g.c+=r.ctn;g.r+=r.rp}
   const nf=(v,dc=0)=>Number(v).toLocaleString('id-ID',{maximumFractionDigits:dc});
-  const H=['AM','KOTA','TOKO','NAMA TOKO','RITASE','CAR','JADWAL','ZG','PAKET','GAB','PLU','DESC','ZONA','KET NATARU','FRAC','MINOR','ACOST','STOCK_AKHIR',nat?'QTY_NAT':'QTY_TGT','QTY_NPB','SISA','CTN_SISA','QTY_ALOKASI','CTN_ALOKASI','RP_ALOKASI'],
+  const H=['AM','KOTA','TOKO','NAMA TOKO','RITASE','CAR','JADWAL','ZG','PAKET','GAB','PLU','DESC','ZONA','POLA1','KET NATARU','FRAC','MINOR','ACOST','STOCK_AKHIR','QTY_TARGET','QTY_NPB','SISA','CTN_SISA','QTY_ALOKASI','CTN_ALOKASI','RP_ALOKASI'],
    f=x=>typeof x==='number'?String(x):/[;,"\n]/.test(x)?'"'+String(x).replace(/"/g,'""')+'"':String(x),parts=['\ufeff'+H.join(',')+'\n'];let buf=[];
-  for(const r of res)buf.push([r.am,r.kota,r.t,r.nt,r.rit,r.car,r.jad,r.zg,r.paket,r.gab,r.p,r.desc,r.zn,r.kt,r.fr,r.mn,r.ac,r.stock,r.tg,r.npb,r.sisa,+r.cs.toFixed(4),r.q,+r.ctn.toFixed(4),+r.rp.toFixed(2)].map(f).join(','));
+  for(const r of res)buf.push([r.am,r.kota,r.t,r.nt,r.rit,r.car,r.jad,r.zg,r.paket,r.gab,r.p,r.desc,r.zn,r.p1,r.kt,r.fr,r.mn,r.ac,r.stock,r.tg,r.npb,r.sisa,+r.cs.toFixed(4),r.q,+r.ctn.toFixed(4),+r.rp.toFixed(2)].map(f).join(','));
   parts.push(buf.join('\n')+'\n');
   const dt=new Date(),tail=(($('#gd').value||'G113').replace(/[^\w-]/g,'')||'G113')+'_'+String(dt.getDate()).padStart(2,'0')+'_'+['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'][dt.getMonth()]+'_'+String(dt.getFullYear()).slice(-2),
    nm='Kanvas_'+tail+'.csv',nx='Rekap_Kanvas_'+tail+'.xlsx',nz='Kanvas_CSV_per_paket_'+tail+'.zip';
   for(const u of kvUrls)if(u)URL.revokeObjectURL(u);
   const u1=URL.createObjectURL(new Blob(parts,{type:'text/csv;charset=utf-8'}));
-  const IT=new Map();for(const r of res){let g=IT.get(r.pk);if(!g)IT.set(r.pk,g={p:r.p,desc:r.desc,pola:nat?'NATARU':(r.kt||''),rk:Number(r.zn)===17,zn:r.zn,al:r.al,fr:r.fr,mn:r.mn,ac:r.ac,st:r.stock,q:0,c:0,rp:0,tk:new Set()});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp;g.tk.add(r.t)}
+  const IT=new Map();for(const r of res){let g=IT.get(r.pk);if(!g)IT.set(r.pk,g={p:r.p,desc:r.desc,pola:r.p1,rk:Number(r.zn)===17,zn:r.zn,al:r.al,fr:r.fr,mn:r.mn,ac:r.ac,st:r.stock,q:0,c:0,rp:0,tk:new Set()});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp;g.tk.add(r.t)}
   const items=[...IT.values()].sort((a,b)=>String(a.zn).localeCompare(String(b.zn),'id',{numeric:true})||b.q-a.q),
    MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],bs=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1),per=String(bs.getDate()).padStart(2,'0')+' '+MB[bs.getMonth()]+' '+String(bs.getFullYear()).slice(-2);
   const u2=URL.createObjectURL(alkBook(items,per,'List Item Pemasangan Alokasi Kanvas'));
@@ -865,7 +860,6 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
  catch(e){jm.className='m e';jm.textContent=e.message}
  go.disabled=false}
 $('#kv_go').onclick=kvCalc;
-{const _ao=alkOpts;alkOpts=async function(){await _ao();kvRender()}}
 const _draw2=draw;draw=async function(){await _draw2();kvStat()};
 
 const _draw=draw;draw=async function(){await _draw();refreshSum();alkOpts();alkStat()};
