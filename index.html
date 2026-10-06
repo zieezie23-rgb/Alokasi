@@ -74,7 +74,13 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 .alrs{display:flex;flex-direction:column;gap:12px}
 .alrs .st{text-align:right;padding:14px 16px}.alrs .st span{font-size:15px}.alrs .st b{font-size:26px;margin-top:8px}
 .alrd{display:flex;justify-content:center}.alrd a.dl{margin:4px 0 0;padding:16px 28px;font-size:18px}
-.kvr{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.kvr .alrs{display:grid;grid-template-columns:1fr 1fr;gap:8px}.kvr .alrd{grid-column:1/-1}.kvr .alrs .st{padding:9px 12px}.kvr .alrs .st span{font-size:13px}.kvr .alrs .st b{font-size:20px;margin-top:3px}.kvr .alrd a.dl{margin:2px 0 0;padding:10px 22px;font-size:15px}
+.kvr{display:flex;flex-direction:column;gap:12px}.kvr .alrd{display:flex;justify-content:center}.kvr .alrd a.dl{margin:0;padding:10px 26px;font-size:15px}
+.kvs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.kvs .st{padding:6px 10px;text-align:right}.kvs .st span{font-size:11px}.kvs .st b{font-size:clamp(13px,3.6vw,19px);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kvsec{font-size:13px;font-weight:700;color:var(--ac2,#8ab4ff);border-left:4px solid var(--yel);padding-left:8px;margin-top:2px}
+.kvrt{display:grid;gap:12px}.kvh{font-weight:700;font-size:13px;margin-bottom:4px}.kvh span{font-weight:400;color:var(--mut);font-size:11.5px;margin-left:4px}
+.kvt{width:100%;margin:0;border-collapse:collapse}.kvt td{text-align:right;white-space:nowrap}.kvt td:first-child{text-align:left}.kvt tr.th td{font-size:11.5px;color:var(--mut);font-weight:600}
+.kvit{overflow:auto;max-height:420px}.kvi2 td:nth-child(2),.kvi2 td:nth-child(3){text-align:left}.kvi2 td:nth-child(2){white-space:normal;min-width:140px}.kvi2 tr.th td{position:sticky;top:0;background:var(--pn,#141b2d)}
+@media(max-width:620px){.kvt td{padding:4px 5px;font-size:12px}.kvrt{gap:8px}.kvs{gap:5px}.kvs .st{padding:5px 6px;border-left-width:3px}.kvs .st span{font-size:10.5px}.kvs .st b{font-size:12.5px;letter-spacing:-.2px;overflow:visible;text-overflow:clip}.kvi2 td{font-size:11px;padding:4px 3px}.kvi2 td:nth-child(2){min-width:84px}}
 .c.isi.kvi{grid-template-columns:auto repeat(2,minmax(0,1fr)) auto}.c.isi.kvi label.ck{flex-direction:row;align-items:center;gap:5px;height:36px;box-sizing:border-box;white-space:nowrap;font-size:13px;cursor:pointer}.c.isi.kvi label.ck input{width:18px;height:18px;margin:0;padding:0;accent-color:var(--yel,#fc0)}.c.isi.kvi button{width:auto;padding:0 12px}
 @media(max-width:620px){.alr{grid-template-columns:1fr}.alrs{order:-1;display:grid;grid-template-columns:1fr 1fr;gap:8px}.alrs .st{padding:10px 12px}.alrs .st span{font-size:13px}.alrs .st b{font-size:20px;margin-top:4px}.alrd{grid-column:1/-1}.alrd a.dl{padding:12px 24px;font-size:16px}}
 .c.k label.ck{flex-direction:row;align-items:center;gap:5px;align-self:flex-end;height:38px;box-sizing:border-box;white-space:nowrap;font-size:13px;cursor:pointer}.c.k label.ck input{width:18px;height:18px;margin:0;accent-color:var(--yel,#fc0)}
@@ -747,9 +753,8 @@ async function kvStat(){const box=$('#kv_src');box.innerHTML='';
   const n=D?((String(D.lb||'').match(/^[\d.,]+/)||[fn(Math.max(0,D.rows.length-1))])[0]):'';
   el.innerHTML=`<div class="n">${KVN[k][0]}</div>
   <div class="m" title="${D?esc(D.name)+' · '+D.time:''}">${D?fdt(D.time):''}</div>
-  ${D?`<div><b>${n}</b> ${KVN[k][1]}</div><div><button type="button" class="g" data-k="${k}" title="Hapus file">&times;</button></div>`:'<div style="grid-column:3/-1;text-align:right"><span class="e">Belum ada data</span></div>'}`;
+  ${D?`<div><b>${n}</b> ${KVN[k][1]}</div>`:'<div style="grid-column:3/-1;text-align:right"><span class="e">Belum ada data</span></div>'}`;
   box.appendChild(el)}}
-$('#kv_src').onclick=async e=>{const b=e.target.closest('button[data-k]');if(!b)return;await tx('readwrite',s=>s.delete('kv_'+b.dataset.k));kvStat()};
 $('#kv_hb').onclick=()=>{const h=$('#kv_hp');h.hidden=!h.hidden;$('#kv_hb').setAttribute('aria-expanded',String(!h.hidden))};
 function kvDetect(f,r){const n=f.name.toLowerCase();
  if(/stock|stok/.test(n))return'stock';if(/sudah|done/.test(n))return'done';if(/rekap|toko/.test(n))return'toko';if(/alok/.test(n))return'done';
@@ -867,10 +872,14 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   const PL_=[...PS].sort((a,b)=>a[0].localeCompare(b[0],'id',{numeric:true})),npk='Paket_Kanvas_'+tail+'.csv';
   const u4=URL.createObjectURL(new Blob(['\ufeff'+['PAKET,ZG,RITASE,CAR,JADWAL,JML_TOKO,JML_ITEM,TOTAL_CTN,TOKO'].concat(PL_.map(([k,g])=>[k,g.zg,g.rit,[...g.car].filter(Boolean).join('/'),[...g.jad].filter(Boolean).join('/'),g.t.size,g.it.size,+g.c.toFixed(4),[...g.t].sort().join(' ')].map(f).join(','))).join('\n')+'\n'],{type:'text/csv;charset=utf-8'}));
   kvUrls=[u1,u2,u3,u4];
-  const pr=PL_.map(([k,g])=>'<tr><td>'+esc(k)+'</td><td>'+nf(g.t.size)+'</td><td>'+nf(g.it.size)+'</td><td>'+nf(g.c)+'</td></tr>').join('');
-  out.innerHTML='<div class="alr kvr"><div class="alrt"><table id="kvp"><tr class="th"><td>Paket</td><td>Toko</td><td>Item</td><td>CTN</td></tr>'+pr+'</table></div>'
-   +'<div class="alrs"><div class="st"><span>Jumlah item</span><b>'+nf(A.size)+'</b></div><div class="st"><span>Total qty</span><b>'+nf(tq)+'</b></div><div class="st"><span>Total ctn</span><b>'+nf(tc,2)+'</b></div><div class="st"><span>Total Rp</span><b>'+nf(tr)+'</b></div>'
-   +'<div class="alrd"><a class="dl" href="#" id="kv_dl">Unduh</a></div></div></div>';
+  const pt=l=>'<table class="kvt"><tr class="th"><td>Paket</td><td>Toko</td><td>Item</td><td>CTN</td></tr>'+l.map(([k,g])=>'<tr><td>'+esc(k)+'</td><td>'+nf(g.t.size)+'</td><td>'+nf(g.it.size)+'</td><td>'+nf(g.c)+'</td></tr>').join('')+'</table>',
+   RT=[...new Set(PL_.map(([,g])=>g.rit||'-'))].sort((x,y)=>String(x).localeCompare(String(y),'id',{numeric:true})),
+   pg=RT.map(rt=>{const l=PL_.filter(([,g])=>(g.rit||'-')===rt),c=l.reduce((a,[,g])=>a+g.c,0);return'<div><div class="kvh">Rit '+esc(rt)+' <span>'+nf(l.length)+' paket · '+nf(c)+' ctn</span></div>'+pt(l)+'</div>'}).join(''),
+   ir=items.slice().sort((x,y)=>(x.pola==='BASIC'?0:1)-(y.pola==='BASIC'?0:1)||String(x.p).localeCompare(String(y.p),'id',{numeric:true})).map(x=>'<tr><td>'+esc(x.p)+'</td><td>'+esc(x.desc)+'</td><td>'+esc(x.pola)+'</td><td>'+nf(x.q)+'</td><td>'+nf(x.c,2)+'</td><td>'+nf(x.rp)+'</td></tr>').join('');
+  out.innerHTML='<div class="kvr"><div class="kvs"><div class="st"><span>Item</span><b>'+nf(A.size)+'</b></div><div class="st"><span>Qty</span><b>'+nf(tq)+'</b></div><div class="st"><span>CTN</span><b>'+nf(tc,2)+'</b></div><div class="st"><span>Rp</span><b>'+nf(tr)+'</b></div></div>'
+   +'<div class="kvsec">Ringkasan paket</div><div class="kvrt" style="grid-template-columns:repeat('+Math.min(RT.length,2)+',minmax(0,1fr))">'+pg+'</div>'
+   +'<div class="kvsec">Ringkasan item</div><div class="kvit"><table class="kvt kvi2"><tr class="th"><td>PRDCD</td><td>DESC</td><td>Pola1</td><td>QTY</td><td>CTN</td><td>RP</td></tr>'+ir+'</table></div>'
+   +'<div class="alrd"><a class="dl" href="#" id="kv_dl">Unduh</a></div></div>';
   $('#kv_dl').onclick=e=>{e.preventDefault();[[u1,nm],[u2,nx],[u3,nz],[u4,npk]].forEach(([u,n],i)=>setTimeout(()=>{const a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();a.remove()},i*700))};
   jm.textContent='Selesai. '+nf(res.length)+' baris alokasi dalam '+nf(PS.size)+' paket.'+pkTxt+dg}
  catch(e){jm.className='m e';jm.textContent=e.message}
