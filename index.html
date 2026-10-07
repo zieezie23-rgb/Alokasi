@@ -77,7 +77,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 .kvr{display:flex;flex-direction:column;gap:12px}.kvr .alrd{display:flex;justify-content:center}.kvr .alrd a.dl{margin:0;padding:10px 26px;font-size:15px}
 .kvs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.kvs .st{padding:6px 10px;text-align:right}.kvs .st span{font-size:11px}.kvs .st b{font-size:clamp(13px,3.6vw,19px);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kvsec{font-size:13px;font-weight:700;color:var(--ac2,#8ab4ff);border-left:4px solid var(--yel);padding-left:8px;margin-top:2px}
-.kvrt{display:grid;gap:12px}.kvh{font-weight:700;font-size:13px;margin-bottom:4px}.kvh span{font-weight:400;color:var(--mut);font-size:11.5px;margin-left:4px}
+.kvrt{display:grid;gap:12px}.kvh{font-weight:700;font-size:13px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}.kvt tr.tot td{font-weight:700;border-top:1px solid var(--line);position:sticky;bottom:0;background:var(--pn,#141b2d)}.kvh span{font-weight:400;color:var(--mut);font-size:11.5px;margin-left:0;white-space:nowrap;text-align:right}
 .kvt{width:100%;margin:0;border-collapse:collapse}.kvt td{text-align:right;white-space:nowrap}.kvt td:first-child{text-align:left}.kvt tr.th td{font-size:11.5px;color:var(--mut);font-weight:600}
 .kvit{overflow:auto;max-height:420px}.kvi2 td:nth-child(2),.kvi2 td:nth-child(3){text-align:left}.kvi2 td:nth-child(2){white-space:normal;min-width:140px}.kvi2 tr.th td{position:sticky;top:0;background:var(--pn,#141b2d)}
 @media(max-width:620px){.kvt td{padding:4px 5px;font-size:12px}.kvrt{gap:8px}.kvs{gap:5px}.kvs .st{padding:5px 6px;border-left-width:3px}.kvs .st span{font-size:10.5px}.kvs .st b{font-size:12.5px;letter-spacing:-.2px;overflow:visible;text-overflow:clip}.kvi2 td{font-size:11px;padding:4px 3px}.kvi2 td:nth-child(2){min-width:84px}}
@@ -931,13 +931,14 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
    IR=RT.map(rt=>{const m=new Map();for(const r of res){if((r.rit||'-')!==rt)continue;let g=m.get(r.pk);if(!g)m.set(r.pk,g={p:r.p,desc:r.desc,pola:r.p1,q:0,c:0,rp:0});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp}
     const l=[...m.values()].sort((x,y)=>(x.pola==='BASIC'?0:1)-(y.pola==='BASIC'?0:1)||String(x.p).localeCompare(String(y.p),'id',{numeric:true})),c=l.reduce((s,x)=>s+x.c,0);
     return'<div class="kvh" style="margin-top:12px">'+esc(kvRl(rt))+' <span>'+nf(l.length)+' item \u00b7 '+nf(c)+' ctn</span></div><div class="kvit"><table class="kvt kvi2"><tr class="th"><td>PRDCD</td><td>DESC</td><td>Pola1</td><td>QTY</td><td>CTN</td><td>RP</td></tr>'
-     +l.map(x=>'<tr><td>'+esc(x.p)+'</td><td>'+esc(x.desc)+'</td><td>'+esc(x.pola)+'</td><td>'+nf(x.q)+'</td><td>'+nf(x.c,2)+'</td><td>'+nf(x.rp)+'</td></tr>').join('')+'</table></div>'}).join('');
-  out.innerHTML='<div class="kvr"><div class="kvs"><div class="st"><span>Item</span><b>'+nf(A.size)+'</b></div><div class="st"><span>Qty</span><b>'+nf(tq)+'</b></div><div class="st"><span>CTN</span><b>'+nf(tc,2)+'</b></div><div class="st"><span>Rp</span><b>'+nf(tr)+'</b></div></div>'
+     +l.map(x=>'<tr><td>'+esc(x.p)+'</td><td>'+esc(x.desc)+'</td><td>'+esc(x.pola)+'</td><td>'+nf(x.q)+'</td><td>'+nf(x.c,2)+'</td><td>'+nf(x.rp)+'</td></tr>').join('')
+     +'<tr class="tot"><td colspan="3">Total</td><td>'+nf(l.reduce((s,x)=>s+x.q,0))+'</td><td>'+nf(c,2)+'</td><td>'+nf(l.reduce((s,x)=>s+x.rp,0))+'</td></tr></table></div>'}).join('');
+  out.innerHTML='<div class="kvr"><div class="kvs"><div class="st"><span>Item</span><b>'+nf(A.size)+'</b></div><div class="st"><span>Paket</span><b>'+nf(PS.size)+'</b></div><div class="st"><span>CTN</span><b>'+nf(tc,2)+'</b></div><div class="st"><span>Rp</span><b>'+nf(tr)+'</b></div></div>'
    +'<div class="kvsec">Ringkasan paket</div><div class="kvrt" style="grid-template-columns:repeat('+Math.min(RT.length,2)+',minmax(0,1fr))">'+pg+'</div>'
    +'<div class="kvsec">Ringkasan item</div>'+IR
    +'</div>';
   const dl=$('#kv_dl');dl.hidden=false;go.textContent='Hitung ulang';dl.onclick=e=>{e.preventDefault();[[u1,nm],[u2,nx],[u3,nz],[u4,npk]].forEach(([u,n],i)=>setTimeout(()=>{const a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();a.remove()},i*700))};
-  jm.textContent='Selesai. Paket terbentuk '+nf(PS.size)+' paket.'}
+  jm.textContent=''}
  catch(e){jm.className='m e';jm.textContent=e.message}
  go.disabled=false}
 $('#kv_go').onclick=kvCalc;
