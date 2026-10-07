@@ -776,6 +776,54 @@ let kvArt;$('#kv_rs').onclick=async()=>{const b=$('#kv_rs');
   for(const u of kvUrls)if(u)URL.revokeObjectURL(u);kvUrls=[];kvN.checked=false;$('#kv_dl').hidden=true;$('#kv_go').textContent='Hitung alokasi';await kvStat()}catch(e){$('#kv_um').textContent='Gagal reset: '+(e.message||e)}
  b.disabled=false};
 let kvUrls=[];
+// ---- Rekap Kanvas (xlsx 2 sheet): KEBUTUHAN (total per PRDCD) + PAKET (matriks ctn per toko per paket), mengikuti CONTOH.xlsx
+function kvBook(res,dt){
+ const X=t=>String(t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])),
+  CL=i=>{let s='';i++;while(i>0){const m=(i-1)%26;s=String.fromCharCode(65+m)+s;i=Math.floor((i-1)/26)}return s},
+  cs=(r,c,v,st)=>'<c r="'+CL(c)+r+'" s="'+st+'" t="inlineStr"><is><t xml:space="preserve">'+X(v)+'</t></is></c>',
+  cn=(r,c,v,st)=>'<c r="'+CL(c)+r+'" s="'+st+'"><v>'+(+(+v).toFixed(4))+'</v></c>',ce=(r,c,st)=>'<c r="'+CL(c)+r+'" s="'+st+'"/>',
+  rw=(r,cells,ht)=>'<row r="'+r+'"'+(ht?' ht="'+ht+'" customHeight="1"':'')+'>'+cells+'</row>',
+  srt=(a,b)=>String(a).localeCompare(String(b),'id',{numeric:true}),
+  MB=['JANUARI','FEBRUARI','MARET','APRIL','MEI','JUNI','JULI','AGUSTUS','SEPTEMBER','OKTOBER','NOVEMBER','DESEMBER'],
+  ritL=v=>{v=String(v??'').trim();return /^\d+$/.test(v)?'RIT'+v:v.toUpperCase()},
+  WS=(rows,cols,mg,land)=>'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols>'
+   +cols.map(([a,b,w])=>'<col min="'+a+'" max="'+b+'" width="'+w+'" customWidth="1"/>').join('')+'</cols><sheetData>'+rows+'</sheetData>'+(mg.length?'<mergeCells count="'+mg.length+'">'+mg.map(m=>'<mergeCell ref="'+m+'"/>').join('')+'</mergeCells>':'')
+   +'<pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup orientation="'+(land?'landscape':'portrait')+'" fitToWidth="1" fitToHeight="0"/></worksheet>';
+ // --- sheet 1: KEBUTUHAN (satu baris per PRDCD)
+ const IT=new Map();for(const r of res){const k=String(r.p);let g=IT.get(k);if(!g)IT.set(k,g={p:k,desc:r.desc,pola:r.p1,al:r.al,q:0,c:0,rp:0});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp}
+ const L1=[...IT.values()].sort((a,b)=>srt(a.p,b.p));let R1='',r=2,tq=0,tc=0,tr=0;
+ R1+=rw(2,cs(2,1,'KEBUTUHAN ALOKASI KANVAS '+String(dt.getDate()).padStart(2,'0')+' '+MB[dt.getMonth()]+' '+dt.getFullYear(),1),24)+rw(3,'',3);
+ R1+=rw(4,['PRDCD','DESC2','POLA1','ALAMAT','QTY','CTN','RP'].map((h,i)=>cs(4,i+1,h,2)).join(''),24);r=5;
+ for(const g of L1){tq+=g.q;tc+=g.c;tr+=g.rp;R1+=rw(r,cs(r,1,g.p,3)+cs(r,2,g.desc,4)+cs(r,3,g.pola,4)+cs(r,4,g.al,4)+cn(r,5,g.q,5)+cn(r,6,g.c,5)+cn(r,7,g.rp,5),24);r++}
+ R1+=rw(r,cs(r,1,'Grand Total',7)+ce(r,2,8)+ce(r,3,8)+ce(r,4,8)+cn(r,5,tq,6)+cn(r,6,tc,6)+cn(r,7,tr,6),24);
+ const S1=WS(R1,[[2,2,12.14],[3,3,56.57],[4,4,9.14],[5,5,11.71],[6,6,11.86],[7,7,9.14],[8,8,15.71]],['B'+r+':E'+r],false);
+ // --- sheet 2: PAKET (satu blok per paket: item x toko, isi = ctn alokasi)
+ const PK=new Map();for(const r of res){let g=PK.get(r.paket);if(!g)PK.set(r.paket,g={n:r.paket,rit:r.rit,t:new Set(),it:new Map()});g.t.add(r.t);const k=String(r.p);let i=g.it.get(k);if(!i)g.it.set(k,i={p:k,desc:r.desc,al:r.al,fr:r.fr,c:new Map()});i.c.set(r.t,(i.c.get(r.t)||0)+r.ctn)}
+ let R2='',y=1;const mg=[];
+ for(const g of [...PK.values()].sort((a,b)=>srt(a.n,b.n))){
+  const T=[...g.t].sort(),nt=T.length,tcI=5+nt,no=+(String(g.n).match(/\d+/)||[0])[0]||g.n;
+  R2+=rw(y,cs(y,0,'PAKET',9)+cn(y,1,no,9)+ce(y,8,10)+cs(y,9,'No pick : ',11)+ce(y,10,12)+ce(y,11,12)+ce(y,12,12),42)+rw(y+1,'',5.1);y+=2;
+  R2+=rw(y,['PRDCD','DESC2','ALAMAT','FRAC','RIT'].concat(T,['Total']).map((h,i)=>cs(y,i,h,13)).join(''),42);y++;
+  const cT=new Array(nt).fill(0);let gt=0;
+  for(const i of [...g.it.values()].sort((a,b)=>srt(a.p,b.p))){let s=0,cells=cs(y,0,i.p,14)+cs(y,1,i.desc,15)+cs(y,2,i.al,15)+cn(y,3,i.fr,14)+cs(y,4,ritL(g.rit),14);
+   T.forEach((t,k)=>{const v=i.c.get(t);if(v){cells+=cn(y,5+k,v,14);s+=v;cT[k]+=v}else cells+=ce(y,5+k,14)});
+   gt+=s;R2+=rw(y,cells+cn(y,tcI,s,16),42);y++}
+  R2+=rw(y,cs(y,0,'Total',16)+ce(y,1,17)+ce(y,2,17)+ce(y,3,17)+ce(y,4,17)+cT.map((v,k)=>cn(y,5+k,v,16)).join('')+cn(y,tcI,gt,16),42);mg.push('A'+y+':E'+y);y+=2}
+ const S2=WS(R2,[[1,1,11.86],[2,2,56.14],[3,3,13],[4,4,8.71],[5,14,9.14]],mg,true);
+ const xf=(n,f,fl,bd,al)=>'<xf numFmtId="'+n+'" fontId="'+f+'" fillId="'+fl+'" borderId="'+bd+'" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment '+al+'/></xf>',
+  V='vertical="center"',CC='horizontal="center" '+V,
+  styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="165" formatCode="_ * #,##0_ ;_ * \\-#,##0_ ;_ * &quot;-&quot;??_ ;_ @_ "/></numFmts><fonts count="5"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="18"/><name val="Calibri"/></font><font><sz val="12"/><name val="Calibri"/></font><font><b/><sz val="12"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFFF00"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF000000"/></left><right style="thin"><color rgb="FF000000"/></right><top style="thin"><color rgb="FF000000"/></top><bottom style="thin"><color rgb="FF000000"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="18">'
+   +xf(0,0,0,0,'')+xf(0,2,0,0,'horizontal="left" '+V)+xf(0,1,0,1,CC)+xf(0,0,0,1,CC)+xf(0,0,0,1,V)+xf(165,0,0,1,V)+xf(165,1,0,1,V)+xf(0,1,0,1,CC)+xf(0,0,0,1,V)
+   +xf(0,2,0,0,CC+' wrapText="1"')+xf(0,2,2,0,CC)+xf(0,2,2,0,'horizontal="right" '+V)+xf(0,2,2,0,'horizontal="centerContinuous" '+V)
+   +xf(0,4,0,1,CC+' wrapText="1"')+xf(0,3,0,1,CC+' wrapText="1"')+xf(0,3,0,1,V)+xf(0,4,0,1,CC+' wrapText="1"')+xf(0,3,0,1,V)
+   +'</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>',
+  NS='xmlns="http://schemas.openxmlformats.org/package/2006/relationships"',HD='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>',RT='http://schemas.openxmlformats.org/officeDocument/2006/relationships/',WT='application/vnd.openxmlformats-officedocument.spreadsheetml.';
+ return zipStore([
+  ['[Content_Types].xml',HD+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="'+WT+'sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="'+WT+'styles+xml"/></Types>'],
+  ['_rels/.rels',HD+'<Relationships '+NS+'><Relationship Id="rId1" Type="'+RT+'officeDocument" Target="xl/workbook.xml"/></Relationships>'],
+  ['xl/workbook.xml',HD+'<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="'+RT.slice(0,-1)+'"><sheets><sheet name="KEBUTUHAN" sheetId="1" r:id="rId1"/><sheet name="PAKET" sheetId="2" r:id="rId2"/></sheets></workbook>'],
+  ['xl/_rels/workbook.xml.rels',HD+'<Relationships '+NS+'><Relationship Id="rId1" Type="'+RT+'worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="'+RT+'worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="'+RT+'styles" Target="styles.xml"/></Relationships>'],
+  ['xl/styles.xml',styles],['xl/worksheets/sheet1.xml',S1],['xl/worksheets/sheet2.xml',S2]])}
 // qty alokasi (ctn) = rounddown(ctn sisa); bila hasilnya di atas Kelipatan CTN, dibulatkan turun ke kelipatan itu (isian kosong = tanpa pembulatan, awal = 5)
 const kvQc=(cs,kl)=>{let q=Math.floor(Math.max(0,cs)+1e-9);if(kl>1&&q>kl)q=Math.floor(q/kl)*kl;return q};
 // ---- paket per ZG: maks 8 toko, total 180-260 ctn per paket; bila lebih dari batas dibagi serata mungkin
@@ -864,7 +912,7 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   const IT=new Map();for(const r of res){let g=IT.get(r.pk);if(!g)IT.set(r.pk,g={p:r.p,desc:r.desc,pola:r.p1,rk:Number(r.zn)===17,zn:r.zn,al:r.al,fr:r.fr,mn:r.mn,ac:r.ac,st:r.stock,q:0,c:0,rp:0,tk:new Set()});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp;g.tk.add(r.t)}
   const items=[...IT.values()].sort((a,b)=>String(a.zn).localeCompare(String(b.zn),'id',{numeric:true})||b.q-a.q),
    MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],bs=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1),per=String(bs.getDate()).padStart(2,'0')+' '+MB[bs.getMonth()]+' '+String(bs.getFullYear()).slice(-2);
-  const u2=URL.createObjectURL(alkBook(items,per,'List Item Pemasangan Alokasi Kanvas'));
+  const u2=URL.createObjectURL(kvBook(res,dt));
   const PF=new Map();for(const r of res){let g=PF.get(r.paket);if(!g)PF.set(r.paket,g={n:r.paket,l:[]});g.l.push(r.t+','+r.p+','+r.q+',Alokasi Kanvas')}
   const u3=URL.createObjectURL(zipStore([...PF.values()].sort((a,b)=>a.n.localeCompare(b.n,'id',{numeric:true})).map(g=>[g.n+'.csv','TOKO,PRDCD,QTY,KET\r\n'+g.l.join('\r\n')+'\r\n']),'application/zip'));
   const PS=new Map();for(const r of res){let g=PS.get(r.paket);if(!g)PS.set(r.paket,g={zg:r.zg,rit:r.rit,car:new Set(),jad:new Set(),t:new Set(),it:new Set(),c:0});g.car.add(r.car);g.jad.add(r.jad);g.t.add(r.t);g.it.add(r.pk);g.c+=r.ctn}
