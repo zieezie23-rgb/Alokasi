@@ -81,7 +81,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 .kvt{width:100%;margin:0;border-collapse:collapse}.kvt td{text-align:right;white-space:nowrap}.kvt td:first-child{text-align:left}.kvt tr.th td{font-size:11.5px;color:var(--mut);font-weight:600}
 .kvit{overflow:auto;max-height:420px}.kvi2 td:nth-child(2),.kvi2 td:nth-child(3){text-align:left}.kvi2 td:nth-child(2){white-space:normal;min-width:140px}.kvi2 tr.th td{position:sticky;top:0;background:var(--pn,#141b2d)}
 @media(max-width:620px){.kvt td{padding:4px 5px;font-size:12px}.kvrt{gap:8px}.kvs{gap:5px}.kvs .st{padding:5px 6px;border-left-width:3px}.kvs .st span{font-size:10.5px}.kvs .st b{font-size:12.5px;letter-spacing:-.2px;overflow:visible;text-overflow:clip}.kvi2 td{font-size:11px;padding:4px 3px}.kvi2 td:nth-child(2){min-width:84px}}
-.c.isi.kvi{grid-template-columns:auto repeat(4,minmax(0,1fr)) auto}.kck{display:flex;gap:12px;align-items:flex-end}.c.isi.kvi label.ck{flex-direction:row;align-items:center;gap:5px;height:36px;box-sizing:border-box;white-space:nowrap;font-size:13px;cursor:pointer}.c.isi.kvi label.ck input{width:18px;height:18px;margin:0;padding:0;accent-color:var(--yel,#fc0)}.c.isi.kvi button{width:auto;padding:0 12px}#kv_hp{grid-template-columns:max-content minmax(0,1fr);align-items:baseline}#kv_hp b{white-space:nowrap}.kvb{display:flex;gap:6px;align-items:flex-end}.kvb a.dl{margin:0;height:36px;box-sizing:border-box;display:inline-flex;align-items:center;padding:0 14px;font-size:13px;white-space:nowrap}.kvb a.dl[hidden]{display:none}@media(max-width:620px){.c.isi.kvi{grid-template-columns:repeat(2,minmax(0,1fr))}.kck{grid-column:1/-1}.kvb{grid-column:1/-1}.kvb>*{flex:1;justify-content:center;text-align:center}}
+.c.isi.kvi{grid-template-columns:auto repeat(4,minmax(0,1fr)) auto}.kck{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}.c.isi.kvi label.ck{flex-direction:row;align-items:center;gap:5px;height:36px;box-sizing:border-box;white-space:nowrap;font-size:13px;cursor:pointer}.c.isi.kvi label.ck input{width:18px;height:18px;margin:0;padding:0;accent-color:var(--yel,#fc0)}.c.isi.kvi button{width:auto;padding:0 12px}#kv_hp{grid-template-columns:max-content minmax(0,1fr);align-items:baseline}#kv_hp b{white-space:nowrap}.kvb{display:flex;gap:6px;align-items:flex-end}.kvb a.dl{margin:0;height:36px;box-sizing:border-box;display:inline-flex;align-items:center;padding:0 14px;font-size:13px;white-space:nowrap}.kvb a.dl[hidden]{display:none}@media(max-width:620px){.c.isi.kvi{grid-template-columns:repeat(2,minmax(0,1fr))}.kck{grid-column:1/-1}.kvb{grid-column:1/-1}.kvb>*{flex:1;justify-content:center;text-align:center}}
 @media(max-width:620px){.alr{grid-template-columns:1fr}.alrs{order:-1;display:grid;grid-template-columns:1fr 1fr;gap:8px}.alrs .st{padding:10px 12px}.alrs .st span{font-size:13px}.alrs .st b{font-size:20px;margin-top:4px}.alrd{grid-column:1/-1}.alrd a.dl{padding:12px 24px;font-size:16px}}
 .c.k label.ck{flex-direction:row;align-items:center;gap:5px;align-self:flex-end;height:38px;box-sizing:border-box;white-space:nowrap;font-size:13px;cursor:pointer}.c.k label.ck input{width:18px;height:18px;margin:0;accent-color:var(--yel,#fc0)}
 @media(max-width:560px){.c.t.k{flex-wrap:wrap;row-gap:8px}}
@@ -145,9 +145,9 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <b>Sudah alokasi</b><span>GAB (12 karakter), PLU (8), atau TOKO (4). Yang ada di file ini tidak ikut dialokasi</span></div>
 <div class="m" id="kv_um" style="margin-top:8px;white-space:normal"></div><div id="kv_ul" style="margin-top:6px"></div></section>
 <section class="p gen"><div class="alt">Alokasi</div><div class="c isi kvi">
-<div class="kck"><label class="ck" title="Pola 1 Terkait: tercentang = QTY_NAT − NPB, tidak = QTY_SEA − NPB"><input type="checkbox" id="kv_nat">Nataru</label><label class="ck" title="Hasil perhitungan di bawah 5 ctn tidak diikutkan"><input type="checkbox" id="kv_m5">&gt;=5ctn</label></div>
-<label>Max item (per rit)<input type="number" id="kv_mi" min="0" step="1" inputmode="numeric"></label>
-<label>Max paket (per rit)<input type="number" id="kv_mp" min="0" step="1" inputmode="numeric"></label>
+<div class="kck"><label class="ck" title="Pola 1 Terkait: tercentang = QTY_NAT − NPB, tidak = QTY_SEA − NPB"><input type="checkbox" id="kv_nat">Nataru</label><label class="ck" title="Hasil perhitungan di bawah 5 ctn tidak diikutkan"><input type="checkbox" id="kv_m5">&gt;=5ctn</label><label class="ck" title="Daftar item RIT1 dan RIT2 dibuat sama"><input type="checkbox" id="kv_same">Item Sama</label></div>
+<label>Max item<input type="number" id="kv_mi" min="0" step="1" inputmode="numeric"></label>
+<label>Max paket<input type="number" id="kv_mp" min="0" step="1" inputmode="numeric"></label>
 <label>Kelipatan CTN<input type="number" id="kv_kl" min="0" step="1" inputmode="numeric"></label>
 <label>Min stock (ctn)<input type="number" id="kv_ms" min="0" step="1" inputmode="numeric"></label>
 <div class="kvb"><button id="kv_go">Hitung alokasi</button><a class="dl" href="#" id="kv_dl" hidden>Unduh</a></div></div>
@@ -770,12 +770,13 @@ $('#kv_fa').onchange=async e=>{const inp=e.target,fs=[...inp.files],um=$('#kv_um
   return'['+KVN[k][0]+'] '+lbl},kvStat)};
 const kvN=$('#kv_nat');kvN.checked=!!KV.nat;kvN.onchange=()=>{KV.nat=kvN.checked;kvSave()};
 const kvM5=$('#kv_m5');kvM5.checked=!!KV.m5;kvM5.onchange=()=>{KV.m5=kvM5.checked;kvSave()};
+const kvSm=$('#kv_same');kvSm.checked=!!KV.same;kvSm.onchange=()=>{KV.same=kvSm.checked;kvSave()};
 for(const[id,k]of[['kv_mi','mi'],['kv_mp','mp'],['kv_kl','kl'],['kv_ms','ms']]){const e=$('#'+id);if(KV[k]!=null)e.value=KV[k];e.oninput=()=>{KV[k]=e.value===''?null:Math.max(0,Math.floor(+e.value));kvSave()}}
 let kvArt;$('#kv_rs').onclick=async()=>{const b=$('#kv_rs');
  if(!b.classList.contains('ask')){b.classList.add('ask');b.textContent='Yakin? Klik lagi';clearTimeout(kvArt);kvArt=setTimeout(()=>{b.classList.remove('ask');b.textContent='Reset'},5000);return}
  clearTimeout(kvArt);b.classList.remove('ask');b.textContent='Reset';b.disabled=true;
  try{for(const k of KVK)await tx('readwrite',s=>s.delete('kv_'+k));$('#kv_res').innerHTML='';$('#kv_msg').textContent='';$('#kv_msg').className='m';$('#kv_um').textContent='';$('#kv_ul').innerHTML='';
-  for(const k of Object.keys(KV))delete KV[k];kvSave();$('#kv_mi').value='';$('#kv_mp').value='';$('#kv_ms').value='';kvM5.checked=false;KV.kl=5;$('#kv_kl').value=5;kvSave();
+  for(const k of Object.keys(KV))delete KV[k];kvSave();$('#kv_mi').value='';$('#kv_mp').value='';$('#kv_ms').value='';kvM5.checked=false;kvSm.checked=false;KV.kl=5;$('#kv_kl').value=5;kvSave();
   for(const u of kvUrls)if(u)URL.revokeObjectURL(u);kvUrls=[];kvN.checked=false;$('#kv_dl').hidden=true;$('#kv_go').textContent='Hitung alokasi';await kvStat()}catch(e){$('#kv_um').textContent='Gagal reset: '+(e.message||e)}
  b.disabled=false};
 let kvUrls=[];
@@ -816,6 +817,13 @@ function kvBook(res,dt){
    gt+=s;R2+=rw(y,cells+cn(y,tcI,s,16),42);y++}
   R2+=rw(y,cs(y,0,'Total',16)+ce(y,1,17)+ce(y,2,17)+ce(y,3,17)+ce(y,4,17)+cT.map((v,k)=>cn(y,5+k,v,16)).join('')+cn(y,tcI,gt,16),42);mg.push('A'+y+':E'+y);y+=2}
  const S2=WS(R2,[[1,1,11.86],[2,2,56.14],[3,3,13],[4,4,8.71],[5,14,9.14]],mg,true);
+ // --- sheet 3: RINGKASAN PAKET (satu baris per paket)
+ const PS3=new Map();for(const r of res){let g=PS3.get(r.paket);if(!g)PS3.set(r.paket,g={zg:r.zg,rit:r.rit,car:new Set(),jad:new Set(),t:new Set(),it:new Set(),c:0});g.car.add(r.car);g.jad.add(r.jad);g.t.add(r.t);g.it.add(r.pk);g.c+=r.ctn}
+ let R3=rw(1,['PAKET','ZG','RITASE','CAR','JADWAL','JML_TOKO','JML_ITEM','TOTAL_CTN','TOKO'].map((x,i)=>cs(1,i,x,13)).join(''),30),y3=2,tT=0,tC=0;
+ for(const[k,g]of[...PS3].sort((a,b)=>srt(a[0],b[0]))){tT+=g.t.size;tC+=g.c;
+  R3+=rw(y3,cs(y3,0,k,14)+cs(y3,1,g.zg||'',14)+cs(y3,2,kvRl(g.rit),14)+cs(y3,3,[...g.car].filter(Boolean).join('/'),14)+cs(y3,4,[...g.jad].filter(Boolean).join('/'),14)+cn(y3,5,g.t.size,14)+cn(y3,6,g.it.size,14)+cn(y3,7,g.c,14)+cs(y3,8,[...g.t].sort().join(' '),15),24);y3++}
+ R3+=rw(y3,cs(y3,0,'Total',16)+ce(y3,1,17)+ce(y3,2,17)+ce(y3,3,17)+ce(y3,4,17)+cn(y3,5,tT,16)+ce(y3,6,17)+cn(y3,7,tC,16)+ce(y3,8,17),24);
+ const S3=WS(R3,[[1,1,12],[2,2,9],[3,3,9],[4,4,16],[5,5,14],[6,8,11],[9,9,70]],['A'+y3+':A'+y3].slice(0,0),true);
  const xf=(n,f,fl,bd,al)=>'<xf numFmtId="'+n+'" fontId="'+f+'" fillId="'+fl+'" borderId="'+bd+'" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment '+al+'/></xf>',
   V='vertical="center"',CC='horizontal="center" '+V,
   styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="165" formatCode="_ * #,##0_ ;_ * \\-#,##0_ ;_ * &quot;-&quot;??_ ;_ @_ "/></numFmts><fonts count="5"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="18"/><name val="Calibri"/></font><font><sz val="12"/><name val="Calibri"/></font><font><b/><sz val="12"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFFF00"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF000000"/></left><right style="thin"><color rgb="FF000000"/></right><top style="thin"><color rgb="FF000000"/></top><bottom style="thin"><color rgb="FF000000"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="19">'
@@ -825,11 +833,11 @@ function kvBook(res,dt){
    +'</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>',
   NS='xmlns="http://schemas.openxmlformats.org/package/2006/relationships"',HD='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>',RT='http://schemas.openxmlformats.org/officeDocument/2006/relationships/',WT='application/vnd.openxmlformats-officedocument.spreadsheetml.';
  return zipStore([
-  ['[Content_Types].xml',HD+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="'+WT+'sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="'+WT+'styles+xml"/></Types>'],
+  ['[Content_Types].xml',HD+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="'+WT+'sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/worksheets/sheet3.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="'+WT+'styles+xml"/></Types>'],
   ['_rels/.rels',HD+'<Relationships '+NS+'><Relationship Id="rId1" Type="'+RT+'officeDocument" Target="xl/workbook.xml"/></Relationships>'],
-  ['xl/workbook.xml',HD+'<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="'+RT.slice(0,-1)+'"><sheets><sheet name="KEBUTUHAN" sheetId="1" r:id="rId1"/><sheet name="PAKET" sheetId="2" r:id="rId2"/></sheets></workbook>'],
-  ['xl/_rels/workbook.xml.rels',HD+'<Relationships '+NS+'><Relationship Id="rId1" Type="'+RT+'worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="'+RT+'worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="'+RT+'styles" Target="styles.xml"/></Relationships>'],
-  ['xl/styles.xml',styles],['xl/worksheets/sheet1.xml',S1],['xl/worksheets/sheet2.xml',S2]])}
+  ['xl/workbook.xml',HD+'<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="'+RT.slice(0,-1)+'"><sheets><sheet name="KEBUTUHAN" sheetId="1" r:id="rId1"/><sheet name="PAKET" sheetId="2" r:id="rId2"/><sheet name="RINGKASAN PAKET" sheetId="3" r:id="rId3"/></sheets></workbook>'],
+  ['xl/_rels/workbook.xml.rels',HD+'<Relationships '+NS+'><Relationship Id="rId1" Type="'+RT+'worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="'+RT+'worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="'+RT+'worksheet" Target="worksheets/sheet3.xml"/><Relationship Id="rId4" Type="'+RT+'styles" Target="styles.xml"/></Relationships>'],
+  ['xl/styles.xml',styles],['xl/worksheets/sheet1.xml',S1],['xl/worksheets/sheet2.xml',S2],['xl/worksheets/sheet3.xml',S3]])}
 // qty alokasi (ctn) = rounddown(ctn sisa); bila hasilnya di atas Kelipatan CTN, dibulatkan turun ke kelipatan itu (isian kosong = tanpa pembulatan, awal = 5)
 const kvQc=(cs,kl)=>{let q=Math.floor(Math.max(0,cs)+1e-9);if(kl>1&&q>kl)q=Math.floor(q/kl)*kl;return q};
 // ---- paket per ZG: maks 8 toko, total 200-260 ctn per paket; bila lebih dari batas dibagi serata mungkin
@@ -854,9 +862,9 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   const[ms,tk,im,tg,np,sk,rk,dn]=await Promise.all(['master','toko','item','target','npb','kv_stock','kv_toko','kv_done'].map(get));
   if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target di tab Master.');
   if(!sk)throw Error('Upload Stock akhir dulu.');if(!rk)throw Error('Upload Rekap Toko dulu.');
-  jm.textContent='Menghitung alokasi...';await tick();KV_CONC=KV.mp>0;
+  jm.textContent='Menghitung alokasi...';await tick();KV_CONC=false;
   const ST=alkStock(sk.rows),ST7=alkStock7(ST),RK=kvToko(rk.rows),DN=dn?alkDone(dn.rows):null,T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
-   nat=!!KV.nat,m5=!!KV.m5,mst=KV.ms>0?KV.ms:null,mxp=KV.mp>0?KV.mp:null,mi=KV.mi>0?KV.mi:null,kl=KV.kl>1?KV.kl:null,
+   nat=!!KV.nat,m5=!!KV.m5,same=!!KV.same,mst=KV.ms>0?KV.ms:null,mxp=KV.mp>0?KV.mp:null,mi=KV.mi>0?KV.mi:null,kl=KV.kl>1?KV.kl:null,
    used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim();let i=0,lolos=0;
   const DNP=new Set(),DNT=new Set();if(DN)for(const g of DN){if(g.length===8)DNP.add(PK(g));else if(g.length===4)DNT.add(g.toUpperCase())}
   for(const[gab,[t,p,S,Vs]]of tg){
@@ -882,8 +890,11 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
    for(const r of res){let g=R.get(r.rit);if(!g)R.set(r.rit,g=new Map());let it=g.get(r.pk);if(!it)g.set(r.pk,it={b:r.p1==='BASIC'?0:1,c:0,z:new Map()});it.c+=r.ctn;const zk=r.zg||'-';let zm=it.z.get(zk);if(!zm)it.z.set(zk,zm=new Map());zm.set(r.t,(zm.get(r.t)||0)+r.ctn)}
    const memo=new Map(),npk=m=>{const l=[...m].sort((x,y)=>x[0]<y[0]?-1:1),k=l.map(x=>x[0]+':'+x[1].toFixed(3)).join('|');let v=memo.get(k);if(v===undefined){const p=kvPack(l);let T=0;for(const x of l)T+=x[1];const nn=p?p.length:0;v=[nn,nn+Math.min(.99,Math.max(0,T-nn*KV_MIN)/KV_MIN)];memo.set(k,v)}return v},
     mrg=(a,b)=>{const m=new Map(a);for(const[t,c]of b)m.set(t,(m.get(t)||0)+c);return m};
-   const keep=new Set();let ri=0;
-   for(const[rt,g]of R){if(++ri%5===0){jm.textContent='Memilih item: rit '+ri+' dari '+R.size;await tick()}
+   const keep=new Set();let ri=0,GR=[...R];
+   if(same&&R.size>1){// Item Sama: satu daftar item untuk semua rit; kandidat hanya item yang ada di setiap rit, nilai dihitung gabungan
+    const G=new Map(),rs=[...R.values()];for(const pk of rs[0].keys()){if(!rs.every(g=>g.has(pk)))continue;const it={b:rs[0].get(pk).b,c:0,z:new Map()};for(const[rt,g]of R){const x=g.get(pk);it.c+=x.c;for(const[zk,zm]of x.z)it.z.set(rt+'\u0002'+zk,zm)}G.set(pk,it)}
+    GR=[['*',G]]}
+   for(const[rt,g]of GR){if(++ri%5===0){jm.textContent='Memilih item: rit '+ri+' dari '+GR.length;await tick()}
     const cur=new Map(),cnt=new Map(),prg=new Map(),left=new Set(g.keys());let n=0;
     for(const ph of[0,1])while(n<mi){let best=null;
      for(const pk of left){const it=g.get(pk);if(it.b!==ph)continue;let gain=0,pg=0;
@@ -892,17 +903,21 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
       if(!best||gain>best.g||gain===best.g&&pg>best.pg+1e-9||gain===best.g&&Math.abs(pg-best.pg)<=1e-9&&(it.c>best.c||it.c===best.c&&pk<best.pk))best={pk,g:gain,pg,c:it.c}}
      if(!best)break;const it=g.get(best.pk);
      for(const[zk,zm]of it.z){const m=mrg(cur.get(zk)||new Map(),zm),v=npk(m);cur.set(zk,m);cnt.set(zk,v[0]);prg.set(zk,v[1])}
-     keep.add(rt+'\u0001'+best.pk);left.delete(best.pk);n++}}
+     for(const rr of(rt==='*'?R.keys():[rt]))keep.add(rr+'\u0001'+best.pk);left.delete(best.pk);n++}}
    res=res.filter(r=>keep.has(r.rit+'\u0001'+r.pk))}
-  // Toko yang hanya mendapat 1 item tidak diikutkan (minimal 2 item per toko)
+  // build: toko minimal 2 item -> paket per ZG (satu toko tidak dipecah) -> batas Max paket per rit
+  const build=r0=>{let res=r0;
   {const TC=new Map();for(const r of res){let s=TC.get(r.t);if(!s)TC.set(r.t,s=new Set());s.add(r.pk)}res=res.filter(r=>TC.get(r.t).size>=2)}
-  // paket per ZG (satu toko tidak dipecah); ZG yang tidak memenuhi syarat tidak dijadikan paket dan tidak ikut
-  const ST_=new Map();for(const r of res){let g=ST_.get(r.zg||'-');if(!g)ST_.set(r.zg||'-',g=new Map());g.set(r.t,(g.get(r.t)||0)+r.ctn)}
+  // ZG yang tidak memenuhi syarat tidak dijadikan paket dan tidak ikut
+  const ST_=new Map(),ZRT=new Map();for(const r of res){const zk=r.zg||'-';let g=ST_.get(zk);if(!g)ST_.set(zk,g=new Map());g.set(r.t,(g.get(r.t)||0)+r.ctn);if(!ZRT.has(zk))ZRT.set(zk,r.rit||'')}
+  // Pembagian paket dalam satu ZG: dibagi rata. Hanya di rit yang kena Max paket, isi paket dimaksimalkan (diisi mendekati batas atas)
+  const ZL=[...ST_].sort((a,b)=>a[0]<b[0]?-1:1).map(([zg,g])=>{const list=[...g].sort((a,b)=>a[0]<b[0]?-1:1);return{zg,list,rit:ZRT.get(zg)||'',pk:kvPack(list)}});
+  if(mxp!=null){const RC=new Map();for(const z of ZL)if(z.pk)RC.set(z.rit,(RC.get(z.rit)||0)+z.pk.length);
+   KV_CONC=true;for(const z of ZL)if(z.pk&&RC.get(z.rit)>mxp){const p2=kvPack(z.list);if(p2)z.pk=p2}KV_CONC=false}
   const TP=new Map();let nz_=0,uz=0,uc=0,pn=0;
-  for(const[zg,g]of [...ST_].sort((a,b)=>a[0]<b[0]?-1:1)){nz_++;const list=[...g].sort((a,b)=>a[0]<b[0]?-1:1),pk=kvPack(list);
-   if(!pk){uz++;for(const[,c]of list)uc+=c;continue}
-   pk.map(m=>m.sort((a,b)=>a-b)).sort((a,b)=>a[0]-b[0]).forEach((m,n)=>{for(const x of m)TP.set(list[x][0],'Paket '+(pn+1+n))})
-   pn+=pk.length}
+  for(const z of ZL){nz_++;if(!z.pk){uz++;for(const[,c]of z.list)uc+=c;continue}
+   z.pk.map(m=>m.sort((a,b)=>a-b)).sort((a,b)=>a[0]-b[0]).forEach((m,n)=>{for(const x of m)TP.set(z.list[x][0],'Paket '+(pn+1+n))})
+   pn+=z.pk.length}
   res=res.filter(r=>TP.has(r.t));for(const r of res)r.paket=TP.get(r.t);
   // Max paket per rit: pertahankan paket dengan CTN terbesar di tiap rit, lalu nomor paket disusun ulang berurutan
   if(mxp!=null){const PM=new Map();for(const r of res){let g=PM.get(r.paket);if(!g)PM.set(r.paket,g={rit:r.rit||'',c:0,n:+(String(r.paket).match(/\d+/)||[0])[0]});g.c+=r.ctn}
@@ -910,6 +925,14 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
    const kp=[];for(const l of BR.values())l.sort((a,b)=>b[1].c-a[1].c||a[1].n-b[1].n).slice(0,mxp).forEach(([k,g])=>kp.push([k,g.n]));
    kp.sort((a,b)=>a[1]-b[1]);const NM=new Map(kp.map(([k],i)=>[k,'Paket '+(i+1)]));
    res=res.filter(r=>NM.has(r.paket));for(const r of res)r.paket=NM.get(r.paket)}
+  return{res,nz_,uz,uc}};
+  let B=build(res);
+  // Item Sama: ulangi sampai daftar item tiap rit identik (hanya item yang ada di semua rit yang dipakai)
+  if(same){for(let it=0;it<12;it++){const S=new Map();for(const r of B.res){const k=r.rit||'';let s=S.get(k);if(!s)S.set(k,s=new Set());s.add(r.pk)}
+    if(S.size<2)break;let com=null;for(const s of S.values())com=com?new Set([...com].filter(x=>s.has(x))):new Set(s);
+    let eq=true;for(const s of S.values())if(s.size!==com.size){eq=false;break}
+    if(eq)break;res=res.filter(r=>com.has(r.pk));B=build(res)}}
+  res=B.res;const{nz_,uz,uc}=B;
   const pkTxt=uz?' '+fn(uz)+' dari '+fn(nz_)+' ZG tidak memenuhi syarat paket ('+Number(uc).toLocaleString('id-ID',{maximumFractionDigits:0})+' ctn, tidak diikutkan).':'';
   const dg=' PLU Target ditemukan di stock akhir: '+fn(hit.size)+' dari '+fn(seen.size)+'.';
   if(!res.length){jm.textContent='Tidak ada baris alokasi yang memenuhi syarat ('+fn(lolos)+' baris lolos filter).'+pkTxt+dg;go.disabled=false;return}
@@ -931,9 +954,8 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   const PF=new Map();for(const r of res){let g=PF.get(r.paket);if(!g)PF.set(r.paket,g={n:r.paket,l:[]});g.l.push(r.t+','+r.p+','+r.q+',Alokasi Kanvas')}
   const u3=URL.createObjectURL(zipStore([...PF.values()].sort((a,b)=>a.n.localeCompare(b.n,'id',{numeric:true})).map(g=>[g.n+'.csv','TOKO,PRDCD,QTY,KET\r\n'+g.l.join('\r\n')+'\r\n']),'application/zip'));
   const PS=new Map();for(const r of res){let g=PS.get(r.paket);if(!g)PS.set(r.paket,g={zg:r.zg,rit:r.rit,car:new Set(),jad:new Set(),t:new Set(),it:new Set(),c:0});g.car.add(r.car);g.jad.add(r.jad);g.t.add(r.t);g.it.add(r.pk);g.c+=r.ctn}
-  const PL_=[...PS].sort((a,b)=>a[0].localeCompare(b[0],'id',{numeric:true})),npk='Paket_Kanvas_'+tail+'.csv';
-  const u4=URL.createObjectURL(new Blob(['\ufeff'+['PAKET,ZG,RITASE,CAR,JADWAL,JML_TOKO,JML_ITEM,TOTAL_CTN,TOKO'].concat(PL_.map(([k,g])=>[k,g.zg,g.rit,[...g.car].filter(Boolean).join('/'),[...g.jad].filter(Boolean).join('/'),g.t.size,g.it.size,+g.c.toFixed(4),[...g.t].sort().join(' ')].map(f).join(','))).join('\n')+'\n'],{type:'text/csv;charset=utf-8'}));
-  kvUrls=[u1,u2,u3,u4];
+  const PL_=[...PS].sort((a,b)=>a[0].localeCompare(b[0],'id',{numeric:true}));
+  kvUrls=[u1,u2,u3];
   const pt=l=>'<table class="kvt"><tr class="th"><td>Paket</td><td>Toko</td><td>Item</td><td>CTN</td></tr>'+l.map(([k,g])=>'<tr><td>'+esc(k)+'</td><td>'+nf(g.t.size)+'</td><td>'+nf(g.it.size)+'</td><td>'+nf(g.c)+'</td></tr>').join('')+'</table>',
    RT=[...new Set(PL_.map(([,g])=>g.rit||'-'))].sort((x,y)=>String(x).localeCompare(String(y),'id',{numeric:true})),
    pg=RT.map(rt=>{const l=PL_.filter(([,g])=>(g.rit||'-')===rt),c=l.reduce((a,[,g])=>a+g.c,0);return'<div><div class="kvh">'+esc(kvRl(rt))+' <span>'+nf(l.length)+' paket · '+nf(c)+' ctn</span></div>'+pt(l)+'</div>'}).join(''),
@@ -946,7 +968,7 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
    +'<div class="kvsec">Ringkasan paket</div><div class="kvrt" style="grid-template-columns:repeat('+Math.min(RT.length,2)+',minmax(0,1fr))">'+pg+'</div>'
    +'<div class="kvsec">Ringkasan item</div>'+IR
    +'</div>';
-  const dl=$('#kv_dl');dl.hidden=false;go.textContent='Hitung ulang';dl.onclick=e=>{e.preventDefault();[[u1,nm],[u2,nx],[u3,nz],[u4,npk]].forEach(([u,n],i)=>setTimeout(()=>{const a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();a.remove()},i*700))};
+  const dl=$('#kv_dl');dl.hidden=false;go.textContent='Hitung ulang';dl.onclick=e=>{e.preventDefault();[[u1,nm],[u2,nx],[u3,nz]].forEach(([u,n],i)=>setTimeout(()=>{const a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();a.remove()},i*700))};
   jm.textContent=''}
  catch(e){jm.className='m e';jm.textContent=e.message}
  go.disabled=false}
