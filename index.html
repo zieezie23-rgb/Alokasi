@@ -824,6 +824,12 @@ function kvBook(res,dt){
   R3+=rw(y3,cs(y3,0,k,14)+cs(y3,1,g.zg||'',14)+cs(y3,2,kvRl(g.rit),14)+cs(y3,3,[...g.car].filter(Boolean).join('/'),14)+cs(y3,4,[...g.jad].filter(Boolean).join('/'),14)+cn(y3,5,g.t.size,14)+cn(y3,6,g.it.size,14)+cn(y3,7,g.c,14)+cs(y3,8,[...g.t].sort().join(' '),15),24);y3++}
  R3+=rw(y3,cs(y3,0,'Total',16)+ce(y3,1,17)+ce(y3,2,17)+ce(y3,3,17)+ce(y3,4,17)+cn(y3,5,tT,16)+ce(y3,6,17)+cn(y3,7,tC,16)+ce(y3,8,17),24);
  const S3=WS(R3,[[1,1,12],[2,2,9],[3,3,9],[4,4,16],[5,5,14],[6,8,11],[9,9,70]],['A'+y3+':A'+y3].slice(0,0),true);
+ // --- sheet 4: Detail (satu baris per toko per PLU)
+ const DH=['AM','KOTA','TOKO','NAMA TOKO','RITASE','CAR','JADWAL','ZG','PAKET','GAB','PLU','DESC','ZONA','POLA1','KET NATARU','FRAC','MINOR','ACOST','STOCK_AKHIR','QTY_TARGET','QTY_NPB','SISA','CTN_SISA','QTY_ALOKASI','CTN_ALOKASI','RP_ALOKASI'];
+ let R4=rw(1,DH.map((x,i)=>cs(1,i,x,13)).join(''),30),y4=2;
+ for(const r of res){const v=[r.am,r.kota,r.t,r.nt,r.rit,r.car,r.jad,r.zg,r.paket,r.gab,r.p,r.desc,r.zn,r.p1,r.kt,r.fr,r.mn,r.ac,r.stock,r.tg,r.npb,r.sisa,r.cs,r.q,r.ctn,r.rp];
+  R4+='<row r="'+y4+'">'+v.map((x,i)=>i<15?cs(y4,i,x??'',4):cn(y4,i,+x||0,4)).join('')+'</row>';y4++}
+ const S4=WS(R4,[[1,3,11],[4,4,28],[5,10,10],[11,11,11],[12,12,42],[13,26,12]],[],true).replace('<sheetView workbookViewId="0"/>','<sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView>');
  const xf=(n,f,fl,bd,al)=>'<xf numFmtId="'+n+'" fontId="'+f+'" fillId="'+fl+'" borderId="'+bd+'" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment '+al+'/></xf>',
   V='vertical="center"',CC='horizontal="center" '+V,
   styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="165" formatCode="_ * #,##0_ ;_ * \\-#,##0_ ;_ * &quot;-&quot;??_ ;_ @_ "/></numFmts><fonts count="5"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="18"/><name val="Calibri"/></font><font><sz val="12"/><name val="Calibri"/></font><font><b/><sz val="12"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFFF00"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF000000"/></left><right style="thin"><color rgb="FF000000"/></right><top style="thin"><color rgb="FF000000"/></top><bottom style="thin"><color rgb="FF000000"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="19">'
@@ -833,11 +839,11 @@ function kvBook(res,dt){
    +'</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>',
   NS='xmlns="http://schemas.openxmlformats.org/package/2006/relationships"',HD='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>',RT='http://schemas.openxmlformats.org/officeDocument/2006/relationships/',WT='application/vnd.openxmlformats-officedocument.spreadsheetml.';
  return zipStore([
-  ['[Content_Types].xml',HD+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="'+WT+'sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/worksheets/sheet3.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="'+WT+'styles+xml"/></Types>'],
+  ['[Content_Types].xml',HD+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="'+WT+'sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/worksheets/sheet3.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/worksheets/sheet4.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="'+WT+'styles+xml"/></Types>'],
   ['_rels/.rels',HD+'<Relationships '+NS+'><Relationship Id="rId1" Type="'+RT+'officeDocument" Target="xl/workbook.xml"/></Relationships>'],
-  ['xl/workbook.xml',HD+'<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="'+RT.slice(0,-1)+'"><sheets><sheet name="KEBUTUHAN" sheetId="1" r:id="rId1"/><sheet name="PAKET" sheetId="2" r:id="rId2"/><sheet name="RINGKASAN PAKET" sheetId="3" r:id="rId3"/></sheets></workbook>'],
-  ['xl/_rels/workbook.xml.rels',HD+'<Relationships '+NS+'><Relationship Id="rId1" Type="'+RT+'worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="'+RT+'worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="'+RT+'worksheet" Target="worksheets/sheet3.xml"/><Relationship Id="rId4" Type="'+RT+'styles" Target="styles.xml"/></Relationships>'],
-  ['xl/styles.xml',styles],['xl/worksheets/sheet1.xml',S1],['xl/worksheets/sheet2.xml',S2],['xl/worksheets/sheet3.xml',S3]])}
+  ['xl/workbook.xml',HD+'<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="'+RT.slice(0,-1)+'"><sheets><sheet name="KEBUTUHAN" sheetId="1" r:id="rId1"/><sheet name="PAKET" sheetId="2" r:id="rId2"/><sheet name="RINGKASAN PAKET" sheetId="3" r:id="rId3"/><sheet name="Detail" sheetId="4" r:id="rId5"/></sheets></workbook>'],
+  ['xl/_rels/workbook.xml.rels',HD+'<Relationships '+NS+'><Relationship Id="rId1" Type="'+RT+'worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="'+RT+'worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="'+RT+'worksheet" Target="worksheets/sheet3.xml"/><Relationship Id="rId4" Type="'+RT+'styles" Target="styles.xml"/><Relationship Id="rId5" Type="'+RT+'worksheet" Target="worksheets/sheet4.xml"/></Relationships>'],
+  ['xl/styles.xml',styles],['xl/worksheets/sheet1.xml',S1],['xl/worksheets/sheet2.xml',S2],['xl/worksheets/sheet3.xml',S3],['xl/worksheets/sheet4.xml',S4]])}
 // qty alokasi (ctn) = rounddown(ctn sisa); bila hasilnya di atas Kelipatan CTN, dibulatkan turun ke kelipatan itu (isian kosong = tanpa pembulatan, awal = 5)
 const kvQc=(cs,kl)=>{let q=Math.floor(Math.max(0,cs)+1e-9);if(kl>1&&q>kl)q=Math.floor(q/kl)*kl;return q};
 // ---- paket per ZG: maks 8 toko, total 200-260 ctn per paket; bila lebih dari batas dibagi serata mungkin
@@ -939,14 +945,9 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   const A=new Set();let tq=0,tc=0,tr=0;
   for(const r of res){A.add(r.pk);tq+=r.q;tc+=r.ctn;tr+=r.rp}
   const nf=(v,dc=0)=>Number(v).toLocaleString('id-ID',{maximumFractionDigits:dc});
-  const H=['AM','KOTA','TOKO','NAMA TOKO','RITASE','CAR','JADWAL','ZG','PAKET','GAB','PLU','DESC','ZONA','POLA1','KET NATARU','FRAC','MINOR','ACOST','STOCK_AKHIR','QTY_TARGET','QTY_NPB','SISA','CTN_SISA','QTY_ALOKASI','CTN_ALOKASI','RP_ALOKASI'],
-   f=x=>typeof x==='number'?String(x):/[;,"\n]/.test(x)?'"'+String(x).replace(/"/g,'""')+'"':String(x),parts=['\ufeff'+H.join(',')+'\n'];let buf=[];
-  for(const r of res)buf.push([r.am,r.kota,r.t,r.nt,r.rit,r.car,r.jad,r.zg,r.paket,r.gab,r.p,r.desc,r.zn,r.p1,r.kt,r.fr,r.mn,r.ac,r.stock,r.tg,r.npb,r.sisa,+r.cs.toFixed(4),r.q,+r.ctn.toFixed(4),+r.rp.toFixed(2)].map(f).join(','));
-  parts.push(buf.join('\n')+'\n');
   const dt=new Date(),tail=(($('#gd').value||'G113').replace(/[^\w-]/g,'')||'G113')+'_'+String(dt.getDate()).padStart(2,'0')+'_'+['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'][dt.getMonth()]+'_'+String(dt.getFullYear()).slice(-2),
-   nm='Kanvas_'+tail+'.csv',nx='Rekap_Kanvas_'+tail+'.xlsx',nz='Kanvas_CSV_per_paket_'+tail+'.zip';
+   nx='Rekap_Kanvas_'+tail+'.xlsx',nz='Kanvas_CSV_per_paket_'+tail+'.zip';
   for(const u of kvUrls)if(u)URL.revokeObjectURL(u);
-  const u1=URL.createObjectURL(new Blob(parts,{type:'text/csv;charset=utf-8'}));
   const IT=new Map();for(const r of res){let g=IT.get(r.pk);if(!g)IT.set(r.pk,g={p:r.p,desc:r.desc,pola:r.p1,rk:Number(r.zn)===17,zn:r.zn,al:r.al,fr:r.fr,mn:r.mn,ac:r.ac,st:r.stock,q:0,c:0,rp:0,tk:new Set()});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp;g.tk.add(r.t)}
   const items=[...IT.values()].sort((a,b)=>String(a.zn).localeCompare(String(b.zn),'id',{numeric:true})||b.q-a.q),
    MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],bs=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1),per=String(bs.getDate()).padStart(2,'0')+' '+MB[bs.getMonth()]+' '+String(bs.getFullYear()).slice(-2);
@@ -955,7 +956,7 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   const u3=URL.createObjectURL(zipStore([...PF.values()].sort((a,b)=>a.n.localeCompare(b.n,'id',{numeric:true})).map(g=>[g.n+'.csv','TOKO,PRDCD,QTY,KET\r\n'+g.l.join('\r\n')+'\r\n']),'application/zip'));
   const PS=new Map();for(const r of res){let g=PS.get(r.paket);if(!g)PS.set(r.paket,g={zg:r.zg,rit:r.rit,car:new Set(),jad:new Set(),t:new Set(),it:new Set(),c:0});g.car.add(r.car);g.jad.add(r.jad);g.t.add(r.t);g.it.add(r.pk);g.c+=r.ctn}
   const PL_=[...PS].sort((a,b)=>a[0].localeCompare(b[0],'id',{numeric:true}));
-  kvUrls=[u1,u2,u3];
+  kvUrls=[u2,u3];
   const pt=l=>'<table class="kvt"><tr class="th"><td>Paket</td><td>Toko</td><td>Item</td><td>CTN</td></tr>'+l.map(([k,g])=>'<tr><td>'+esc(k)+'</td><td>'+nf(g.t.size)+'</td><td>'+nf(g.it.size)+'</td><td>'+nf(g.c)+'</td></tr>').join('')+'</table>',
    RT=[...new Set(PL_.map(([,g])=>g.rit||'-'))].sort((x,y)=>String(x).localeCompare(String(y),'id',{numeric:true})),
    pg=RT.map(rt=>{const l=PL_.filter(([,g])=>(g.rit||'-')===rt),c=l.reduce((a,[,g])=>a+g.c,0);return'<div><div class="kvh">'+esc(kvRl(rt))+' <span>'+nf(l.length)+' paket · '+nf(c)+' ctn</span></div>'+pt(l)+'</div>'}).join(''),
@@ -968,7 +969,7 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
    +'<div class="kvsec">Ringkasan paket</div><div class="kvrt" style="grid-template-columns:repeat('+Math.min(RT.length,2)+',minmax(0,1fr))">'+pg+'</div>'
    +'<div class="kvsec">Ringkasan item</div>'+IR
    +'</div>';
-  const dl=$('#kv_dl');dl.hidden=false;go.textContent='Hitung ulang';dl.onclick=e=>{e.preventDefault();[[u1,nm],[u2,nx],[u3,nz]].forEach(([u,n],i)=>setTimeout(()=>{const a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();a.remove()},i*700))};
+  const dl=$('#kv_dl');dl.hidden=false;go.textContent='Hitung ulang';dl.onclick=e=>{e.preventDefault();[[u2,nx],[u3,nz]].forEach(([u,n],i)=>setTimeout(()=>{const a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();a.remove()},i*700))};
   jm.textContent=''}
  catch(e){jm.className='m e';jm.textContent=e.message}
  go.disabled=false}
