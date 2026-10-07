@@ -81,7 +81,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 .kvt{width:100%;margin:0;border-collapse:collapse}.kvt td{text-align:right;white-space:nowrap}.kvt td:first-child{text-align:left}.kvt tr.th td{font-size:11.5px;color:var(--mut);font-weight:600}
 .kvit{overflow:auto;max-height:420px}.kvi2 td:nth-child(2),.kvi2 td:nth-child(3){text-align:left}.kvi2 td:nth-child(2){white-space:normal;min-width:140px}.kvi2 tr.th td{position:sticky;top:0;background:var(--pn,#141b2d)}
 @media(max-width:620px){.kvt td{padding:4px 5px;font-size:12px}.kvrt{gap:8px}.kvs{gap:5px}.kvs .st{padding:5px 6px;border-left-width:3px}.kvs .st span{font-size:10.5px}.kvs .st b{font-size:12.5px;letter-spacing:-.2px;overflow:visible;text-overflow:clip}.kvi2 td{font-size:11px;padding:4px 3px}.kvi2 td:nth-child(2){min-width:84px}}
-.c.isi.kvi{grid-template-columns:auto repeat(3,minmax(0,1fr)) auto}.kck{display:flex;gap:12px;align-items:flex-end}.c.isi.kvi label.ck{flex-direction:row;align-items:center;gap:5px;height:36px;box-sizing:border-box;white-space:nowrap;font-size:13px;cursor:pointer}.c.isi.kvi label.ck input{width:18px;height:18px;margin:0;padding:0;accent-color:var(--yel,#fc0)}.c.isi.kvi button{width:auto;padding:0 12px}#kv_hp{grid-template-columns:max-content minmax(0,1fr);align-items:baseline}#kv_hp b{white-space:nowrap}.kvb{display:flex;gap:6px;align-items:flex-end}.kvb a.dl{margin:0;height:36px;box-sizing:border-box;display:inline-flex;align-items:center;padding:0 14px;font-size:13px;white-space:nowrap}.kvb a.dl[hidden]{display:none}@media(max-width:620px){.c.isi.kvi{grid-template-columns:repeat(3,minmax(0,1fr))}.kck{grid-column:1/-1}.kvb{grid-column:1/-1}.kvb>*{flex:1;justify-content:center;text-align:center}}
+.c.isi.kvi{grid-template-columns:auto repeat(4,minmax(0,1fr)) auto}.kck{display:flex;gap:12px;align-items:flex-end}.c.isi.kvi label.ck{flex-direction:row;align-items:center;gap:5px;height:36px;box-sizing:border-box;white-space:nowrap;font-size:13px;cursor:pointer}.c.isi.kvi label.ck input{width:18px;height:18px;margin:0;padding:0;accent-color:var(--yel,#fc0)}.c.isi.kvi button{width:auto;padding:0 12px}#kv_hp{grid-template-columns:max-content minmax(0,1fr);align-items:baseline}#kv_hp b{white-space:nowrap}.kvb{display:flex;gap:6px;align-items:flex-end}.kvb a.dl{margin:0;height:36px;box-sizing:border-box;display:inline-flex;align-items:center;padding:0 14px;font-size:13px;white-space:nowrap}.kvb a.dl[hidden]{display:none}@media(max-width:620px){.c.isi.kvi{grid-template-columns:repeat(2,minmax(0,1fr))}.kck{grid-column:1/-1}.kvb{grid-column:1/-1}.kvb>*{flex:1;justify-content:center;text-align:center}}
 @media(max-width:620px){.alr{grid-template-columns:1fr}.alrs{order:-1;display:grid;grid-template-columns:1fr 1fr;gap:8px}.alrs .st{padding:10px 12px}.alrs .st span{font-size:13px}.alrs .st b{font-size:20px;margin-top:4px}.alrd{grid-column:1/-1}.alrd a.dl{padding:12px 24px;font-size:16px}}
 .c.k label.ck{flex-direction:row;align-items:center;gap:5px;align-self:flex-end;height:38px;box-sizing:border-box;white-space:nowrap;font-size:13px;cursor:pointer}.c.k label.ck input{width:18px;height:18px;margin:0;accent-color:var(--yel,#fc0)}
 @media(max-width:560px){.c.t.k{flex-wrap:wrap;row-gap:8px}}
@@ -147,6 +147,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <section class="p gen"><div class="alt">Alokasi</div><div class="c isi kvi">
 <div class="kck"><label class="ck" title="Pola 1 Terkait: tercentang = QTY_NAT − NPB, tidak = QTY_SEA − NPB"><input type="checkbox" id="kv_nat">Nataru</label><label class="ck" title="Hasil perhitungan di bawah 5 ctn tidak diikutkan"><input type="checkbox" id="kv_m5">&gt;=5ctn</label></div>
 <label>Max item (per rit)<input type="number" id="kv_mi" min="0" step="1" inputmode="numeric"></label>
+<label>Max paket (per rit)<input type="number" id="kv_mp" min="0" step="1" inputmode="numeric"></label>
 <label>Kelipatan CTN<input type="number" id="kv_kl" min="0" step="1" inputmode="numeric"></label>
 <label>Min stock (ctn)<input type="number" id="kv_ms" min="0" step="1" inputmode="numeric"></label>
 <div class="kvb"><button id="kv_go">Hitung alokasi</button><a class="dl" href="#" id="kv_dl" hidden>Unduh</a></div></div>
@@ -769,12 +770,12 @@ $('#kv_fa').onchange=async e=>{const inp=e.target,fs=[...inp.files],um=$('#kv_um
   return'['+KVN[k][0]+'] '+lbl},kvStat)};
 const kvN=$('#kv_nat');kvN.checked=!!KV.nat;kvN.onchange=()=>{KV.nat=kvN.checked;kvSave()};
 const kvM5=$('#kv_m5');kvM5.checked=!!KV.m5;kvM5.onchange=()=>{KV.m5=kvM5.checked;kvSave()};
-for(const[id,k]of[['kv_mi','mi'],['kv_kl','kl'],['kv_ms','ms']]){const e=$('#'+id);if(KV[k]!=null)e.value=KV[k];e.oninput=()=>{KV[k]=e.value===''?null:Math.max(0,Math.floor(+e.value));kvSave()}}
+for(const[id,k]of[['kv_mi','mi'],['kv_mp','mp'],['kv_kl','kl'],['kv_ms','ms']]){const e=$('#'+id);if(KV[k]!=null)e.value=KV[k];e.oninput=()=>{KV[k]=e.value===''?null:Math.max(0,Math.floor(+e.value));kvSave()}}
 let kvArt;$('#kv_rs').onclick=async()=>{const b=$('#kv_rs');
  if(!b.classList.contains('ask')){b.classList.add('ask');b.textContent='Yakin? Klik lagi';clearTimeout(kvArt);kvArt=setTimeout(()=>{b.classList.remove('ask');b.textContent='Reset'},5000);return}
  clearTimeout(kvArt);b.classList.remove('ask');b.textContent='Reset';b.disabled=true;
  try{for(const k of KVK)await tx('readwrite',s=>s.delete('kv_'+k));$('#kv_res').innerHTML='';$('#kv_msg').textContent='';$('#kv_msg').className='m';$('#kv_um').textContent='';$('#kv_ul').innerHTML='';
-  for(const k of Object.keys(KV))delete KV[k];kvSave();$('#kv_mi').value='';$('#kv_ms').value='';kvM5.checked=false;KV.kl=5;$('#kv_kl').value=5;kvSave();
+  for(const k of Object.keys(KV))delete KV[k];kvSave();$('#kv_mi').value='';$('#kv_mp').value='';$('#kv_ms').value='';kvM5.checked=false;KV.kl=5;$('#kv_kl').value=5;kvSave();
   for(const u of kvUrls)if(u)URL.revokeObjectURL(u);kvUrls=[];kvN.checked=false;$('#kv_dl').hidden=true;$('#kv_go').textContent='Hitung alokasi';await kvStat()}catch(e){$('#kv_um').textContent='Gagal reset: '+(e.message||e)}
  b.disabled=false};
 let kvUrls=[];
@@ -855,7 +856,7 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   if(!sk)throw Error('Upload Stock akhir dulu.');if(!rk)throw Error('Upload Rekap Toko dulu.');
   jm.textContent='Menghitung alokasi...';await tick();
   const ST=alkStock(sk.rows),ST7=alkStock7(ST),RK=kvToko(rk.rows),DN=dn?alkDone(dn.rows):null,T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
-   nat=!!KV.nat,m5=!!KV.m5,mst=KV.ms>0?KV.ms:null,mi=KV.mi>0?KV.mi:null,kl=KV.kl>1?KV.kl:null,
+   nat=!!KV.nat,m5=!!KV.m5,mst=KV.ms>0?KV.ms:null,mxp=KV.mp>0?KV.mp:null,mi=KV.mi>0?KV.mi:null,kl=KV.kl>1?KV.kl:null,
    used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim();let i=0,lolos=0;
   const DNP=new Set(),DNT=new Set();if(DN)for(const g of DN){if(g.length===8)DNP.add(PK(g));else if(g.length===4)DNT.add(g.toUpperCase())}
   for(const[gab,[t,p,S,Vs]]of tg){
@@ -893,6 +894,8 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
      for(const[zk,zm]of it.z){const m=mrg(cur.get(zk)||new Map(),zm),v=npk(m);cur.set(zk,m);cnt.set(zk,v[0]);prg.set(zk,v[1])}
      keep.add(rt+'\u0001'+best.pk);left.delete(best.pk);n++}}
    res=res.filter(r=>keep.has(r.rit+'\u0001'+r.pk))}
+  // Toko yang hanya mendapat 1 item tidak diikutkan (minimal 2 item per toko)
+  {const TC=new Map();for(const r of res){let s=TC.get(r.t);if(!s)TC.set(r.t,s=new Set());s.add(r.pk)}res=res.filter(r=>TC.get(r.t).size>=2)}
   // paket per ZG (satu toko tidak dipecah); ZG yang tidak memenuhi syarat tidak dijadikan paket dan tidak ikut
   const ST_=new Map();for(const r of res){let g=ST_.get(r.zg||'-');if(!g)ST_.set(r.zg||'-',g=new Map());g.set(r.t,(g.get(r.t)||0)+r.ctn)}
   const TP=new Map();let nz_=0,uz=0,uc=0,pn=0;
@@ -901,6 +904,12 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
    pk.map(m=>m.sort((a,b)=>a-b)).sort((a,b)=>a[0]-b[0]).forEach((m,n)=>{for(const x of m)TP.set(list[x][0],'Paket '+(pn+1+n))})
    pn+=pk.length}
   res=res.filter(r=>TP.has(r.t));for(const r of res)r.paket=TP.get(r.t);
+  // Max paket per rit: pertahankan paket dengan CTN terbesar di tiap rit, lalu nomor paket disusun ulang berurutan
+  if(mxp!=null){const PM=new Map();for(const r of res){let g=PM.get(r.paket);if(!g)PM.set(r.paket,g={rit:r.rit||'',c:0,n:+(String(r.paket).match(/\d+/)||[0])[0]});g.c+=r.ctn}
+   const BR=new Map();for(const[k,g]of PM){let l=BR.get(g.rit);if(!l)BR.set(g.rit,l=[]);l.push([k,g])}
+   const kp=[];for(const l of BR.values())l.sort((a,b)=>b[1].c-a[1].c||a[1].n-b[1].n).slice(0,mxp).forEach(([k,g])=>kp.push([k,g.n]));
+   kp.sort((a,b)=>a[1]-b[1]);const NM=new Map(kp.map(([k],i)=>[k,'Paket '+(i+1)]));
+   res=res.filter(r=>NM.has(r.paket));for(const r of res)r.paket=NM.get(r.paket)}
   const pkTxt=uz?' '+fn(uz)+' dari '+fn(nz_)+' ZG tidak memenuhi syarat paket ('+Number(uc).toLocaleString('id-ID',{maximumFractionDigits:0})+' ctn, tidak diikutkan).':'';
   const dg=' PLU Target ditemukan di stock akhir: '+fn(hit.size)+' dari '+fn(seen.size)+'.';
   if(!res.length){jm.textContent='Tidak ada baris alokasi yang memenuhi syarat ('+fn(lolos)+' baris lolos filter).'+pkTxt+dg;go.disabled=false;return}
