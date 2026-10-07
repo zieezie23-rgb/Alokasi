@@ -832,11 +832,11 @@ function kvBook(res,dt){
   ['xl/styles.xml',styles],['xl/worksheets/sheet1.xml',S1],['xl/worksheets/sheet2.xml',S2]])}
 // qty alokasi (ctn) = rounddown(ctn sisa); bila hasilnya di atas Kelipatan CTN, dibulatkan turun ke kelipatan itu (isian kosong = tanpa pembulatan, awal = 5)
 const kvQc=(cs,kl)=>{let q=Math.floor(Math.max(0,cs)+1e-9);if(kl>1&&q>kl)q=Math.floor(q/kl)*kl;return q};
-// ---- paket per ZG: maks 8 toko, total 180-260 ctn per paket; bila lebih dari batas dibagi serata mungkin
-const KV_MIN=180,KV_MAX=260,KV_TK=8;
+// ---- paket per ZG: maks 8 toko, total 200-260 ctn per paket; bila lebih dari batas dibagi serata mungkin
+const KV_MIN=200,KV_MAX=260,KV_TK=8;let KV_CONC=false;
 function kvSplit(list,k){const idx=list.map((_,i)=>i).sort((a,b)=>list[b][1]-list[a][1]||a-b),P=Array.from({length:k},()=>({s:0,m:[]}));
  for(const i of idx){let b=null;for(const p of P)if(p.m.length<KV_TK&&(!b||p.s<b.s))b=p;if(!b)b=P[0];b.m.push(i);b.s+=list[i][1]}
- const cost=()=>{let v=0,mx=-1e9,mn=1e9;for(const p of P){v+=Math.max(0,KV_MIN-p.s)+Math.max(0,p.s-KV_MAX)+Math.max(0,p.m.length-KV_TK)*1000+(p.m.length?0:1000);mx=Math.max(mx,p.s);mn=Math.min(mn,p.s)}return[v,mx-mn]},
+ const cost=()=>{let v=0,sq=0,mx=-1e9,mn=1e9;for(const p of P){v+=Math.max(0,KV_MIN-p.s)+Math.max(0,p.s-KV_MAX)+Math.max(0,p.m.length-KV_TK)*1000+(p.m.length?0:1000);mx=Math.max(mx,p.s);mn=Math.min(mn,p.s);sq+=p.s*p.s}return[v,KV_CONC?-sq:mx-mn]},
   less=(a,b)=>a[0]<b[0]||a[0]===b[0]&&a[1]<b[1];
  let cur=cost();
  for(let pass=0;pass<300;pass++){let imp=false;
@@ -854,7 +854,7 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   const[ms,tk,im,tg,np,sk,rk,dn]=await Promise.all(['master','toko','item','target','npb','kv_stock','kv_toko','kv_done'].map(get));
   if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target di tab Master.');
   if(!sk)throw Error('Upload Stock akhir dulu.');if(!rk)throw Error('Upload Rekap Toko dulu.');
-  jm.textContent='Menghitung alokasi...';await tick();
+  jm.textContent='Menghitung alokasi...';await tick();KV_CONC=KV.mp>0;
   const ST=alkStock(sk.rows),ST7=alkStock7(ST),RK=kvToko(rk.rows),DN=dn?alkDone(dn.rows):null,T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
    nat=!!KV.nat,m5=!!KV.m5,mst=KV.ms>0?KV.ms:null,mxp=KV.mp>0?KV.mp:null,mi=KV.mi>0?KV.mi:null,kl=KV.kl>1?KV.kl:null,
    used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim();let i=0,lolos=0;
