@@ -346,7 +346,7 @@ async function draw(){const meta=(await get('meta'))||{},box=$('#src');box.inner
  for(const k in SRC){const D=await get(k),n=k==='npb'?(D?D.m.size:0):(D?(D.size??D.length):0),mt=meta[k]||{};
   const el=document.createElement('div');el.className='r';
   el.innerHTML=`<div class="n">${SRC[k][0]}</div>
-  <div class="m" style="color:#4ade80" title="${(mt.file||'')+' · '+(mt.time||'')}">${n&&mt.time?(fdl(tpd(mt.time))||fdt(mt.time)):''}</div>
+  <div class="m" style="color:${(()=>{const d=tpd(mt.time),t=new Date();return d&&d.toDateString()===t.toDateString()?'#4ade80':'#fff'})()}" title="${(mt.file||'')+' · '+(mt.time||'')}">${n&&mt.time?(fdl(tpd(mt.time))||fdt(mt.time)):''}</div>
   <div>${n?`<b>${fn(n)}</b> ${k==='npb'?'GAB':'baris'}`:'<span class="e">Belum ada data</span>'}</div>
   `;
   if(k==='npb')nbn=n;box.appendChild(el);const hd=document.querySelector(`#hp [data-hd="${k}"]`);if(hd)hd.innerHTML=k==='pomgg'?((n||nbn)?`<button type="button" class="g" data-dl="pomgg" title="Unduh data PO dan NPB (Excel)">Unduh PO &amp; NPB</button>`:''):(n&&k!=='master'&&k!=='npb'?`<button type="button" class="g" data-dl="${k}" title="Unduh data ${SRC[k][0]}">Unduh</button>`:'')};luUpdate()}
@@ -951,7 +951,7 @@ function kvPilihPaket(P,L,rows,o){const m5=o.m5,lim=o.mxp!=null?o.mxp:Infinity,m
    for(let i=0;i<cand.length;i++){if(cand[i].g.key!==p.g.key)continue;const c=peek(cand[i].t);if(c>=15&&p.c+c<=hi&&c>bc){bc=c;bi=i}}
    if(bi<0)break;const[x]=cand.splice(bi,1);if(fit(x.t)){p.st.push(x.t);p.c+=ct(x.t)}}}
  return{acc,RS}}
-function kvNomor(S,G,P){const acc=[...S.acc].sort((a,b)=>kvSrt(a.rit,b.rit)||b.c-a.c),res=[],inP=new Set();
+function kvNomor(S,G,P){const zk=p=>[...p.g.zg].sort(kvSrt)[0]||'',acc=[...S.acc].sort((a,b)=>kvSrt(a.rit,b.rit)||kvSrt(zk(a),zk(b))||b.c-a.c),res=[],inP=new Set();
  acc.forEach((p,i)=>{for(const t of p.st){inP.add(t);for(const r of S.RS.get(t))if(r.q>0){r.paket='Paket '+(i+1);res.push(r)}}});
  const gz=new Set(acc.map(p=>p.g.key));let uz=0,uc=0;for(const g of G.values())if(!gz.has(g.key))uz++;
  for(const[t,rs]of S.RS)if(!inP.has(t))for(const r of rs)uc+=r.q0/r.fr;
