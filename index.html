@@ -857,12 +857,12 @@ function kvSplit(list,k){const n=list.length,base=list.map((_,i)=>i).sort((a,b)=
  // satu percobaan: isi awal serakah menurut urutan idx, lalu perbaiki dengan memindah/menukar toko antar paket
  const attempt=idx=>{const P=Array.from({length:k},()=>({s:0,m:[]}));
   for(const i of idx){let b=null;for(const p of P)if(p.m.length<KV_TK&&(!b||p.s<b.s))b=p;if(!b)b=P[0];b.m.push(i);b.s+=list[i][1]}
-  let cur=cost(P);
+  let cur=cost(P),cv=cur[0];const pen=(s,n)=>Math.max(0,KV_MIN-s)+Math.max(0,s-KV_MAX)+Math.max(0,n-KV_TK)*1000+(n?0:1000);
   for(let pass=0;pass<300;pass++){let imp=false;
    for(let a=0;a<k;a++)for(let b=0;b<k;b++){if(a===b)continue;const A=P[a],B=P[b];
     for(let x=0;x<A.m.length;x++){
-     {const i=A.m[x];A.m.splice(x,1);B.m.push(i);A.s-=list[i][1];B.s+=list[i][1];const c=cost(P);if(less(c,cur)){cur=c;imp=true;x--;continue}B.m.pop();A.m.splice(x,0,i);A.s+=list[i][1];B.s-=list[i][1]}
-     for(let y=0;y<B.m.length;y++){const i=A.m[x],j=B.m[y];A.m[x]=j;B.m[y]=i;const d=list[j][1]-list[i][1];A.s+=d;B.s-=d;const c=cost(P);if(less(c,cur)){cur=c;imp=true;break}A.m[x]=i;B.m[y]=j;A.s-=d;B.s+=d}}}
+     {const i=A.m[x],w=list[i][1];if(cv-pen(A.s,A.m.length)-pen(B.s,B.m.length)+pen(A.s-w,A.m.length-1)+pen(B.s+w,B.m.length+1)<=cv){A.m.splice(x,1);B.m.push(i);A.s-=w;B.s+=w;const c=cost(P);if(less(c,cur)){cur=c;cv=c[0];imp=true;x--;continue}B.m.pop();A.m.splice(x,0,i);A.s+=w;B.s-=w}}
+     for(let y=0;y<B.m.length;y++){const i=A.m[x],j=B.m[y],d=list[j][1]-list[i][1];if(cv-pen(A.s,A.m.length)-pen(B.s,B.m.length)+pen(A.s+d,A.m.length)+pen(B.s-d,B.m.length)>cv)continue;A.m[x]=j;B.m[y]=i;A.s+=d;B.s-=d;const c=cost(P);if(less(c,cur)){cur=c;cv=c[0];imp=true;break}A.m[x]=i;B.m[y]=j;A.s-=d;B.s+=d}}}
    if(!imp)break}
   return[cur,P]};
  let best=attempt(base);
@@ -871,7 +871,8 @@ function kvSplit(list,k){const n=list.length,base=list.map((_,i)=>i).sort((a,b)=
   for(let t=0;t<6&&best[0][0]>0;t++){const idx=[...base];for(let i=idx.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]]}
    const r=attempt(idx);if(less(r[0],best[0]))best=r}}
  return best[0][0]===0?best[1].map(p=>p.m):null}
-function kvPackA(list,A){const a=KV_MIN,b=KV_MAX;if(A){KV_MIN=150;KV_MAX=180}try{return kvPack(list)}finally{KV_MIN=a;KV_MAX=b}}
+const KV_PM=new Map();
+function kvPackA(list,A){const key=(A?1:0)+(KV_CONC?'c':'n')+list.map(x=>x[1]).join(',');if(KV_PM.has(key))return KV_PM.get(key);const a=KV_MIN,b=KV_MAX;if(A){KV_MIN=150;KV_MAX=180}let r;try{r=kvPack(list)}finally{KV_MIN=a;KV_MAX=b}KV_PM.set(key,r);return r}
 // Grup ZG yang boleh digabung dalam 1 paket (ubah di sini jika ada perubahan). ZG yang tidak ada di daftar tidak pernah digabung.
 const KV_FAM=[['A1','A2','A3','A4','A5','A6'],['A7','A9','A10'],['A11','A12'],['B1','B2','B3'],['B5','B6','B7','B8','B9'],['B10','B11'],['C4','C5','C6'],['C7','C8','C9','C10'],['D1','D2','D3'],['D4','D5'],['F1','F2'],['G2','G3'],['G4','G5']],
  KV_FM=new Map(),KV_FI=new Map();KV_FAM.forEach((f,i)=>f.forEach((z,n)=>{KV_FM.set(z,i);KV_FI.set(z,n)}));
@@ -988,13 +989,13 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   let res=rows;
   if(mi!=null){const R=new Map();
    for(const r of res){let g=R.get(r.rit);if(!g)R.set(r.rit,g=new Map());let it=g.get(r.pk);if(!it)g.set(r.pk,it={b:r.p1==='BASIC'?0:1,c:0,z:new Map()});it.c+=r.ctn;const zk=kvFk(r);let zm=it.z.get(zk);if(!zm)it.z.set(zk,zm=new Map());zm.set(r.t,(zm.get(r.t)||0)+r.ctn)}
-   const memo=new Map(),npk=(m,A)=>{const l=[...m].sort((x,y)=>x[0]<y[0]?-1:1),k=(A?'A#':'')+l.map(x=>x[0]+':'+x[1].toFixed(3)).join('|');let v=memo.get(k);if(v===undefined){let T=0;for(const x of l)T+=x[1];const lo=kvLo(A);let nn=0,left=T;if(T>=lo){const r=kvSubPack(l,A);if(r){nn=r.pk.length;left=r.rest.reduce((a,x)=>a+x[1],0)}}v=[nn,nn+Math.min(.99,Math.max(0,left)/lo)];memo.set(k,v)}return v},
+   const memo=new Map(),npk=(m,A)=>{const l=[...m].sort((x,y)=>x[0]<y[0]?-1:1),k=(A?'A#':'')+l.map(x=>x[1].toFixed(3)).sort().join('|');let v=memo.get(k);if(v===undefined){let T=0;for(const x of l)T+=x[1];const lo=kvLo(A);let nn=0,left=T;if(T>=lo){const r=kvSubPack(l,A);if(r){nn=r.pk.length;left=r.rest.reduce((a,x)=>a+x[1],0)}}v=[nn,nn+Math.min(.99,Math.max(0,left)/lo)];memo.set(k,v)}return v},
     mrg=(a,b)=>{const m=new Map(a);for(const[t,c]of b)m.set(t,(m.get(t)||0)+c);return m};
    const keep=new Set();let ri=0,GR=[...R];
    if(same&&R.size>1){// Item Sama: satu daftar item untuk semua rit; kandidat hanya item yang ada di setiap rit, nilai dihitung gabungan
     const G=new Map(),rs=[...R.values()];for(const pk of rs[0].keys()){if(!rs.every(g=>g.has(pk)))continue;const it={b:rs[0].get(pk).b,c:0,z:new Map()};for(const[rt,g]of R){const x=g.get(pk);it.c+=x.c;for(const[zk,zm]of x.z)it.z.set(rt+'\u0002'+zk,zm)}G.set(pk,it)}
     GR=[['*',G]]}
-   for(const[rt,g]of GR){if(++ri%5===0){jm.textContent='Memilih item: rit '+ri+' dari '+GR.length;await tick()}
+   for(const[rt,g]of GR){{jm.textContent='Memilih item: rit '+(++ri)+' dari '+GR.length;await tick()}
     const cur=new Map(),cnt=new Map(),prg=new Map(),left=new Set(g.keys());let n=0;
     for(const ph of[0,1])while(n<mi){let best=null;
      for(const pk of left){const it=g.get(pk);if(it.b!==ph)continue;let gain=0,pg=0;
@@ -1003,11 +1004,12 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
       if(!best||gain>best.g||gain===best.g&&pg>best.pg+1e-9||gain===best.g&&Math.abs(pg-best.pg)<=1e-9&&(it.c>best.c||it.c===best.c&&pk<best.pk))best={pk,g:gain,pg,c:it.c}}
      if(!best)break;const it=g.get(best.pk);
      for(const[zk,zm]of it.z){const m=mrg(cur.get(zk)||new Map(),zm),v=npk(m,kvA(zk));cur.set(zk,m);cnt.set(zk,v[0]);prg.set(zk,v[1])}
-     for(const rr of(rt==='*'?R.keys():[rt]))keep.add(rr+'\u0001'+best.pk);left.delete(best.pk);n++}}
+     for(const rr of(rt==='*'?R.keys():[rt]))keep.add(rr+'\u0001'+best.pk);left.delete(best.pk);n++;jm.textContent='Memilih item: rit '+ri+' dari '+GR.length+' ('+n+'/'+mi+')';await tick()}}
    res=res.filter(r=>keep.has(r.rit+'\u0001'+r.pk))}
   // ===== Penentuan paket: lihat urutan di atas kvTokoMin. Item Sama (bila dicentang) mengulang seluruh perhitungan dengan daftar item yang sama di tiap rit =====
   const hitung=r0=>{for(const r of r0){if(r.qo===undefined)r.qo=r.q;r.q=r.qo;r.ctn=d(r.q,r.fr);r.rp=r.q*r.ac}
    const R1=kvTokoMin(r0),G=kvKelompok(R1),{P,L}=kvBentukPaket(G);return kvNomor(kvPilihPaket(P,L,R1,{mxp,m5}),G,P)};
+  jm.textContent='Membentuk paket...';await tick();
   let B=hitung(res);const B0={np:B.np,mz:B.mz,uz:B.uz,nz_:B.nz_},skipN=B.skip;
   if(same){let r0=res;for(let it=0;it<12;it++){const S=new Map();for(const r of B.res){const k=r.rit||'';let s=S.get(k);if(!s)S.set(k,s=new Set());s.add(r.pk)}
    if(S.size<2)break;let com=null;for(const s of S.values())com=com?new Set([...com].filter(x=>s.has(x))):new Set(s);
