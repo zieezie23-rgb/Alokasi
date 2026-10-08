@@ -887,7 +887,7 @@ function kvSubPack(list,A){let cur=[...list].sort((a,b)=>b[1]-a[1]);const rest=[
 //  1. kvTokoMin     buang toko yang totalnya di bawah 15 ctn
 //  2. kvKelompok    kelompokkan toko per ritase, CAR A / bukan A, dan grup ZG (ZG dalam satu kurung KV_FAM dihitung satu kelompok sejak awal)
 //  3. kvBentukPaket tiap kelompok dibagi jadi paket 200-260 ctn (CAR A 150-180), isi dimaksimalkan mendekati batas atas, maks 8 toko per paket
-//  4. kvPilihPaket  terapkan batas stock (paket terbesar lebih dulu), pilih paket terbesar per ritase sebanyak Max paket,
+//  4. kvPilihPaket  terapkan batas stock (bergantian satu paket per rit, di tiap rit paket terbesar dulu), pilih paket terbesar per ritase sebanyak Max paket,
 //                   lalu toko dari paket yang tidak terpilih / toko sisa ditambahkan ke paket terpilih sampai mendekati batas atas
 //  5. kvNomor       beri nomor paket (per ritase, terbesar dulu) dan hitung ringkasan
 const kvSrt=(a,b)=>String(a).localeCompare(String(b),'id',{numeric:true});
@@ -937,8 +937,10 @@ function kvPilihPaket(P,L,rows,o){const m5=o.m5,lim=o.mxp!=null?o.mxp:Infinity,m
   p.st=keep;p.c=keep.reduce((a,t)=>a+ct(t),0);acc.push(p);
   for(const t of keep)for(const r of RS.get(t))if(r.q>0){let l=byPK.get(r.pk);if(!l)byPK.set(r.pk,l=[]);l.push({r,p})}
   return true};
- // paket terbesar dulu (lintas rit) agar stock dipakai paket yang paling penuh; tiap rit hanya Max paket yang diterima
- for(const p of [...P].sort((a,b)=>b.c-a.c)){
+ // seimbang antar rit: bergantian satu paket per rit (di tiap rit paket terbesar dulu) agar stock tidak habis dipakai satu rit; tiap rit hanya Max paket yang diterima
+ const BR=new Map();for(const p of [...P].sort((a,b)=>b.c-a.c)){let l=BR.get(p.rit);if(!l)BR.set(p.rit,l=[]);l.push(p)}
+ const ord=[];for(let i=0,more=true;more;i++){more=false;for(const k of [...BR.keys()].sort(kvSrt)){const l=BR.get(k);if(i<l.length){ord.push(l[i]);more=true}}}
+ for(const p of ord){
   if((cnt.get(p.rit)||0)>=lim){for(const t of p.st)D.push({t,g:p.g});continue}
   if(coba(p))cnt.set(p.rit,(cnt.get(p.rit)||0)+1)}
  // toko sisa + toko dari paket yang tidak terpilih ditambahkan ke paket terpilih (kelompok sama) sampai mendekati batas atas; paket paling longgar dulu
