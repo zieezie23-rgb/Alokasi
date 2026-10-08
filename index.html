@@ -849,7 +849,7 @@ function kvBook(res,dt){
 const kvQc=(cs,kl)=>{let q=Math.floor(Math.max(0,cs)+1e-9);if(kl>1&&q>kl)q=Math.floor(q/kl)*kl;return q};
 // ---- paket per ZG: maks 8 toko, total 200-260 ctn per paket; bila lebih dari batas dibagi serata mungkin
 let KV_MIN=200,KV_MAX=260;const KV_TK=8;let KV_CONC=false;
-const kvA=k=>String(k).includes('\u0004'),kvLo=A=>A?150:200,kvDf=A=>kvLo(A),kvHi=A=>A?180:260;
+const kvFk=r=>{const f=KV_FM.get(String(r.zg).toUpperCase());return f===undefined?(r.gk||'-'):(r.carA?'\u0004':'')+'F'+f},kvA=k=>String(k).includes('\u0004'),kvLo=A=>A?150:200,kvDf=A=>kvLo(A),kvHi=A=>A?180:260;
 
 function kvSplit(list,k){const idx=list.map((_,i)=>i).sort((a,b)=>list[b][1]-list[a][1]||a-b),P=Array.from({length:k},()=>({s:0,m:[]}));
  for(const i of idx){let b=null;for(const p of P)if(p.m.length<KV_TK&&(!b||p.s<b.s))b=p;if(!b)b=P[0];b.m.push(i);b.s+=list[i][1]}
@@ -869,6 +869,12 @@ const KV_FAM=[['A1','A2','A3','A4','A5','A6'],['A7','A9','A10'],['A11','A12'],['
  KV_FM=new Map(),KV_FI=new Map();KV_FAM.forEach((f,i)=>f.forEach((z,n)=>{KV_FM.set(z,i);KV_FI.set(z,n)}));
 // ZG yang sama diutamakan: ZG yang tidak bisa jadi paket sendiri digabung dengan ZG lain dalam grup yang sama (rit sama, kelas CAR sama: A tidak dicampur).
 // Setelah itu, toko dari ZG yang masih belum jadi paket (sisa) dimasukkan satu per satu ke paket dalam grup yang sama agar paket mendekati batas maksimal (260; CAR A 180), maksimal 8 toko per paket.
+// Ambil sebanyak mungkin toko dari daftar yang bisa jadi paket valid (buang toko terkecil yang menghalangi); sisanya dikembalikan
+function kvSubPack(list,A){let cur=[...list].sort((a,b)=>b[1]-a[1]);const rest=[],lo=kvLo(A);let pk=kvPackA(cur,A);
+ while(!pk&&cur.length>1){if(cur.reduce((a,s)=>a+s[1],0)<lo)break;let best=cur.length-1;
+  if(cur.length<=16)for(let i=cur.length-1;i>=0;i--){const t=cur.filter((_,j)=>j!==i);if(t.reduce((a,s)=>a+s[1],0)>=lo&&kvPackA(t,A)){best=i;break}}
+  rest.push(cur.splice(best,1)[0]);pk=kvPackA(cur,A)}
+ return pk?{list:cur,pk,rest}:null}
 function kvMergeZ(ZL){const out=[],G=new Map(),
  mg=(a,b)=>({zg:a.zg+'+'+b.zg,list:[...a.list,...b.list].sort((x,y)=>x[0]<y[0]?-1:1),rit:a.rit,A:a.A,m:{zn:b.m.zn,gr:b.m.gr,kec:new Set([...a.m.kec,...b.m.kec])},pk:null}),
  base=z=>String(z.zg).replace('\u0004','').toUpperCase();
@@ -882,6 +888,10 @@ function kvMergeZ(ZL){const out=[],G=new Map(),
     emit.push(z);last=z;continue}
    if(z.pk){emit.push(z);last=z}else pend=z}
   if(pend){if(last&&last.pk){const g=mg(last,pend);g.pk=kvPackA(g.list,g.A);if(g.pk){emit[emit.indexOf(last)]=g;pend=null}}if(pend)emit.push(pend)}
+  // ZG sisa dalam grup yang sama digabung (semua toko sisa dikumpulkan), ambil sebanyak mungkin yang bisa jadi paket
+  {const un=emit.filter(z=>!z.pk);if(un.length){const pool=[];for(const z of un)for(const s of z.list)pool.push(s);const r=kvSubPack(pool,un[0].A);
+    if(r){const g={zg:un.map(z=>z.zg).join('+'),list:r.list,rit:un[0].rit,A:un[0].A,m:{zn:un[0].m.zn,gr:un[0].m.gr,kec:new Set()},pk:r.pk},nl=r.rest.length?{zg:g.zg+'~',list:r.rest,rit:g.rit,A:g.A,m:g.m,pk:null}:null,k0=emit.indexOf(un[0]);
+     for(const z of un)emit.splice(emit.indexOf(z),1);emit.splice(Math.min(k0,emit.length),0,g);if(nl)emit.push(nl)}}}
   // isi paket yang masih punya ruang dengan toko sisa (yang paling besar tapi masih muat), paket paling longgar dulu
   {const pz=emit.filter(z=>z.pk),loose=[];for(const z of emit)if(!z.pk)for(const s of z.list)loose.push({z,s});
    if(pz.length&&loose.length){const hi=kvHi(pz[0].A),P=[];loose.sort((a,b)=>b.s[1]-a.s[1]);
@@ -922,7 +932,7 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   // (aturan paket: kvPack). Item yang tidak membantu terbentuknya paket tidak memakai slot; urutan ukuran qty hanya pemecah seri.
   let res=rows;
   if(mi!=null){const R=new Map();
-   for(const r of res){let g=R.get(r.rit);if(!g)R.set(r.rit,g=new Map());let it=g.get(r.pk);if(!it)g.set(r.pk,it={b:r.p1==='BASIC'?0:1,c:0,z:new Map()});it.c+=r.ctn;const zk=r.gk||'-';let zm=it.z.get(zk);if(!zm)it.z.set(zk,zm=new Map());zm.set(r.t,(zm.get(r.t)||0)+r.ctn)}
+   for(const r of res){let g=R.get(r.rit);if(!g)R.set(r.rit,g=new Map());let it=g.get(r.pk);if(!it)g.set(r.pk,it={b:r.p1==='BASIC'?0:1,c:0,z:new Map()});it.c+=r.ctn;const zk=kvFk(r);let zm=it.z.get(zk);if(!zm)it.z.set(zk,zm=new Map());zm.set(r.t,(zm.get(r.t)||0)+r.ctn)}
    const memo=new Map(),npk=(m,A)=>{const l=[...m].sort((x,y)=>x[0]<y[0]?-1:1),k=(A?'A#':'')+l.map(x=>x[0]+':'+x[1].toFixed(3)).join('|');let v=memo.get(k);if(v===undefined){const p=kvPackA(l,A);let T=0;for(const x of l)T+=x[1];const nn=p?p.length:0;v=[nn,nn+Math.min(.99,Math.max(0,T-nn*kvLo(A))/kvLo(A))];memo.set(k,v)}return v},
     mrg=(a,b)=>{const m=new Map(a);for(const[t,c]of b)m.set(t,(m.get(t)||0)+c);return m};
    const keep=new Set();let ri=0,GR=[...R];
