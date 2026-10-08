@@ -849,58 +849,111 @@ function kvBook(res,dt){
 const kvQc=(cs,kl)=>{let q=Math.floor(Math.max(0,cs)+1e-9);if(kl>1&&q>kl)q=Math.floor(q/kl)*kl;return q};
 // ---- paket per ZG: maks 8 toko, total 200-260 ctn per paket; bila lebih dari batas dibagi serata mungkin
 let KV_MIN=200,KV_MAX=260;const KV_TK=8;let KV_CONC=false;
-const kvFk=r=>{const f=KV_FM.get(String(r.zg).toUpperCase());return f===undefined?(r.gk||'-'):(r.carA?'\u0004':'')+'F'+f},kvA=k=>String(k).includes('\u0004'),kvLo=A=>A?150:200,kvDf=A=>kvLo(A),kvHi=A=>A?180:260;
+const kvFk=r=>{const f=KV_FM.get(String(r.zg).toUpperCase());return f===undefined?(r.gk||'-'):(r.carA?'\u0004':'')+'\u0005'+f},kvA=k=>String(k).includes('\u0004'),kvLo=A=>A?150:200,kvDf=A=>kvLo(A),kvHi=A=>A?180:260;
 
-function kvSplit(list,k){const idx=list.map((_,i)=>i).sort((a,b)=>list[b][1]-list[a][1]||a-b),P=Array.from({length:k},()=>({s:0,m:[]}));
- for(const i of idx){let b=null;for(const p of P)if(p.m.length<KV_TK&&(!b||p.s<b.s))b=p;if(!b)b=P[0];b.m.push(i);b.s+=list[i][1]}
- const cost=()=>{let v=0,sq=0,mx=-1e9,mn=1e9;for(const p of P){v+=Math.max(0,KV_MIN-p.s)+Math.max(0,p.s-KV_MAX)+Math.max(0,p.m.length-KV_TK)*1000+(p.m.length?0:1000);mx=Math.max(mx,p.s);mn=Math.min(mn,p.s);sq+=p.s*p.s}return[v,KV_CONC?-sq:mx-mn]},
+function kvSplit(list,k){const n=list.length,base=list.map((_,i)=>i).sort((a,b)=>list[b][1]-list[a][1]||a-b);
+ const cost=P=>{let v=0,sq=0,mx=-1e9,mn=1e9;for(const p of P){v+=Math.max(0,KV_MIN-p.s)+Math.max(0,p.s-KV_MAX)+Math.max(0,p.m.length-KV_TK)*1000+(p.m.length?0:1000);mx=Math.max(mx,p.s);mn=Math.min(mn,p.s);sq+=p.s*p.s}return[v,KV_CONC?-sq:mx-mn]},
   less=(a,b)=>a[0]<b[0]||a[0]===b[0]&&a[1]<b[1];
- let cur=cost();
- for(let pass=0;pass<300;pass++){let imp=false;
-  for(let a=0;a<k;a++)for(let b=0;b<k;b++){if(a===b)continue;const A=P[a],B=P[b];
-   for(let x=0;x<A.m.length;x++){
-    {const i=A.m[x];A.m.splice(x,1);B.m.push(i);A.s-=list[i][1];B.s+=list[i][1];const c=cost();if(less(c,cur)){cur=c;imp=true;x--;continue}B.m.pop();A.m.splice(x,0,i);A.s+=list[i][1];B.s-=list[i][1]}
-    for(let y=0;y<B.m.length;y++){const i=A.m[x],j=B.m[y];A.m[x]=j;B.m[y]=i;const d=list[j][1]-list[i][1];A.s+=d;B.s-=d;const c=cost();if(less(c,cur)){cur=c;imp=true;break}A.m[x]=i;B.m[y]=j;A.s-=d;B.s+=d}}}
-  if(!imp)break}
- return cur[0]===0?P.map(p=>p.m):null}
+ // satu percobaan: isi awal serakah menurut urutan idx, lalu perbaiki dengan memindah/menukar toko antar paket
+ const attempt=idx=>{const P=Array.from({length:k},()=>({s:0,m:[]}));
+  for(const i of idx){let b=null;for(const p of P)if(p.m.length<KV_TK&&(!b||p.s<b.s))b=p;if(!b)b=P[0];b.m.push(i);b.s+=list[i][1]}
+  let cur=cost(P);
+  for(let pass=0;pass<300;pass++){let imp=false;
+   for(let a=0;a<k;a++)for(let b=0;b<k;b++){if(a===b)continue;const A=P[a],B=P[b];
+    for(let x=0;x<A.m.length;x++){
+     {const i=A.m[x];A.m.splice(x,1);B.m.push(i);A.s-=list[i][1];B.s+=list[i][1];const c=cost(P);if(less(c,cur)){cur=c;imp=true;x--;continue}B.m.pop();A.m.splice(x,0,i);A.s+=list[i][1];B.s-=list[i][1]}
+     for(let y=0;y<B.m.length;y++){const i=A.m[x],j=B.m[y];A.m[x]=j;B.m[y]=i;const d=list[j][1]-list[i][1];A.s+=d;B.s-=d;const c=cost(P);if(less(c,cur)){cur=c;imp=true;break}A.m[x]=i;B.m[y]=j;A.s-=d;B.s+=d}}}
+   if(!imp)break}
+  return[cur,P]};
+ let best=attempt(base);
+ // bila belum valid, coba beberapa urutan awal lain (acak tetap) agar tidak terjebak
+ if(best[0][0]>0&&k>1&&n<=40){let seed=12345+n*31+k;const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff};
+  for(let t=0;t<6&&best[0][0]>0;t++){const idx=[...base];for(let i=idx.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]]}
+   const r=attempt(idx);if(less(r[0],best[0]))best=r}}
+ return best[0][0]===0?best[1].map(p=>p.m):null}
 function kvPackA(list,A){const a=KV_MIN,b=KV_MAX;if(A){KV_MIN=150;KV_MAX=180}try{return kvPack(list)}finally{KV_MIN=a;KV_MAX=b}}
 // Grup ZG yang boleh digabung dalam 1 paket (ubah di sini jika ada perubahan). ZG yang tidak ada di daftar tidak pernah digabung.
 const KV_FAM=[['A1','A2','A3','A4','A5','A6'],['A7','A9','A10'],['A11','A12'],['B1','B2','B3'],['B5','B6','B7','B8','B9'],['B10','B11'],['C4','C5','C6'],['C7','C8','C9','C10'],['D1','D2','D3'],['D4','D5'],['F1','F2'],['G2','G3'],['G4','G5']],
  KV_FM=new Map(),KV_FI=new Map();KV_FAM.forEach((f,i)=>f.forEach((z,n)=>{KV_FM.set(z,i);KV_FI.set(z,n)}));
-// ZG yang sama diutamakan: ZG yang tidak bisa jadi paket sendiri digabung dengan ZG lain dalam grup yang sama (rit sama, kelas CAR sama: A tidak dicampur).
-// Setelah itu, toko dari ZG yang masih belum jadi paket (sisa) dimasukkan satu per satu ke paket dalam grup yang sama agar paket mendekati batas maksimal (260; CAR A 180), maksimal 8 toko per paket.
 // Ambil sebanyak mungkin toko dari daftar yang bisa jadi paket valid (buang toko terkecil yang menghalangi); sisanya dikembalikan
 function kvSubPack(list,A){let cur=[...list].sort((a,b)=>b[1]-a[1]);const rest=[],lo=kvLo(A);let pk=kvPackA(cur,A);
  while(!pk&&cur.length>1){if(cur.reduce((a,s)=>a+s[1],0)<lo)break;let best=cur.length-1;
   if(cur.length<=16)for(let i=cur.length-1;i>=0;i--){const t=cur.filter((_,j)=>j!==i);if(t.reduce((a,s)=>a+s[1],0)>=lo&&kvPackA(t,A)){best=i;break}}
   rest.push(cur.splice(best,1)[0]);pk=kvPackA(cur,A)}
  return pk?{list:cur,pk,rest}:null}
-function kvMergeZ(ZL){const out=[],G=new Map(),
- mg=(a,b)=>({zg:a.zg+'+'+b.zg,list:[...a.list,...b.list].sort((x,y)=>x[0]<y[0]?-1:1),rit:a.rit,A:a.A,m:{zn:b.m.zn,gr:b.m.gr,kec:new Set([...a.m.kec,...b.m.kec])},pk:null}),
- base=z=>String(z.zg).replace('\u0004','').toUpperCase();
- for(const z of ZL){const f=KV_FM.get(base(z));if(f===undefined){out.push(z);continue}
-  const k=(z.A?'A':'-')+'|'+z.rit+'|'+f;let l=G.get(k);if(!l)G.set(k,l=[]);l.push(z)}
- for(const l of G.values()){l.sort((a,b)=>KV_FI.get(base(a))-KV_FI.get(base(b)));let pend=null,last=null;const emit=[];
-  for(const z of l){
-   if(pend){const g=mg(pend,z);g.pk=kvPackA(g.list,g.A);
-    if(g.pk){emit.push(g);last=g;pend=null;continue}
-    if(!z.pk){pend=g;continue}
-    emit.push(z);last=z;continue}
-   if(z.pk){emit.push(z);last=z}else pend=z}
-  if(pend){if(last&&last.pk){const g=mg(last,pend);g.pk=kvPackA(g.list,g.A);if(g.pk){emit[emit.indexOf(last)]=g;pend=null}}if(pend)emit.push(pend)}
-  // ZG sisa dalam grup yang sama digabung (semua toko sisa dikumpulkan), ambil sebanyak mungkin yang bisa jadi paket
-  {const un=emit.filter(z=>!z.pk);if(un.length){const pool=[];for(const z of un)for(const s of z.list)pool.push(s);const r=kvSubPack(pool,un[0].A);
-    if(r){const g={zg:un.map(z=>z.zg).join('+'),list:r.list,rit:un[0].rit,A:un[0].A,m:{zn:un[0].m.zn,gr:un[0].m.gr,kec:new Set()},pk:r.pk},nl=r.rest.length?{zg:g.zg+'~',list:r.rest,rit:g.rit,A:g.A,m:g.m,pk:null}:null,k0=emit.indexOf(un[0]);
-     for(const z of un)emit.splice(emit.indexOf(z),1);emit.splice(Math.min(k0,emit.length),0,g);if(nl)emit.push(nl)}}}
-  // isi paket yang masih punya ruang dengan toko sisa (yang paling besar tapi masih muat), paket paling longgar dulu
-  {const pz=emit.filter(z=>z.pk),loose=[];for(const z of emit)if(!z.pk)for(const s of z.list)loose.push({z,s});
-   if(pz.length&&loose.length){const hi=kvHi(pz[0].A),P=[];loose.sort((a,b)=>b.s[1]-a.s[1]);
-    for(const z of pz)for(const m of z.pk)P.push({z,m,t:m.reduce((a,i)=>a+z.list[i][1],0)});
-    P.sort((a,b)=>a.t-b.t);
-    for(const p of P){while(p.m.length<KV_TK){let bi=-1;for(let i=0;i<loose.length;i++)if(p.t+loose[i].s[1]<=hi){bi=i;break}
-      if(bi<0)break;const{z:zz,s}=loose.splice(bi,1)[0];zz.list.splice(zz.list.indexOf(s),1);p.z.list.push(s);p.m.push(p.z.list.length-1);p.t+=s[1]}}}}
-  for(const z of emit)if(z.list.length)out.push(z)}
- return out.sort((a,b)=>a.zg<b.zg?-1:1)}
+
+// ===================== PENENTUAN PAKET KANVAS =====================
+// Urutan proses (dipanggil dari kvCalc):
+//  1. kvTokoMin     buang toko yang totalnya di bawah 15 ctn
+//  2. kvKelompok    kelompokkan toko per ritase, CAR A / bukan A, dan grup ZG (ZG dalam satu kurung KV_FAM dihitung satu kelompok sejak awal)
+//  3. kvBentukPaket tiap kelompok dibagi jadi paket 200-260 ctn (CAR A 150-180), isi dimaksimalkan mendekati batas atas, maks 8 toko per paket
+//  4. kvPilihPaket  terapkan batas stock (paket terbesar lebih dulu), pilih paket terbesar per ritase sebanyak Max paket,
+//                   lalu toko dari paket yang tidak terpilih / toko sisa ditambahkan ke paket terpilih sampai mendekati batas atas
+//  5. kvNomor       beri nomor paket (per ritase, terbesar dulu) dan hitung ringkasan
+const kvSrt=(a,b)=>String(a).localeCompare(String(b),'id',{numeric:true});
+function kvTokoMin(rows){const T=new Map();for(const r of rows)T.set(r.t,(T.get(r.t)||0)+r.ctn);return rows.filter(r=>T.get(r.t)>=15)}
+function kvKelompok(rows){const G=new Map();
+ for(const r of rows){const key=(r.rit||'')+'\u0003'+kvFk(r);let g=G.get(key);if(!g)G.set(key,g={key,rit:r.rit||'',A:!!r.carA,zg:new Set(),st:new Map(),sz:new Map()});g.zg.add(r.zg||'-');g.sz.set(r.t,r.zg||'-');g.st.set(r.t,(g.st.get(r.t)||0)+r.ctn)}
+ return G}
+function kvBentukPaket(G){const P=[],L=[];KV_CONC=true;
+ // hasil satu kelompok: {pk:[{st,c}], rest:[toko]}; ukuran = total ctn yang masuk paket
+ const pak=(g,list)=>{const r=kvSubPack(list,g.A);if(!r)return{pk:[],rest:list.map(x=>x[0]),c:0};
+   const pk=r.pk.map(m=>({st:m.map(i=>r.list[i][0]),c:m.reduce((a,i)=>a+r.list[i][1],0)}));return{pk,rest:r.rest.map(x=>x[0]),c:pk.reduce((a,p)=>a+p.c,0)}};
+ try{for(const g of G.values()){const list=[...g.st].sort((a,b)=>a[0]<b[0]?-1:1);let best=pak(g,list);
+   // kelompok gabungan: bandingkan dengan membentuk paket per ZG dulu lalu sisanya digabung; ambil yang lebih banyak ctn masuk paket
+   if(g.zg.size>1){const by=new Map();for(const x of list){const z=g.sz.get(x[0]);let a=by.get(z);if(!a)by.set(z,a=[]);a.push(x)}
+    const pk=[];let rest=[];for(const a of by.values()){const r=pak(g,a);pk.push(...r.pk);for(const t of r.rest)rest.push([t,g.st.get(t)])}
+    if(rest.length){const r=pak(g,rest.sort((a,b)=>a[0]<b[0]?-1:1));pk.push(...r.pk);rest=r.rest.map(t=>[t,g.st.get(t)])}
+    const c=pk.reduce((a,p)=>a+p.c,0);if(c>best.c)best={pk,rest:rest.map(x=>x[0]),c}}
+   for(const p of best.pk)P.push({g,rit:g.rit,A:g.A,st:p.st,c:p.c});
+   for(const t of best.rest)L.push({t,g})}}
+ finally{KV_CONC=false}
+ return{P,L}}
+function kvPilihPaket(P,L,rows,o){const m5=o.m5,lim=o.mxp!=null?o.mxp:Infinity,minRem=m5?5:1;
+ const RS=new Map();for(const r of rows){r.q0=r.q;let a=RS.get(r.t);if(!a)RS.set(r.t,a=[]);a.push(r)}
+ let used=new Map();const acc=[],D=[],cnt=new Map(),byPK=new Map();
+ const rn=r=>Math.round(r.q/r.fr),sv=(r,c)=>{r.q=c*r.fr;r.ctn=c;r.rp=r.q*r.ac},ct=t=>RS.get(t).reduce((a,r)=>a+r.ctn,0),
+  // qty baris dibatasi sisa stock (Basic 100%, Terkait 90% lewat r.cap)
+  lm=r=>{const rem=r.cap-(used.get(r.pk)||0);let nq=Math.max(0,Math.min(r.q0,Math.floor(rem/r.fr+1e-9)*r.fr));if(m5&&Math.round(nq/r.fr)<5)nq=0;return nq},
+  free=t=>{for(const r of RS.get(t)){used.set(r.pk,(used.get(r.pk)||0)-r.q);sv(r,0)}},
+  back=t=>{for(const r of RS.get(t))sv(r,Math.round(r.q0/r.fr))},
+  // pakai stock untuk satu toko; toko yang jadi < 15 ctn tidak diikutkan (stock dikembalikan)
+  fit=t=>{for(const r of RS.get(t)){sv(r,Math.round(lm(r)/r.fr));used.set(r.pk,(used.get(r.pk)||0)+r.q)}if(ct(t)<15){free(t);return false}return true},
+  peek=t=>{let s=0;for(const r of RS.get(t))s+=Math.round(lm(r)/r.fr);return s};
+ const coba=p=>{const lo=kvLo(p.A),sU=new Map(used),log=[],cl=[],keep=[],out=[];
+  for(const t of p.st){for(const r of RS.get(t))log.push([r,r.q]);(fit(t)?keep:out).push(t)}
+  let c=keep.reduce((a,t)=>a+ct(t),0);
+  if(c<lo){// donor stock: ambil kelebihan PLU yang sama dari paket terpilih (kelebihan di atas batas bawah paket donor)
+   for(const t of keep)for(const r of RS.get(t)){if(!(r.q<r.q0))continue;const need=lo-c;if(need<=0)break;
+    const want=Math.min(need,Math.round(r.q0/r.fr)-rn(r));if(want<=0||(m5&&rn(r)+want<5))continue;
+    const dn=(byPK.get(r.pk)||[]).filter(x=>x.p.c>kvLo(x.p.A)&&rn(x.r)>minRem).sort((a,b)=>b.p.c-a.p.c);let got=0;
+    for(const x of dn){if(got>=want)break;const gv=Math.min(want-got,x.p.c-kvLo(x.p.A),rn(x.r)-minRem,ct(x.r.t)-15);if(gv<=0)continue;
+     log.push([x.r,x.r.q]);cl.push([x.p,x.p.c]);sv(x.r,rn(x.r)-gv);x.p.c-=gv;got+=gv}
+    if(got>0){log.push([r,r.q]);sv(r,rn(r)+got);c+=got}}}
+  const ok=c>=lo&&keep.every(t=>ct(t)>=15);
+  if(!ok){for(let i=log.length-1;i>=0;i--){const[r,q]=log[i];sv(r,Math.round(q/r.fr))}for(let i=cl.length-1;i>=0;i--)cl[i][0].c=cl[i][1];used=sU;
+   for(const t of p.st){back(t);D.push({t,g:p.g})}return false}
+  for(const t of out){back(t);D.push({t,g:p.g})}
+  p.st=keep;p.c=keep.reduce((a,t)=>a+ct(t),0);acc.push(p);
+  for(const t of keep)for(const r of RS.get(t))if(r.q>0){let l=byPK.get(r.pk);if(!l)byPK.set(r.pk,l=[]);l.push({r,p})}
+  return true};
+ // paket terbesar dulu (lintas rit) agar stock dipakai paket yang paling penuh; tiap rit hanya Max paket yang diterima
+ for(const p of [...P].sort((a,b)=>b.c-a.c)){
+  if((cnt.get(p.rit)||0)>=lim){for(const t of p.st)D.push({t,g:p.g});continue}
+  if(coba(p))cnt.set(p.rit,(cnt.get(p.rit)||0)+1)}
+ // toko sisa + toko dari paket yang tidak terpilih ditambahkan ke paket terpilih (kelompok sama) sampai mendekati batas atas; paket paling longgar dulu
+ const cand=[...L.map(x=>({t:x.t,g:x.g})),...D];
+ for(const p of acc)p.c=p.st.reduce((a,t)=>a+ct(t),0);
+ for(const p of [...acc].sort((a,b)=>a.c-b.c)){const hi=kvHi(p.A);
+  while(p.st.length<KV_TK){let bi=-1,bc=0;
+   for(let i=0;i<cand.length;i++){if(cand[i].g.key!==p.g.key)continue;const c=peek(cand[i].t);if(c>=15&&p.c+c<=hi&&c>bc){bc=c;bi=i}}
+   if(bi<0)break;const[x]=cand.splice(bi,1);if(fit(x.t)){p.st.push(x.t);p.c+=ct(x.t)}}}
+ return{acc,RS}}
+function kvNomor(S,G,P){const acc=[...S.acc].sort((a,b)=>kvSrt(a.rit,b.rit)||b.c-a.c),res=[],inP=new Set();
+ acc.forEach((p,i)=>{for(const t of p.st){inP.add(t);for(const r of S.RS.get(t))if(r.q>0){r.paket='Paket '+(i+1);res.push(r)}}});
+ const gz=new Set(acc.map(p=>p.g.key));let uz=0,uc=0;for(const g of G.values())if(!gz.has(g.key))uz++;
+ for(const[t,rs]of S.RS)if(!inP.has(t))for(const r of rs)uc+=r.q0/r.fr;
+ return{res,nz_:G.size,uz,uc,mz:P.filter(p=>p.g.zg.size>1).length,np:P.length,skip:P.length-acc.length}}
 function kvPack(list){const n=list.length,tot=list.reduce((a,x)=>a+x[1],0);if(!n||tot<KV_MIN)return null;
  const k0=Math.max(1,Math.ceil(tot/KV_MAX),Math.ceil(n/KV_TK)),k1=Math.min(n,Math.floor(tot/KV_MIN));
  for(let k=k0;k<=k1;k++){const r=kvSplit(list,k);if(r)return r}return null}
@@ -933,7 +986,7 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   let res=rows;
   if(mi!=null){const R=new Map();
    for(const r of res){let g=R.get(r.rit);if(!g)R.set(r.rit,g=new Map());let it=g.get(r.pk);if(!it)g.set(r.pk,it={b:r.p1==='BASIC'?0:1,c:0,z:new Map()});it.c+=r.ctn;const zk=kvFk(r);let zm=it.z.get(zk);if(!zm)it.z.set(zk,zm=new Map());zm.set(r.t,(zm.get(r.t)||0)+r.ctn)}
-   const memo=new Map(),npk=(m,A)=>{const l=[...m].sort((x,y)=>x[0]<y[0]?-1:1),k=(A?'A#':'')+l.map(x=>x[0]+':'+x[1].toFixed(3)).join('|');let v=memo.get(k);if(v===undefined){const p=kvPackA(l,A);let T=0;for(const x of l)T+=x[1];const nn=p?p.length:0;v=[nn,nn+Math.min(.99,Math.max(0,T-nn*kvLo(A))/kvLo(A))];memo.set(k,v)}return v},
+   const memo=new Map(),npk=(m,A)=>{const l=[...m].sort((x,y)=>x[0]<y[0]?-1:1),k=(A?'A#':'')+l.map(x=>x[0]+':'+x[1].toFixed(3)).join('|');let v=memo.get(k);if(v===undefined){let T=0;for(const x of l)T+=x[1];const lo=kvLo(A);let nn=0,left=T;if(T>=lo){const r=kvSubPack(l,A);if(r){nn=r.pk.length;left=r.rest.reduce((a,x)=>a+x[1],0)}}v=[nn,nn+Math.min(.99,Math.max(0,left)/lo)];memo.set(k,v)}return v},
     mrg=(a,b)=>{const m=new Map(a);for(const[t,c]of b)m.set(t,(m.get(t)||0)+c);return m};
    const keep=new Set();let ri=0,GR=[...R];
    if(same&&R.size>1){// Item Sama: satu daftar item untuk semua rit; kandidat hanya item yang ada di setiap rit, nilai dihitung gabungan
@@ -950,79 +1003,17 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
      for(const[zk,zm]of it.z){const m=mrg(cur.get(zk)||new Map(),zm),v=npk(m,kvA(zk));cur.set(zk,m);cnt.set(zk,v[0]);prg.set(zk,v[1])}
      for(const rr of(rt==='*'?R.keys():[rt]))keep.add(rr+'\u0001'+best.pk);left.delete(best.pk);n++}}
    res=res.filter(r=>keep.has(r.rit+'\u0001'+r.pk))}
-  // build: toko minimal 15 ctn total (1 item boleh asal >=15 ctn; toko di bawah 15 ctn tidak diikutkan) -> paket per ZG (satu toko tidak dipecah) -> batas Max paket per rit
-  let useConc=true,useTop=false;
-  const build=r0=>{let res=r0;
-  {const TC=new Map();for(const r of res)TC.set(r.t,(TC.get(r.t)||0)+r.ctn);res=res.filter(r=>TC.get(r.t)>=15)}
-  // ZG yang tidak memenuhi syarat tidak dijadikan paket dan tidak ikut
-  const ST_=new Map(),ZRT=new Map();for(const r of res){const zk=r.gk||'-';let g=ST_.get(zk);if(!g)ST_.set(zk,g=new Map());g.set(r.t,(g.get(r.t)||0)+r.ctn);if(!ZRT.has(zk))ZRT.set(zk,r.rit||'')}
-  // Pembagian paket dalam satu ZG: dibagi rata. Hanya di rit yang kena Max paket, isi paket dimaksimalkan (diisi mendekati batas atas)
-  const ZM=new Map();for(const r of res){const zk=r.gk||'-';let m=ZM.get(zk);if(!m)ZM.set(zk,m={zn:r.zn_||'',gr:r.gr_||'',kec:new Set(),A:!!r.carA});if(r.kec)m.kec.add(r.kec)}
-  let ZL=[...ST_].sort((a,b)=>a[0]<b[0]?-1:1).map(([zg,g])=>{const list=[...g].sort((a,b)=>a[0]<b[0]?-1:1),m=ZM.get(zg);return{zg,list,rit:ZRT.get(zg)||'',A:m.A,m,pk:kvPackA(list,m.A)}});
-  ZL=kvMergeZ(ZL);
-  if(mxp!=null&&useConc){const RC=new Map();for(const z of ZL)if(z.pk)RC.set(z.rit,(RC.get(z.rit)||0)+z.pk.length);
-   KV_CONC=true;for(const z of ZL)if(z.pk&&RC.get(z.rit)>mxp){const p2=kvPackA(z.list,z.A);if(p2)z.pk=p2}KV_CONC=false}
-  const TP=new Map();let nz_=0,uz=0,uc=0,pn=0;
-  for(const z of ZL){nz_++;if(!z.pk){uz++;for(const[,c]of z.list)uc+=c;continue}
-   z.pk.map(m=>m.sort((a,b)=>a-b)).sort((a,b)=>a[0]-b[0]).forEach((m,n)=>{for(const x of m)TP.set(z.list[x][0],'Paket '+(pn+1+n))})
-   pn+=z.pk.length}
-  res=res.filter(r=>TP.has(r.t));for(const r of res)r.paket=TP.get(r.t);
-  // Max paket per rit: pertahankan paket dengan CTN terbesar di tiap rit, lalu nomor paket disusun ulang berurutan
-  if(mxp!=null&&useTop){const PM=new Map();for(const r of res){let g=PM.get(r.paket);if(!g)PM.set(r.paket,g={rit:r.rit||'',c:0,n:+(String(r.paket).match(/\d+/)||[0])[0]});g.c+=r.ctn}
-   const BR=new Map();for(const[k,g]of PM){let l=BR.get(g.rit);if(!l)BR.set(g.rit,l=[]);l.push([k,g])}
-   const kp=[];for(const l of BR.values())l.sort((a,b)=>b[1].c-a[1].c||a[1].n-b[1].n).slice(0,mxp).forEach(([k,g])=>kp.push([k,g.n]));
-   kp.sort((a,b)=>a[1]-b[1]);const NM=new Map(kp.map(([k],i)=>[k,'Paket '+(i+1)]));
-   res=res.filter(r=>NM.has(r.paket));for(const r of res)r.paket=NM.get(r.paket)}
-  const mz=ZL.filter(z=>z.pk&&String(z.zg).includes('+')).length;
-  return{res,nz_,uz,uc,mz,np:pn}};
-  const run=r0=>{let B=build(r0);
-  // Item Sama: ulangi sampai daftar item tiap rit identik (hanya item yang ada di semua rit yang dipakai)
-  if(same){for(let it=0;it<12;it++){const S=new Map();for(const r of B.res){const k=r.rit||'';let s=S.get(k);if(!s)S.set(k,s=new Set());s.add(r.pk)}
-    if(S.size<2)break;let com=null;for(const s of S.values())com=com?new Set([...com].filter(x=>s.has(x))):new Set(s);
-    let eq=true;for(const s of S.values())if(s.size!==com.size){eq=false;break}
-    if(eq)break;r0=r0.filter(r=>com.has(r.pk));B=build(r0)}}
-  return B};
-  let B=run(res);const B0={np:B.np,mz:B.mz,uz:B.uz,nz_:B.nz_};let skipN=0;
-  // Pilih paket dengan memperhitungkan stock: paket diurutkan dari CTN terbesar per rit, qty tiap PLU dibatasi sisa stock (Basic = stock akhir, Terkait = 90%).
-  // Paket diterima jika setelah dibatasi stock tiap tokonya >=15 ctn dan totalnya >= batas bawah (200; CAR A 150), atau bisa ditutup donor stock
-  // (hanya dari paket yang sudah diterima dengan sisa di atas batas bawah: 200, CAR A 150). Paket yang gagal dilewati tanpa memakai stock; berhenti di Max paket per rit.
-  useConc=false;
-  {const PK=new Map();
-   for(const r of B.res){r.q0=r.q;let g=PK.get(r.paket);if(!g)PK.set(r.paket,g={k:r.paket,rows:[],rit:r.rit||'',A:!!r.carA,c:0,n:+(String(r.paket).match(/\d+/)||[0])[0]});g.rows.push(r);g.c+=r.ctn}
-   const BR=new Map();for(const g of PK.values()){let l=BR.get(g.rit);if(!l)BR.set(g.rit,l=[]);l.push(g)}
-   let used=new Map(),PC=new Map(),TT=new Map();const rn=r=>Math.round(r.q/r.fr),sv=(r,c)=>{r.q=c*r.fr;r.ctn=c;r.rp=r.q*r.ac},minRem=m5?5:1,lim=mxp!=null?mxp:Infinity,accRows=[];
-   for(const l of BR.values()){l.sort((a,b)=>b.c-a.c||a.n-b.n);let acc=0;
-    for(const g of l){if(acc>=lim)break;
-     const lo=kvLo(g.A),sP=new Map(PC),sT=new Map(TT),sU=new Map(used),log=[];
-     for(const r of g.rows){const rem=r.cap-(used.get(r.pk)||0);let nq=Math.max(0,Math.min(r.q0,Math.floor(rem/r.fr+1e-9)*r.fr));
-      if(m5&&Math.round(nq/r.fr)<5)nq=0;
-      log.push([r,r.q]);sv(r,Math.round(nq/r.fr));used.set(r.pk,(used.get(r.pk)||0)+r.q)}
-     const tot=()=>g.rows.reduce((a,r)=>a+r.ctn,0);
-     // toko di paket ini yang total ctn-nya < 15 tidak diikutkan (stock dikembalikan)
-     {const ST=new Map();for(const r of g.rows)ST.set(r.t,(ST.get(r.t)||0)+r.ctn);
-      for(const r of g.rows)if(ST.get(r.t)<15&&r.q>0){used.set(r.pk,used.get(r.pk)-r.q);sv(r,0)}
-      for(const[t,c]of ST)TT.set(t,c<15?0:c)}
-     PC.set(g.k,tot());
-     if(PC.get(g.k)<lo){
-      for(const r of g.rows){if(!(r.q<r.q0))continue;
-       const need=lo-PC.get(g.k);if(need<=0)break;
-       const room=Math.round(r.q0/r.fr)-rn(r),want=Math.min(need,room);if(want<=0)continue;
-       if(m5&&rn(r)+want<5)continue;
-       const dn=accRows.filter(x=>x.pk===r.pk&&x.paket!==g.k&&PC.get(x.paket)>kvDf(x.carA)&&rn(x)>minRem).sort((a,b)=>PC.get(b.paket)-PC.get(a.paket));
-       let got=0;
-       for(const x of dn){if(got>=want)break;const gv=Math.min(want-got,PC.get(x.paket)-kvDf(x.carA),rn(x)-minRem,TT.get(x.t)-15);if(gv<=0)continue;
-        log.push([x,x.q]);sv(x,rn(x)-gv);PC.set(x.paket,PC.get(x.paket)-gv);TT.set(x.t,TT.get(x.t)-gv);got+=gv}
-       if(got>0){log.push([r,r.q]);sv(r,rn(r)+got);PC.set(g.k,PC.get(g.k)+got);TT.set(r.t,(TT.get(r.t)||0)+got)}}}
-     // toko di paket ini tidak boleh ada yang di bawah 15 ctn (kecuali yang sudah dikeluarkan = 0)
-     let okp=PC.get(g.k)>=lo;
-     if(okp){const ST=new Map();for(const r of g.rows)ST.set(r.t,(ST.get(r.t)||0)+r.ctn);for(const c of ST.values())if(c>0&&c<15){okp=false;break}}
-     if(okp){acc++;for(const r of g.rows)accRows.push(r)}
-     else{skipN++;for(let x=log.length-1;x>=0;x--){const[r,q]=log[x];sv(r,Math.round(q/r.fr))}PC=sP;TT=sT;used=sU}}}
-   let r1=accRows.filter(r=>r.q>0);if(m5)r1=r1.filter(r=>r.ctn>=5);
-   useTop=false;B=run(r1)}
+  // ===== Penentuan paket: lihat urutan di atas kvTokoMin. Item Sama (bila dicentang) mengulang seluruh perhitungan dengan daftar item yang sama di tiap rit =====
+  const hitung=r0=>{for(const r of r0){if(r.qo===undefined)r.qo=r.q;r.q=r.qo;r.ctn=d(r.q,r.fr);r.rp=r.q*r.ac}
+   const R1=kvTokoMin(r0),G=kvKelompok(R1),{P,L}=kvBentukPaket(G);return kvNomor(kvPilihPaket(P,L,R1,{mxp,m5}),G,P)};
+  let B=hitung(res);const B0={np:B.np,mz:B.mz,uz:B.uz,nz_:B.nz_},skipN=B.skip;
+  if(same){let r0=res;for(let it=0;it<12;it++){const S=new Map();for(const r of B.res){const k=r.rit||'';let s=S.get(k);if(!s)S.set(k,s=new Set());s.add(r.pk)}
+   if(S.size<2)break;let com=null;for(const s of S.values())com=com?new Set([...com].filter(x=>s.has(x))):new Set(s);
+   let eq=true;for(const s of S.values())if(s.size!==com.size){eq=false;break}
+   if(eq)break;r0=r0.filter(r=>com.has(r.pk));B=hitung(r0)}}
   res=B.res;const{nz_,uz,uc}=B;
   const pkTxt=uz?' '+fn(uz)+' dari '+fn(nz_)+' ZG tidak memenuhi syarat paket ('+Number(uc).toLocaleString('id-ID',{maximumFractionDigits:0})+' ctn, tidak diikutkan).':'';
-  const dg=' PLU Target ditemukan di stock akhir: '+fn(hit.size)+' dari '+fn(seen.size)+'.'+' Sebelum batas stock: '+fn(B0.np)+' paket ('+fn(B0.mz)+' hasil gabungan ZG, '+fn(B0.uz)+' dari '+fn(B0.nz_)+' ZG belum bisa jadi paket); '+fn(skipN)+' paket dilewati karena stock/syarat toko.';
+  const dg=' PLU Target ditemukan di stock akhir: '+fn(hit.size)+' dari '+fn(seen.size)+'.'+' Paket terbentuk sebelum stock/Max paket: '+fn(B0.np)+' ('+fn(B0.mz)+' gabungan lebih dari 1 ZG; '+fn(B0.uz)+' dari '+fn(B0.nz_)+' kelompok ZG belum bisa jadi paket); '+fn(skipN)+' paket tidak terpilih (Max paket / stock).';
   if(!res.length){jm.textContent='Tidak ada baris alokasi yang memenuhi syarat ('+fn(lolos)+' baris lolos filter).'+pkTxt+dg;go.disabled=false;return}
   const A=new Set();let tq=0,tc=0,tr=0;
   for(const r of res){A.add(r.pk);tq+=r.q;tc+=r.ctn;tr+=r.rp}
