@@ -986,7 +986,7 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
    if(p1==='terkait'){if(zc!==14&&zc!==15)continue}else if(p1==='basic'){if(zn===''||zc===0)continue;if(!(kvTr(I[2])>0))continue}else continue;
    if(DN&&(DN.has(gab)||DNP.has(PK(p))||DNT.has(tu)))continue;
    lolos++;
-   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,target=p1==='basic'?S+Vs:3*((nat?kvTr('NATARU'):kvTr(I[2]))||0)/100*(nat?S:Vs),npx=p1==='basic'?AB+AI:nat?AB:AI,sisa=p1==='basic'?target-npx:Math.max(0,target-npx);
+   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,target=p1==='basic'?S+Vs:(bq=>{if(!(fr>0&&bq/fr>20))return bq;const tp=(nat?kvTr('NATARU'):kvTr(I[2]))||0;return tp>65?bq:(tp>33?1.5:3)*tp/100*bq})(nat?S:Vs),npx=p1==='basic'?AB+AI:nat?AB:AI,sisa=p1==='basic'?target-npx:Math.max(0,target-npx);
    if(!(mn>0)||!(fr>0))continue;
    if(mst!=null&&!(stock/fr>=mst))continue;
    const cs=d(sisa,fr),qc=kvQc(mxc!=null?Math.min(cs,mxc):cs,kl);if(m5&&qc<5)continue;const q=qc*fr;if(q<=0)continue;
