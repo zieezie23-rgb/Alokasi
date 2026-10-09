@@ -966,6 +966,13 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target di tab Master.');
   if(!sk)throw Error('Upload Stock akhir dulu.');if(!rk)throw Error('Upload Rekap Toko dulu.');
   jm.textContent='Menghitung alokasi...';await tick();KV_CONC=false;
+  // Termin: persen kumulatif pola sampai hari ini (dari termin.json). Dipakai Terkait (3 x termin x target) dan Basic (belum masuk termin = tidak dibawa)
+  let TD=TR.data||null;if(!TD){try{const r=await fetch('termin.json',{cache:'no-cache'});if(r.ok)TD=await r.json()}catch(e){}}
+  if(!TD||!Array.isArray(TD.pola)||!Array.isArray(TD.minggu))throw Error('termin.json tidak bisa dimuat. Alokasi Kanvas butuh data termin.');
+  const NW=new Date(),TMc=new Map(),kvTr=nm=>{const q=String(nm||'').trim().toUpperCase();if(TMc.has(q))return TMc.get(q);const p=TD.pola.find(x=>String(x.nama).trim().toUpperCase()===q);let v=null;
+   if(p){const[a,b,c]=TD.minggu[0].mulai.split('-').map(Number),n=Math.floor((Date.UTC(NW.getFullYear(),NW.getMonth(),NW.getDate())-Date.UTC(a,b-1,c))/864e5);
+    if(n<0)v=0;else if(n>=TD.minggu.length*7)v=p.persen.reduce((t,x)=>t+(+x||0),0);else{const k=Math.floor(n/7);let t=0;for(let i=0;i<k;i++)t+=+p.persen[i]||0;v=t+(n%7+1)*(+p.persen[k]||0)/7}}
+   TMc.set(q,v);return v};
   const ST=alkStock(sk.rows),ST7=alkStock7(ST),RK=kvToko(rk.rows),DN=dn?alkDone(dn.rows):null,T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
    nat=!!KV.nat,m5=!!KV.m5,same=!!KV.same,mst=KV.ms>0?KV.ms:null,mxc=KV.mx>0?KV.mx:null,mxp=KV.mp>0?KV.mp:null,mi=KV.mi>0?KV.mi:null,kl=KV.kl>1?KV.kl:null,
    used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim();let i=0,lolos=0;
@@ -976,10 +983,10 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
    const M=M0.get(p)||[],I=I0.get(p)||[],zn=t2(M[1]);
    // Pola 1 Terkait: hanya zona 14 dan 15. Pola 1 Basic: semua zona kecuali yang tidak punya zona (kosong / 0). Pola 1 lain tidak diikutkan
    const p1=String(z(I[1])).trim().toLowerCase(),zc=Number(zn);
-   if(p1==='terkait'){if(zc!==14&&zc!==15)continue}else if(p1==='basic'){if(zn===''||zc===0)continue}else continue;
+   if(p1==='terkait'){if(zc!==14&&zc!==15)continue}else if(p1==='basic'){if(zn===''||zc===0)continue;if(!(kvTr(I[2])>0))continue}else continue;
    if(DN&&(DN.has(gab)||DNP.has(PK(p))||DNT.has(tu)))continue;
    lolos++;
-   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,target=p1==='basic'?S+Vs:nat?S:Vs,npx=p1==='basic'?AB+AI:nat?AB:AI,sisa=target-npx;
+   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,target=p1==='basic'?S+Vs:3*((nat?kvTr('NATARU'):kvTr(I[2]))||0)/100*(nat?S:Vs),npx=p1==='basic'?AB+AI:nat?AB:AI,sisa=p1==='basic'?target-npx:Math.max(0,target-npx);
    if(!(mn>0)||!(fr>0))continue;
    if(mst!=null&&!(stock/fr>=mst))continue;
    const cs=d(sisa,fr),qc=kvQc(mxc!=null?Math.min(cs,mxc):cs,kl);if(m5&&qc<5)continue;const q=qc*fr;if(q<=0)continue;
