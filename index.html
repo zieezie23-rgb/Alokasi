@@ -847,9 +847,9 @@ function kvBook(res,dt){
   ['xl/styles.xml',styles],['xl/worksheets/sheet1.xml',S1],['xl/worksheets/sheet2.xml',S2],['xl/worksheets/sheet3.xml',S3],['xl/worksheets/sheet4.xml',S4]])}
 // qty alokasi (ctn) = rounddown(ctn sisa); bila hasilnya di atas Kelipatan CTN, dibulatkan turun ke kelipatan itu (isian kosong = tanpa pembulatan, awal = 5)
 const kvQc=(cs,kl)=>{let q=Math.floor(Math.max(0,cs)+1e-9);if(kl>1&&q>kl)q=Math.floor(q/kl)*kl;return q};
-// ---- paket per ZG: maks 8 toko, total 200-260 ctn per paket; bila lebih dari batas dibagi serata mungkin
-let KV_MIN=200,KV_MAX=260;const KV_TK=8;let KV_CONC=false;
-const kvFk=r=>{const f=KV_FM.get(String(r.zg).toUpperCase());return f===undefined?(r.gk||'-'):(r.carA?'\u0004':'')+'\u0005'+f},kvA=k=>String(k).includes('\u0004'),kvLo=A=>A?150:200,kvDf=A=>kvLo(A),kvHi=A=>A?180:260;
+// ---- paket per ZG: maks 8 toko; CAR A 150-180 (hanya dengan A), CAR B 200-245 (boleh campur B dan C), CAR C 200-260 (hanya dengan C); ZG / kelompok ZG yang sama; bila lebih dari batas dibagi serata mungkin
+const KV_TOL=0.97;let KV_MIN=200,KV_MAX=245;const KV_TK=8;let KV_CONC=false;
+const kvFk=r=>{const f=KV_FM.get(String(r.zg).toUpperCase());return f===undefined?(r.gk||'-'):(r.carA?'\u0004':'')+'\u0005'+f},kvA=k=>String(k).includes('\u0004'),kvLo=A=>A===true?150:200,kvDf=A=>kvLo(A),kvHi=A=>A===true?180:A==='C'?260:245;// mode paket: true = CAR A (150-180), false = CAR B / campur B+C (200-245), 'C' = hanya CAR C (200-260)
 
 function kvSplit(list,k){const n=list.length,base=list.map((_,i)=>i).sort((a,b)=>list[b][1]-list[a][1]||a-b);
  const cost=P=>{let v=0,sq=0,mx=-1e9,mn=1e9;for(const p of P){v+=Math.max(0,KV_MIN-p.s)+Math.max(0,p.s-KV_MAX)+Math.max(0,p.m.length-KV_TK)*1000+(p.m.length?0:1000);mx=Math.max(mx,p.s);mn=Math.min(mn,p.s);sq+=p.s*p.s}return[v,KV_CONC?-sq:mx-mn]},
@@ -872,7 +872,7 @@ function kvSplit(list,k){const n=list.length,base=list.map((_,i)=>i).sort((a,b)=
    const r=attempt(idx);if(less(r[0],best[0]))best=r}}
  return best[0][0]===0?best[1].map(p=>p.m):null}
 const KV_PM=new Map();
-function kvPackA(list,A){const key=(A?1:0)+(KV_CONC?'c':'n')+list.map(x=>x[1]).join(',');if(KV_PM.has(key))return KV_PM.get(key);const a=KV_MIN,b=KV_MAX;if(A){KV_MIN=150;KV_MAX=180}let r;try{r=kvPack(list)}finally{KV_MIN=a;KV_MAX=b}KV_PM.set(key,r);return r}
+function kvPackA(list,A){const key=String(A)+(KV_CONC?'c':'n')+list.map(x=>x[1]).join(',');if(KV_PM.has(key))return KV_PM.get(key);const a=KV_MIN,b=KV_MAX;KV_MIN=kvLo(A);KV_MAX=kvHi(A);let r;try{r=kvPack(list)}finally{KV_MIN=a;KV_MAX=b}KV_PM.set(key,r);return r}
 // Grup ZG yang boleh digabung dalam 1 paket (ubah di sini jika ada perubahan). ZG yang tidak ada di daftar tidak pernah digabung.
 const KV_FAM=[['A1','A2','A3','A4','A5','A6'],['A7','A9','A10'],['A11','A12'],['B1','B2','B3'],['B5','B6','B7','B8','B9'],['B10','B11'],['C4','C5','C6'],['C7','C8','C9','C10'],['D1','D2','D3'],['D4','D5'],['F1','F2'],['G2','G3'],['G4','G5']],
  KV_FM=new Map(),KV_FI=new Map();KV_FAM.forEach((f,i)=>f.forEach((z,n)=>{KV_FM.set(z,i);KV_FI.set(z,n)}));
@@ -887,27 +887,36 @@ function kvSubPack(list,A){let cur=[...list].sort((a,b)=>b[1]-a[1]);const rest=[
 // Urutan proses (dipanggil dari kvCalc):
 //  1. kvTokoMin     buang toko yang totalnya di bawah 15 ctn
 //  2. kvKelompok    kelompokkan toko per ritase, CAR A / bukan A, dan grup ZG (ZG dalam satu kurung KV_FAM dihitung satu kelompok sejak awal)
-//  3. kvBentukPaket tiap kelompok dibagi jadi paket 200-260 ctn (CAR A 150-180), isi dimaksimalkan mendekati batas atas, maks 8 toko per paket
+//  3. kvBentukPaket tiap kelompok dibagi jadi paket 200-240 ctn (CAR A 150-180); prioritas CAR sama (A hanya dengan A; B dan C lebih dulu dibentuk sendiri-sendiri, sisanya baru digabung B+C), isi dimaksimalkan mendekati batas atas, maks 8 toko per paket
 //  4. kvPilihPaket  terapkan batas stock (bergantian satu paket per rit, di tiap rit paket terbesar dulu), pilih paket terbesar per ritase sebanyak Max paket,
 //                   lalu toko dari paket yang tidak terpilih / toko sisa ditambahkan ke paket terpilih sampai mendekati batas atas
 //  5. kvNomor       beri nomor paket (per ritase, terbesar dulu) dan hitung ringkasan
 const kvSrt=(a,b)=>String(a).localeCompare(String(b),'id',{numeric:true});
 function kvTokoMin(rows){const T=new Map();for(const r of rows)T.set(r.t,(T.get(r.t)||0)+r.ctn);return rows.filter(r=>T.get(r.t)>=15)}
 function kvKelompok(rows){const G=new Map();
- for(const r of rows){const key=(r.rit||'')+'\u0003'+kvFk(r);let g=G.get(key);if(!g)G.set(key,g={key,rit:r.rit||'',A:!!r.carA,zg:new Set(),st:new Map(),sz:new Map()});g.zg.add(r.zg||'-');g.sz.set(r.t,r.zg||'-');g.st.set(r.t,(g.st.get(r.t)||0)+r.ctn)}
+ for(const r of rows){const key=(r.rit||'')+'\u0003'+kvFk(r);let g=G.get(key);if(!g)G.set(key,g={key,rit:r.rit||'',A:!!r.carA,zg:new Set(),st:new Map(),sz:new Map(),cr:new Map()});g.zg.add(r.zg||'-');g.sz.set(r.t,r.zg||'-');g.cr.set(r.t,String(r.car||'').trim().toUpperCase()||'-');g.st.set(r.t,(g.st.get(r.t)||0)+r.ctn)}
  return G}
 function kvBentukPaket(G){const P=[],L=[];KV_CONC=true;
  // hasil satu kelompok: {pk:[{st,c}], rest:[toko]}; ukuran = total ctn yang masuk paket
- const pak=(g,list)=>{const r=kvSubPack(list,g.A);if(!r)return{pk:[],rest:list.map(x=>x[0]),c:0};
-   const pk=r.pk.map(m=>({st:m.map(i=>r.list[i][0]),c:m.reduce((a,i)=>a+r.list[i][1],0)}));return{pk,rest:r.rest.map(x=>x[0]),c:pk.reduce((a,p)=>a+p.c,0)}};
- try{for(const g of G.values()){const list=[...g.st].sort((a,b)=>a[0]<b[0]?-1:1);let best=pak(g,list);
-   // kelompok gabungan: bandingkan dengan membentuk paket per ZG dulu lalu sisanya digabung; ambil yang lebih banyak ctn masuk paket
-   if(g.zg.size>1){const by=new Map();for(const x of list){const z=g.sz.get(x[0]);let a=by.get(z);if(!a)by.set(z,a=[]);a.push(x)}
-    const pk=[];let rest=[];for(const a of by.values()){const r=pak(g,a);pk.push(...r.pk);for(const t of r.rest)rest.push([t,g.st.get(t)])}
-    if(rest.length){const r=pak(g,rest.sort((a,b)=>a[0]<b[0]?-1:1));pk.push(...r.pk);rest=r.rest.map(t=>[t,g.st.get(t)])}
-    const c=pk.reduce((a,p)=>a+p.c,0);if(c>best.c)best={pk,rest:rest.map(x=>x[0]),c}}
-   for(const p of best.pk)P.push({g,rit:g.rit,A:g.A,st:p.st,c:p.c});
-   for(const t of best.rest)L.push({t,g})}}
+ const pak=(list,mode)=>{const r=kvSubPack(list,mode);if(!r)return{pk:[],rest:list.map(x=>x[0]),c:0};
+   const pk=r.pk.map(m=>({st:m.map(i=>r.list[i][0]),c:m.reduce((a,i)=>a+r.list[i][1],0),A:mode}));return{pk,rest:r.rest.map(x=>x[0]),c:pk.reduce((a,p)=>a+p.c,0)}};
+ // satu tahap untuk satu mode paket: bila ZG campur, bentuk paket per ZG dulu lalu sisanya digabung lintas ZG (satu kelompok ZG); dipakai bila ctn masuk paket >= KV_TOL x hasil sekaligus
+ const stg=(g,list,mode)=>{if(!list.length)return{pk:[],rest:[]};
+   let best=pak(list,mode);const by=new Map();for(const x of list){const k=g.sz.get(x[0]);let a=by.get(k);if(!a)by.set(k,a=[]);a.push(x)}
+   if(by.size>1){const pk=[];let rest=[];for(const a of by.values()){const r=pak(a,mode);pk.push(...r.pk);for(const t of r.rest)rest.push([t,g.st.get(t)])}
+    if(rest.length){const r=pak(rest.sort((a,b)=>a[0]<b[0]?-1:1),mode);pk.push(...r.pk);rest=r.rest.map(t=>[t,g.st.get(t)])}
+    const c=pk.reduce((a,p)=>a+p.c,0);if(c>=best.c*KV_TOL)best={pk,rest:rest.map(x=>x[0]),c}}
+   return{pk:best.pk,rest:best.rest.map(t=>[t,g.st.get(t)])}};
+ try{for(const g of G.values()){const list=[...g.st].sort((a,b)=>a[0]<b[0]?-1:1);let pk,rest;
+   if(g.A){const r=stg(g,list,true);pk=r.pk;rest=r.rest}
+   else{// B dan C digabung dulu (200-245). Paket yang ternyata C semua memakai batas C (maks 260, diisi saat penambahan toko sisa C); sisa B sendiri (200-245)
+    const isC=t=>g.cr.get(t)==='C',srt=(a,b)=>a[0]<b[0]?-1:1,r1=stg(g,list,false),allC=r1.pk.filter(p=>p.st.every(isC)),mix=r1.pk.filter(p=>!p.st.every(isC)),
+     restC=r1.rest.filter(x=>isC(x[0])),Bs=r1.rest.filter(x=>!isC(x[0])),
+     srt0=0;
+    const r2={pk:allC.map(p=>({...p,A:'C'})),rest:restC};
+    const r3=stg(g,Bs,false);pk=[...mix,...r2.pk,...r3.pk];rest=[...r2.rest,...r3.rest]}
+   for(const p of pk)P.push({g,rit:g.rit,A:p.A,st:p.st,c:p.c});
+   for(const[t]of rest)L.push({t,g})}}
  finally{KV_CONC=false}
  return{P,L}}
 function kvPilihPaket(P,L,rows,o){const m5=o.m5,lim=o.mxp!=null?o.mxp:Infinity,minRem=m5?5:1;
@@ -946,10 +955,11 @@ function kvPilihPaket(P,L,rows,o){const m5=o.m5,lim=o.mxp!=null?o.mxp:Infinity,m
   if(coba(p))cnt.set(p.rit,(cnt.get(p.rit)||0)+1)}
  // toko sisa + toko dari paket yang tidak terpilih ditambahkan ke paket terpilih (kelompok sama) sampai mendekati batas atas; paket paling longgar dulu
  const cand=[...L.map(x=>({t:x.t,g:x.g})),...D];
+ const crOf=t=>String(RS.get(t)[0].car||'').trim().toUpperCase();// prioritas CAR sama saat menambah toko ke paket
  for(const p of acc)p.c=p.st.reduce((a,t)=>a+ct(t),0);
  for(const p of [...acc].sort((a,b)=>a.c-b.c)){const hi=kvHi(p.A);
-  while(p.st.length<KV_TK){let bi=-1,bc=0;
-   for(let i=0;i<cand.length;i++){if(cand[i].g.key!==p.g.key)continue;const c=peek(cand[i].t);if(c>=15&&p.c+c<=hi&&c>bc){bc=c;bi=i}}
+  while(p.st.length<KV_TK){let bi=-1,bc=0,bs=-1;const pc=new Set(p.st.map(crOf));
+   for(let i=0;i<cand.length;i++){if(cand[i].g.key!==p.g.key||p.A==='C'&&crOf(cand[i].t)!=='C')continue;const c=peek(cand[i].t),sm=pc.has(crOf(cand[i].t))?1:0;if(c>=15&&p.c+c<=hi&&(sm>bs||sm===bs&&c>bc)){bs=sm;bc=c;bi=i}}
    if(bi<0)break;const[x]=cand.splice(bi,1);if(fit(x.t)){p.st.push(x.t);p.c+=ct(x.t)}}}
  return{acc,RS}}
 function kvNomor(S,G,P){const zk=p=>[...p.g.zg].sort(kvSrt)[0]||'',acc=[...S.acc].sort((a,b)=>kvSrt(a.rit,b.rit)||kvSrt(zk(a),zk(b))||b.c-a.c),res=[],inP=new Set();
