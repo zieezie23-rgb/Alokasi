@@ -304,7 +304,7 @@ function dlCsv(nm,H,rows,o){o=o||{};const f=x=>x==null?'':typeof x==='number'?St
  a.href=u;a.download=nm;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
 const DLH={toko:['KODE TOKO','NAMA TOKO','AM','KECAMATAN','KOTA'],item:['PLU','DESC','POLA1','POLA2','KET NATARU'],target:['TOKO','PRDCD','QTY_NAT','QTY_SEA'],npb:['GAB','QTY_NATARU','QTY_TOTAL'],pomgg:POH};
 // unduh PO + NPB sebagai Excel 4 sheet: Detail PO, Detail NPB, Basic, Terkait. RECID '1' (PO) tidak ikut.
-// Per tanggal: PO = QTY recid R+H; BPB = BPB_QTY recid R (tanggal PO); NPB = QTY ALOK (tanggal NPB). TOTAL: PO, BPB, NPB, PO OUT (QTY recid kosong)
+// Per tanggal: PO = QTY recid R+H+kosong; BPB = BPB_QTY recid R (tanggal PO); NPB = QTY ALOK (tanggal NPB). TOTAL: PO, BPB, NPB, PO OUT (QTY recid kosong saja, juga ikut dihitung di PO)
 function pomggBook(D,R,tg,im){
  const I0=im||new Map(),mm=tg?pluMap(tg):new Map(),rows=D.filter(r=>String(r[0]??'').trim()!=='1'),
   MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],
@@ -317,7 +317,7 @@ function pomggBook(D,R,tg,im){
   add=(pl,p,d,i,q)=>{const m=G[pl];let o=m.get(p);if(!o)m.set(p,o={t:[0,0,0,0],d:new Map()});o.t[i]+=q;if(d>0&&i<3){let c=o.d.get(d);if(!c)o.d.set(d,c=[0,0,0]);c[i]+=q}};
  for(const r of rows){const p=pluOf(r[3],mm);if(p===undefined)continue;const pl=pol(p);if(!ok(pl))continue;
   const rc=String(r[0]??'').trim().toUpperCase(),q=NUM(r[4]),bq=NUM(r[7]),d=dk(r[5]);
-  if((rc==='R'||rc==='H')&&q)add(pl,p,d,0,q);if(rc==='R'&&bq)add(pl,p,d,1,bq);if(rc===''&&q)add(pl,p,d,3,q)}
+  if((rc==='R'||rc==='H'||rc==='')&&q)add(pl,p,d,0,q);if(rc==='R'&&bq)add(pl,p,d,1,bq);if(rc===''&&q)add(pl,p,d,3,q)}
  if(R&&tg)for(const x of R.rows){const t=tg.get(K(x[0]));if(!t)continue;const p=t[1],pl=pol(p);if(!ok(pl))continue;const q=NUM(x[2]);if(q)add(pl,p,nk(x[1]),2,q)}
  // semua tanggal dari awal sampai akhir, tanggal kosong tetap ada
  let mn=0,mx=0;for(const m of Object.values(G))for(const o of m.values())for(const d of o.d.keys()){if(!mn||d<mn)mn=d;if(d>mx)mx=d}
