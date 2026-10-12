@@ -141,7 +141,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <div id="kv_src" style="margin-top:10px;padding-top:8px;border-top:1px solid var(--line)"></div>
 <div id="kv_hp" class="hp" hidden>
 <b>Stock akhir</b><span>Tarikan LWA Stock Akhir</span>
-<b>Rekap Toko</b><span>TOKO (opsional: NAMA TOKO, RITASE, CAR, JADWAL, ZN, GR, Kota/Kab, Kec/Kecamatan)</span>
+<b>Rute</b><span>Bawaan aplikasi (rute.csv): toko, ritase, CAR, dan kelompok paket (dipisah baris kosong). Tidak perlu diupload</span>
 <b>Sudah alokasi</b><span>GAB (12 karakter), PLU (8), atau TOKO (4). Yang ada di file ini tidak ikut dialokasi</span></div>
 <div class="m" id="kv_um" style="margin-top:8px;white-space:normal"></div><div id="kv_ul" style="margin-top:6px"></div></section>
 <section class="p gen"><div class="alt">Alokasi</div><div class="c isi kvi">
@@ -744,7 +744,12 @@ $('#al_go').onclick=alkCalc;
 // ======== ALOKASI KANVAS ========
 const KV=(()=>{try{return JSON.parse(localStorage.getItem('kv')||'{}')||{}}catch(e){return{}}})();
 const kvSave=()=>{try{localStorage.setItem('kv',JSON.stringify(KV))}catch(e){}};
-const KVK=['stock','toko','done'],KVN={stock:['Stock akhir','PLU'],toko:['Rekap Toko','toko'],done:['Sudah alokasi','baris']};
+const KVK=['stock','done'],KVN={stock:['Stock akhir','PLU'],toko:['Rute','toko'],done:['Sudah alokasi','baris']};
+// Rute (toko, ritase, CAR, kelompok paket) = file bawaan aplikasi rute.csv; kelompok = blok toko dipisah baris kosong
+let KVR=null;
+function kvCsv(t){const rows=[];let row=[],f='',q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c==='\"'){if(t[i+1]==='\"'){f+='\"';i++}else q=false}else f+=c}else if(c==='\"')q=true;else if(c===','){row.push(f);f=''}else if(c==='\n'||c==='\r'){if(c==='\r'&&t[i+1]==='\n')i++;row.push(f);rows.push(row);row=[];f=''}else f+=c}
+ if(f!==''||row.length){row.push(f);rows.push(row)}return rows.map(r=>r.map(c=>c===''?null:c))}
+async function kvRute(){if(KVR)return KVR;const r=await fetch('rute.csv',{cache:'no-cache'});if(!r.ok)throw Error('rute.csv tidak bisa dimuat.');KVR=kvCsv(await r.text());return KVR}
 // Rekap Toko: kolom TOKO wajib, kolom lain dibaca bila ada
 function kvToko(r){const h=alkHead(r,isTk);if(!h)throw Error('Kolom TOKO tidak ditemukan (dicari di 20 baris pertama).');
  const[n,b]=h,it=n.findIndex(isTk),ix=a=>n.findIndex(x=>a.includes(x)&&x!==''),g=(x,i)=>i<0?'':String(x[i]??'').trim(),
@@ -753,14 +758,15 @@ function kvToko(r){const h=alkHead(r,isTk);if(!h)throw Error('Kolom TOKO tidak d
  for(const x of b){const k=K(x[it]).toUpperCase();if(!k&&!(x||[]).some(c=>c!==null&&String(c).trim()!=='')){if(adaK){kel++;adaK=false}continue}
   if(k&&k!=='TOKO'){adaK=true;if(!m.has(k))m.set(k,{kel,nm:g(x,i1),rit:g(x,ir).replace(/\s+/g,''),car:g(x,ic),jad:g(x,ij),gr:g(x,ig),zn:g(x,iz),kota:g(x,ik),kec:g(x,ie).toUpperCase()})}}
  if(!m.size)throw Error('Tidak ada kode toko di file. '+hd(n));return m}
-const KPAR={stock:r=>fn(alkStock(r).size)+' PLU',toko:r=>fn(kvToko(r).size)+' toko',done:r=>fn(alkDone(r).size)+' baris'};
+const KPAR={stock:r=>fn(alkStock(r).size)+' PLU',toko:r=>{const m=kvToko(r);return fn(m.size)+' toko, '+fn(new Set([...m.values()].map(v=>v.kel)).size)+' kelompok'},done:r=>fn(alkDone(r).size)+' baris'};
 async function kvStat(){const box=$('#kv_src');box.innerHTML='';
  for(const k of KVK){const D=await get('kv_'+k),el=document.createElement('div');el.className='r';
   const n=D?((String(D.lb||'').match(/^[\d.,]+/)||[fn(Math.max(0,D.rows.length-1))])[0]):'';
   el.innerHTML=`<div class="n">${KVN[k][0]}</div>
   <div class="m" title="${D?esc(D.name)+' · '+D.time:''}">${D?fdt(D.time):''}</div>
   ${D?`<div><b>${n}</b> ${KVN[k][1]}</div>`:'<div style="grid-column:3/-1;text-align:right"><span class="e">Belum ada data</span></div>'}`;
-  box.appendChild(el)}}
+  box.appendChild(el)}
+ try{const m=kvToko(await kvRute()),el=document.createElement('div');el.className='r';el.innerHTML=`<div class="n">Rute</div><div class="m" title="rute.csv">bawaan aplikasi</div><div><b>${fn(m.size)}</b> toko, ${fn(new Set([...m.values()].map(v=>v.kel)).size)} kelompok</div>`;box.appendChild(el)}catch(e){const el=document.createElement('div');el.className='r';el.innerHTML='<div class="n">Rute</div><div style="grid-column:2/-1;text-align:right"><span class="e">rute.csv gagal dimuat</span></div>';box.appendChild(el)}}
 $('#kv_hb').onclick=()=>{const h=$('#kv_hp');h.hidden=!h.hidden;$('#kv_hb').setAttribute('aria-expanded',String(!h.hidden))};
 function kvDetect(f,r){const n=f.name.toLowerCase();
  if(/stock|stok/.test(n))return'stock';if(/sudah|done/.test(n))return'done';if(/rekap|toko/.test(n))return'toko';if(/alok/.test(n))return'done';
@@ -770,7 +776,8 @@ $('#kv_fa').onchange=async e=>{const inp=e.target,fs=[...inp.files],um=$('#kv_um
  await runFiles(fs,$('#kv_ul'),um,inp.parentNode,async(f,pre)=>{
   um.textContent=pre+'membaca file. File besar bisa butuh 1-2 menit...';await tick();
   const[r]=await sheet(f,'');if(!r.length)throw Error('File kosong.');
-  const k=kvDetect(f,r);if(!k)throw Error('jenis file tidak dikenali. Tambahkan kata Stock / Rekap Toko / Sudah pada nama file.');
+  const k=kvDetect(f,r);if(!k)throw Error('jenis file tidak dikenali. Tambahkan kata Stock / Sudah pada nama file.');
+  if(k==='toko')throw Error('Rute sudah bawaan aplikasi (rute.csv), tidak perlu diupload. Untuk memperbarui, ganti file rute.csv di aplikasi.');
   const lbl=KPAR[k](r);await put('kv_'+k,{name:f.name,time:new Date().toLocaleString('id-ID'),rows:r,lb:lbl});
   return'['+KVN[k][0]+'] '+lbl},kvStat)};
 const kvN=$('#kv_nat');kvN.checked=!!KV.nat;kvN.onchange=()=>{KV.nat=kvN.checked;kvSave()};
@@ -974,9 +981,9 @@ function kvPack(list){const n=list.length,tot=list.reduce((a,x)=>a+x[1],0);if(!n
  for(let k=k0;k<=k1;k++){const r=kvSplit(list,k);if(r)return r}return null}
 async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go.disabled=true;out.innerHTML='';jm.className='m';$('#kv_dl').hidden=true;
  try{if(cloudOn()){jm.textContent='Mengecek data terbaru...';try{await syncAll()}catch(e){}}
-  const[ms,tk,im,tg,np,sk,rk,dn]=await Promise.all(['master','toko','item','target','npb','kv_stock','kv_toko','kv_done'].map(get));
+  const[ms,tk,im,tg,np,sk,dn]=await Promise.all(['master','toko','item','target','npb','kv_stock','kv_done'].map(get)),rk={rows:await kvRute()};
   if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target di tab Master.');
-  if(!sk)throw Error('Upload Stock akhir dulu.');if(!rk)throw Error('Upload Rekap Toko dulu.');
+  if(!sk)throw Error('Upload Stock akhir dulu.');
   jm.textContent='Menghitung alokasi...';await tick();KV_CONC=false;
   // Termin: persen kumulatif pola sampai hari ini (dari termin.json). Dipakai Terkait (3 x termin x target) dan Basic (belum masuk termin = tidak dibawa)
   let TD=TR.data||null;if(!TD){try{const r=await fetch('termin.json',{cache:'no-cache'});if(r.ok)TD=await r.json()}catch(e){}}
@@ -985,9 +992,10 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
    if(p){const[a,b,c]=TD.minggu[0].mulai.split('-').map(Number),n=Math.floor((Date.UTC(NW.getFullYear(),NW.getMonth(),NW.getDate())-Date.UTC(a,b-1,c))/864e5);
     if(n<0)v=0;else if(n>=TD.minggu.length*7)v=p.persen.reduce((t,x)=>t+(+x||0),0);else{const k=Math.floor(n/7);let t=0;for(let i=0;i<k;i++)t+=+p.persen[i]||0;v=t+(n%7+1)*(+p.persen[k]||0)/7}}
    TMc.set(q,v);return v};
-  const ST=alkStock(sk.rows),ST7=alkStock7(ST),RK=kvToko(rk.rows),DN=dn?alkDone(dn.rows):null,T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
+  const ST=alkStock(sk.rows),ST7=alkStock7(ST),RK=kvToko(rk.rows),KLP=new Set([...RK.values()].map(v=>v.kel)).size,DN=dn?alkDone(dn.rows):null,T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
    nat=!!KV.nat,m5=!!KV.m5,same=!!KV.same,mst=KV.ms>0?KV.ms:null,mxc=KV.mx>0?KV.mx:null,mxp=KV.mp>0?KV.mp:null,mi=KV.mi>0?KV.mi:null,kl=KV.kl>1?KV.kl:null,
    used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim();let i=0,lolos=0;
+  if(RK.size>20&&KLP<2)throw Error('rute.csv belum punya pemisah kelompok (baris kosong antar kelompok), jadi semua toko dianggap satu kelompok.');
   const DNP=new Set(),DNT=new Set();if(DN)for(const g of DN){if(g.length===8)DNP.add(PK(g));else if(g.length===4)DNT.add(g.toUpperCase())}
   for(const[gab,[t,p,S,Vs]]of tg){
    if(++i%50000===0){jm.textContent='Menghitung: '+pc(i,tg.size);await tick()}
