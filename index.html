@@ -141,13 +141,15 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <div id="kv_src" style="margin-top:10px;padding-top:8px;border-top:1px solid var(--line)"></div>
 <div id="kv_hp" class="hp" hidden>
 <b>Stock akhir</b><span>Tarikan LWA Stock Akhir</span>
-<b>Rute</b><span>Bawaan aplikasi (rute.csv): toko, ritase, CAR, dan kelompok paket (dipisah baris kosong). Tidak perlu diupload</span>
+<b>Rute</b><span>Upload tiap alokasi (nama file memuat kata Rute): toko, ritase, CAR, dan kelompok paket (dipisah baris kosong)</span>
 <b>Sudah alokasi</b><span>GAB (12 karakter), PLU (8), atau TOKO (4). Yang ada di file ini tidak ikut dialokasi</span></div>
 <div class="m" id="kv_um" style="margin-top:8px;white-space:normal"></div><div id="kv_ul" style="margin-top:6px"></div></section>
 <section class="p gen"><div class="alt">Alokasi</div><div class="c isi kvi">
 <div class="kck"><label class="ck" title="Pola 1 Terkait: tercentang = QTY_NAT − NPB, tidak = QTY_SEA − NPB"><input type="checkbox" id="kv_nat">Nataru</label><label class="ck" title="Hasil perhitungan di bawah 5 ctn tidak diikutkan"><input type="checkbox" id="kv_m5">&gt;=5ctn</label><label class="ck" title="Daftar item RIT1 dan RIT2 dibuat sama"><input type="checkbox" id="kv_same">Item Sama</label></div>
 <label>Max item<input type="number" id="kv_mi" min="0" step="1" inputmode="numeric"></label>
 <label>Max paket<input type="number" id="kv_mp" min="0" step="1" inputmode="numeric"></label>
+<label title="Air mineral, minyak goreng, gula, beras: maksimal item (PLU) per kategori dalam satu paket. Kosong = tanpa batas">Kategori/paket<input type="number" id="kv_gp" min="0" step="1" inputmode="numeric"></label>
+<label title="Air mineral, minyak goreng, gula, beras: maksimal item (PLU) per kategori dalam satu rit. Kosong = tanpa batas">Kategori/rit<input type="number" id="kv_gr" min="0" step="1" inputmode="numeric"></label>
 <label>Kelipatan CTN<input type="number" id="kv_kl" min="0" step="1" inputmode="numeric"></label>
 <label>Min stock (ctn)<input type="number" id="kv_ms" min="0" step="1" inputmode="numeric"></label>
 <label title="Batas qty per baris (toko x PLU). Hasil di atas batas dipotong ke batas, kosong = tanpa batas">Max Ctn<input type="number" id="kv_mx" min="0" step="1" inputmode="numeric"></label>
@@ -744,12 +746,11 @@ $('#al_go').onclick=alkCalc;
 // ======== ALOKASI KANVAS ========
 const KV=(()=>{try{return JSON.parse(localStorage.getItem('kv')||'{}')||{}}catch(e){return{}}})();
 const kvSave=()=>{try{localStorage.setItem('kv',JSON.stringify(KV))}catch(e){}};
-const KVK=['stock','done'],KVN={stock:['Stock akhir','PLU'],toko:['Rute','toko'],done:['Sudah alokasi','baris']};
-// Rute (toko, ritase, CAR, kelompok paket) = file bawaan aplikasi rute.csv; kelompok = blok toko dipisah baris kosong
-let KVR=null;
+const KVK=['stock','toko','done'],KVN={stock:['Stock akhir','PLU'],toko:['Rute','toko'],done:['Sudah alokasi','baris']};
+// Rute (toko, ritase, CAR, kelompok paket) = file Rute yang diupload tiap alokasi (tersimpan di perangkat); kelompok = blok toko dipisah baris kosong
 function kvCsv(t){const rows=[];let row=[],f='',q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c==='\"'){if(t[i+1]==='\"'){f+='\"';i++}else q=false}else f+=c}else if(c==='\"')q=true;else if(c===','){row.push(f);f=''}else if(c==='\n'||c==='\r'){if(c==='\r'&&t[i+1]==='\n')i++;row.push(f);rows.push(row);row=[];f=''}else f+=c}
  if(f!==''||row.length){row.push(f);rows.push(row)}return rows.map(r=>r.map(c=>c===''?null:c))}
-async function kvRute(){if(KVR)return KVR;const r=await fetch('rute.csv',{cache:'no-cache'});if(!r.ok)throw Error('rute.csv tidak bisa dimuat.');KVR=kvCsv(await r.text());return KVR}
+async function kvRute(){const D=await get('kv_toko');if(!D||!D.rows||!D.rows.length)throw Error('Upload Rute dulu (file Rute: TOKO, NAMA TOKO, RITASE, CAR, dst; kelompok dipisah baris kosong).');return D.rows}
 // Rekap Toko: kolom TOKO wajib, kolom lain dibaca bila ada
 function kvToko(r){const h=alkHead(r,isTk);if(!h)throw Error('Kolom TOKO tidak ditemukan (dicari di 20 baris pertama).');
  const[n,b]=h,it=n.findIndex(isTk),ix=a=>n.findIndex(x=>a.includes(x)&&x!==''),g=(x,i)=>i<0?'':String(x[i]??'').trim(),
@@ -766,10 +767,10 @@ async function kvStat(){const box=$('#kv_src');box.innerHTML='';
   <div class="m" title="${D?esc(D.name)+' · '+D.time:''}">${D?fdt(D.time):''}</div>
   ${D?`<div><b>${n}</b> ${KVN[k][1]}</div>`:'<div style="grid-column:3/-1;text-align:right"><span class="e">Belum ada data</span></div>'}`;
   box.appendChild(el)}
- try{const m=kvToko(await kvRute()),el=document.createElement('div');el.className='r';el.innerHTML=`<div class="n">Rute</div><div class="m" title="rute.csv">bawaan aplikasi</div><div><b>${fn(m.size)}</b> toko, ${fn(new Set([...m.values()].map(v=>v.kel)).size)} kelompok</div>`;box.appendChild(el)}catch(e){const el=document.createElement('div');el.className='r';el.innerHTML='<div class="n">Rute</div><div style="grid-column:2/-1;text-align:right"><span class="e">rute.csv gagal dimuat</span></div>';box.appendChild(el)}}
+}
 $('#kv_hb').onclick=()=>{const h=$('#kv_hp');h.hidden=!h.hidden;$('#kv_hb').setAttribute('aria-expanded',String(!h.hidden))};
 function kvDetect(f,r){const n=f.name.toLowerCase();
- if(/stock|stok/.test(n))return'stock';if(/sudah|done/.test(n))return'done';if(/rekap|toko/.test(n))return'toko';if(/alok/.test(n))return'done';
+ if(/stock|stok/.test(n))return'stock';if(/sudah|done/.test(n))return'done';if(/rute|rekap|toko/.test(n))return'toko';if(/alok/.test(n))return'done';
  const h=alkHead(r,isTk);if(h&&(h[0].includes('NAMA TOKO')||h[0].includes('RITASE')))return'toko';
  try{KPAR.stock(r);return'stock'}catch(e){}if(alkHead(r,x=>x==='GAB'))return'done';return null}
 $('#kv_fa').onchange=async e=>{const inp=e.target,fs=[...inp.files],um=$('#kv_um');inp.value='';if(!fs.length)return;
@@ -777,18 +778,18 @@ $('#kv_fa').onchange=async e=>{const inp=e.target,fs=[...inp.files],um=$('#kv_um
   um.textContent=pre+'membaca file. File besar bisa butuh 1-2 menit...';await tick();
   const[r]=await sheet(f,'');if(!r.length)throw Error('File kosong.');
   const k=kvDetect(f,r);if(!k)throw Error('jenis file tidak dikenali. Tambahkan kata Stock / Sudah pada nama file.');
-  if(k==='toko')throw Error('Rute sudah bawaan aplikasi (rute.csv), tidak perlu diupload. Untuk memperbarui, ganti file rute.csv di aplikasi.');
-  const lbl=KPAR[k](r);await put('kv_'+k,{name:f.name,time:new Date().toLocaleString('id-ID'),rows:r,lb:lbl});
+    const lbl=KPAR[k](r);await put('kv_'+k,{name:f.name,time:new Date().toLocaleString('id-ID'),rows:r,lb:lbl});
   return'['+KVN[k][0]+'] '+lbl},kvStat)};
 const kvN=$('#kv_nat');kvN.checked=!!KV.nat;kvN.onchange=()=>{KV.nat=kvN.checked;kvSave()};
 const kvM5=$('#kv_m5');kvM5.checked=!!KV.m5;kvM5.onchange=()=>{KV.m5=kvM5.checked;kvSave()};
 const kvSm=$('#kv_same');kvSm.checked=!!KV.same;kvSm.onchange=()=>{KV.same=kvSm.checked;kvSave()};
-for(const[id,k]of[['kv_mi','mi'],['kv_mp','mp'],['kv_kl','kl'],['kv_ms','ms'],['kv_mx','mx']]){const e=$('#'+id);if(KV[k]!=null)e.value=KV[k];e.oninput=()=>{KV[k]=e.value===''?null:Math.max(0,Math.floor(+e.value));kvSave()}}
+if(KV.gp===undefined)KV.gp=2;if(KV.gr===undefined)KV.gr=3;
+for(const[id,k]of[['kv_gp','gp'],['kv_gr','gr'],['kv_mi','mi'],['kv_mp','mp'],['kv_kl','kl'],['kv_ms','ms'],['kv_mx','mx']]){const e=$('#'+id);if(KV[k]!=null)e.value=KV[k];e.oninput=()=>{KV[k]=e.value===''?null:Math.max(0,Math.floor(+e.value));kvSave()}}
 let kvArt;$('#kv_rs').onclick=async()=>{const b=$('#kv_rs');
  if(!b.classList.contains('ask')){b.classList.add('ask');b.textContent='Yakin? Klik lagi';clearTimeout(kvArt);kvArt=setTimeout(()=>{b.classList.remove('ask');b.textContent='Reset'},5000);return}
  clearTimeout(kvArt);b.classList.remove('ask');b.textContent='Reset';b.disabled=true;
  try{for(const k of KVK)await tx('readwrite',s=>s.delete('kv_'+k));$('#kv_res').innerHTML='';$('#kv_msg').textContent='';$('#kv_msg').className='m';$('#kv_um').textContent='';$('#kv_ul').innerHTML='';
-  for(const k of Object.keys(KV))delete KV[k];kvSave();$('#kv_mi').value='';$('#kv_mp').value='';$('#kv_ms').value='';$('#kv_mx').value='';kvM5.checked=false;kvSm.checked=false;KV.kl=5;$('#kv_kl').value=5;kvSave();
+  for(const k of Object.keys(KV))delete KV[k];kvSave();$('#kv_mi').value='';$('#kv_mp').value='';$('#kv_ms').value='';$('#kv_mx').value='';kvM5.checked=false;kvSm.checked=false;KV.kl=5;$('#kv_kl').value=5;KV.gp=2;KV.gr=3;$('#kv_gp').value=2;$('#kv_gr').value=3;kvSave();
   for(const u of kvUrls)if(u)URL.revokeObjectURL(u);kvUrls=[];kvN.checked=false;$('#kv_dl').hidden=true;$('#kv_go').textContent='Hitung alokasi';await kvStat()}catch(e){$('#kv_um').textContent='Gagal reset: '+(e.message||e)}
  b.disabled=false};
 let kvUrls=[];
@@ -894,14 +895,27 @@ function kvSubPack(list,A){let cur=[...list].sort((a,b)=>b[1]-a[1]);const rest=[
 // ===================== PENENTUAN PAKET KANVAS =====================
 // Urutan proses (dipanggil dari kvCalc):
 //  1. kvTokoMin     buang toko yang totalnya di bawah 15 ctn
-//  2. kvKelompok    kelompokkan toko per CAR A / bukan A (ritase boleh campur; paket berisi toko 2 rit jadi RIT2, hanya RIT1 tetap RIT1), dan kelompok RUTE (blok toko dipisah baris kosong di file Rekap Toko / RUTE)
+//  2. kvKelompok    kelompokkan toko per CAR A / bukan A (ritase boleh campur; rit paket = rit mayoritas tokonya), dan kelompok RUTE (blok toko dipisah baris kosong di file Rekap Toko / RUTE)
 //  3. kvBentukPaket tiap kelompok dibagi jadi paket (CAR A 130-180, CAR B 180-240, CAR C 200-260 ctn); prioritas CAR sama (A hanya dengan A; B dan C lebih dulu dibentuk sendiri-sendiri, sisanya baru digabung B+C), isi dimaksimalkan mendekati batas atas, maks 8 toko per paket
 //  4. kvPilihPaket  terapkan batas stock (bergantian satu paket per rit, di tiap rit paket terbesar dulu), pilih paket terbesar per ritase sebanyak Max paket,
 //                   lalu toko dari paket yang tidak terpilih / toko sisa ditambahkan ke paket terpilih sampai mendekati batas atas
 //  5. kvNomor       beri nomor paket (per ritase, terbesar dulu) dan hitung ringkasan
+// Kategori utama dari deskripsi (DESC2 Master): AIR (air mineral), MINYAK (minyak goreng), GULA, BERAS. Selain itu = '' (tidak dibatasi)
+const KV_NEG=/RAW MATERIAL|OLAHAN|KONVERSI|TUNA|MASSAGE|SHOWER|SNACK|BAKCANG|KRAKER|BIHUN|LAPIS|TETEH|FRISIAN|STICK|CAKE|BOLU|APEM|WAJIK|SALAK|SEAWEED|COLOGNE|SPRAY|SERUM|TONER|SABUN|SHAMPO|KOPI|COFFEE|TEH |BUBUR|PIA |ROTI|PERMEN|SIRUP|SUSU|COKLAT|TEPUNG|KUE|TALAM|KETAN|KERUPUK|KECAP|BISKUIT|MINUMAN|ISOTONIK|MILK|KENTAL MANIS|KREMER|GALON KOSONG|WASH|BODY|HAIR|LOTION|TELON|KAYU PUTIH|NASI|BABY OIL/,kvGc=new Map();
+function kvGrp(d){d=String(d||'').toUpperCase();let v=kvGc.get(d);if(v!==undefined)return v;v='';
+ if(!KV_NEG.test(d)){if(/\bAIR (MINERAL|MINUM|OKSI)\b|\bMINERAL WATER\b/.test(d))v='AIR';
+  else if(/\bMINYAK (GORENG|KEDELAI|KELAPA|JAGUNG)\b|\b(CORN|OLIVE|CANOLA|SUNFLOWER|COCONUT) OIL\b/.test(d))v='MINYAK';
+  else if(/\bGULA (PASIR|TEBU|KRISTAL|PUTIH|MERAH|KELAPA|BATU|HALUS|SEMUT|JAWA|AREN|PREMIUM|CAIR|BATANG)\b|\bGULAKU\b/.test(d))v='GULA';
+  else if(/\bBERAS\b/.test(d)&&/\b(SAK|PCH|PCK)\b/.test(d))v='BERAS'}
+ kvGc.set(d,v);return v}
+// Batas item per kategori: maks gp item per paket dan gr item per rit (item terbesar ctn dipertahankan). Kembalikan set baris (toko+PLU) yang dibuang
+function kvBatasKat(res,gp,gr){const bad=new Set(),G=[],mk=(key,lim)=>{const M=new Map();for(const r of res){const g=kvGrp(r.desc);if(!g)continue;const k=key(r)+'\u0002'+g;let a=M.get(k);if(!a)M.set(k,a={m:new Map(),rs:[]});a.m.set(r.pk,(a.m.get(r.pk)||0)+r.ctn);a.rs.push(r)}
+  for(const a of M.values()){if(a.m.size<=lim)continue;const keep=new Set([...a.m].sort((x,y)=>y[1]-x[1]||(x[0]<y[0]?-1:1)).slice(0,lim).map(x=>x[0]));for(const r of a.rs)if(!keep.has(r.pk))bad.add(r.t+'\u0001'+r.pk)}};
+ if(gp)mk(r=>r.paket,gp);if(gr)mk(r=>r.rit||'-',gr);return bad}
 const kvSrt=(a,b)=>String(a).localeCompare(String(b),'id',{numeric:true});
-// ritase paket: kalau isinya toko dari 2 rit, paket jadi rit yang lebih besar (RIT2); hanya toko RIT1 = tetap RIT1
-const kvRit=(st,g)=>st.reduce((m,t)=>{const v=g.rt.get(t)||'';return m===''||kvSrt(v,m)>0?v:m},'');
+// ritase paket: kalau isinya campur RIT1 dan RIT2, paket mengikuti rit yang mayoritas (jumlah toko terbanyak; seri: ctn terbanyak, lalu rit lebih besar)
+const kvRit=(st,g)=>{const C=new Map();for(const t of st){const v=g.rt.get(t)||'',a=C.get(v)||[0,0];a[0]++;a[1]+=g.st.get(t)||0;C.set(v,a)}
+ let b=null,ba=null;for(const[v,a]of C)if(b===null||a[0]>ba[0]||a[0]===ba[0]&&(a[1]>ba[1]||a[1]===ba[1]&&kvSrt(v,b)>0)){b=v;ba=a}return b===null?'':b};
 function kvTokoMin(rows){const T=new Map();for(const r of rows)T.set(r.t,(T.get(r.t)||0)+r.ctn);return rows.filter(r=>T.get(r.t)>=15)}
 function kvKelompok(rows){const G=new Map();
  for(const r of rows){const key=kvFk(r);let g=G.get(key);if(!g)G.set(key,g={key,rit:r.rit0||'',A:!!r.carA,zg:new Set(),st:new Map(),sz:new Map(),cr:new Map(),rt:new Map()});g.rt.set(r.t,r.rit0??r.rit??'');g.zg.add(r.zg||'-');g.sz.set(r.t,r.zg||'-');g.cr.set(r.t,String(r.car||'').trim().toUpperCase()||'-');g.st.set(r.t,(g.st.get(r.t)||0)+r.ctn)}
@@ -995,7 +1009,7 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   const ST=alkStock(sk.rows),ST7=alkStock7(ST),RK=kvToko(rk.rows),KLP=new Set([...RK.values()].map(v=>v.kel)).size,DN=dn?alkDone(dn.rows):null,T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
    nat=!!KV.nat,m5=!!KV.m5,same=!!KV.same,mst=KV.ms>0?KV.ms:null,mxc=KV.mx>0?KV.mx:null,mxp=KV.mp>0?KV.mp:null,mi=KV.mi>0?KV.mi:null,kl=KV.kl>1?KV.kl:null,
    used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim();let i=0,lolos=0;
-  if(RK.size>20&&KLP<2)throw Error('rute.csv belum punya pemisah kelompok (baris kosong antar kelompok), jadi semua toko dianggap satu kelompok.');
+  if(RK.size>20&&KLP<2)throw Error('File Rute belum punya pemisah kelompok (baris kosong antar kelompok), jadi semua toko dianggap satu kelompok.');
   const DNP=new Set(),DNT=new Set();if(DN)for(const g of DN){if(g.length===8)DNP.add(PK(g));else if(g.length===4)DNT.add(g.toUpperCase())}
   for(const[gab,[t,p,S,Vs]]of tg){
    if(++i%50000===0){jm.textContent='Menghitung: '+pc(i,tg.size);await tick()}
@@ -1037,14 +1051,19 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   const hitung=r0=>{for(const r of r0){if(r.qo===undefined)r.qo=r.q;r.q=r.qo;r.ctn=d(r.q,r.fr);r.rp=r.q*r.ac}
    const R1=kvTokoMin(r0),G=kvKelompok(R1),{P,L}=kvBentukPaket(G);return kvNomor(kvPilihPaket(P,L,R1,{mxp,m5}),G,P)};
   jm.textContent='Membentuk paket...';await tick();
-  let B=hitung(res);const B0={np:B.np,mz:B.mz,uz:B.uz,nz_:B.nz_},skipN=B.skip;
+  let B=hitung(res),base=res;const B0={np:B.np,mz:B.mz,uz:B.uz,nz_:B.nz_},skipN=B.skip;
   if(same){let r0=res;for(let it=0;it<12;it++){const S=new Map();for(const r of B.res){const k=r.rit||'';let s=S.get(k);if(!s)S.set(k,s=new Set());s.add(r.pk)}
    if(S.size<2)break;let com=null;for(const s of S.values())com=com?new Set([...com].filter(x=>s.has(x))):new Set(s);
    let eq=true;for(const s of S.values())if(s.size!==com.size){eq=false;break}
-   if(eq)break;r0=r0.filter(r=>com.has(r.pk));B=hitung(r0)}}
+   if(eq)break;r0=r0.filter(r=>com.has(r.pk));base=r0;B=hitung(r0)}}
+  // Batas item kategori utama (air mineral, minyak, gula, beras): baris yang dibuang -> paket dibentuk ulang agar syarat CTN paket tetap terpenuhi
+  const KG=KV.gp>0?KV.gp:null,KR=KV.gr>0?KV.gr:null;let kgN=0;
+  if(KG||KR){jm.textContent='Membatasi item per kategori...';await tick();
+   for(let it=0;it<12;it++){const bad=kvBatasKat(B.res,KG,KR);if(!bad.size)break;kgN+=bad.size;base=base.filter(r=>!bad.has(r.t+'\u0001'+r.pk));B=hitung(base)}
+   const bad=kvBatasKat(B.res,KG,KR);if(bad.size){kgN+=bad.size;B.res=B.res.filter(r=>!bad.has(r.t+'\u0001'+r.pk))}}
   res=B.res;const{nz_,uz,uc}=B;
   const pkTxt=uz?' '+fn(uz)+' dari '+fn(nz_)+' kelompok tidak memenuhi syarat paket ('+Number(uc).toLocaleString('id-ID',{maximumFractionDigits:0})+' ctn, tidak diikutkan).':'';
-  const dg=' PLU Target ditemukan di stock akhir: '+fn(hit.size)+' dari '+fn(seen.size)+'.'+' Paket terbentuk sebelum stock/Max paket: '+fn(B0.np)+' ('+fn(B0.uz)+' dari '+fn(B0.nz_)+' kelompok belum bisa jadi paket); '+fn(skipN)+' paket tidak terpilih (Max paket / stock).';
+  const dg=' PLU Target ditemukan di stock akhir: '+fn(hit.size)+' dari '+fn(seen.size)+'.'+' Paket terbentuk sebelum stock/Max paket: '+fn(B0.np)+' ('+fn(B0.uz)+' dari '+fn(B0.nz_)+' kelompok belum bisa jadi paket); '+fn(skipN)+' paket tidak terpilih (Max paket / stock).'+(kgN?' Batas kategori (air mineral/minyak/gula/beras) membuang '+fn(kgN)+' baris toko-item.':'');
   if(!res.length){jm.textContent='Tidak ada baris alokasi yang memenuhi syarat ('+fn(lolos)+' baris lolos filter).'+pkTxt+dg;go.disabled=false;return}
   const A=new Set();let tq=0,tc=0,tr=0;
   for(const r of res){A.add(r.pk);tq+=r.q;tc+=r.ctn;tr+=r.rp}
