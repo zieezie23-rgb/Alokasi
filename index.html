@@ -304,11 +304,12 @@ function dlCsv(nm,H,rows,o){o=o||{};const f=x=>x==null?'':typeof x==='number'?St
  a.href=u;a.download=nm;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
 const DLH={toko:['KODE TOKO','NAMA TOKO','AM','KECAMATAN','KOTA'],item:['PLU','DESC','POLA1','POLA2','KET NATARU'],target:['TOKO','PRDCD','QTY_NAT','QTY_SEA'],npb:['GAB','QTY_NATARU','QTY_TOTAL'],pomgg:POH};
 // unduh PO + NPB sebagai Excel 3 sheet: Detail PO, Detail NPB, Pertanggal (Basic + Terkait, kolom POLA1 di kanan PRDCD). RECID '1' (PO) tidak ikut.
-// Per tanggal: PO = QTY recid R+H+kosong; BPB = BPB_QTY recid R (tanggal PO); NPB = QTY ALOK (tanggal NPB). TOTAL: PO, BPB, NPB, PO OUT (QTY recid kosong saja, juga ikut dihitung di PO)
+// Per tanggal: PO dan PO OUT dengan tanggal PO lebih dari H-1 (kemarin) tidak dibawa dan tidak masuk TOTAL (BPB/NPB tetap). PO = QTY recid R+H+kosong; BPB = BPB_QTY recid R (tanggal PO); NPB = QTY ALOK (tanggal NPB). TOTAL: PO, BPB, NPB, PO OUT (QTY recid kosong saja, juga ikut dihitung di PO)
 function pomggBook(D,R,tg,im){
  const I0=im||new Map(),mm=tg?pluMap(tg):new Map(),rows=D.filter(r=>String(r[0]??'').trim()!=='1'),
   MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],
   dk=s=>{const m=String(s||'').match(/^(\d+)\/(\d+)\/(\d+)$/);return m?+m[3]*10000+ +m[1]*100+ +m[2]:0},
+  hm1=(()=>{const u=new Date();u.setDate(u.getDate()-1);return u.getFullYear()*10000+(u.getMonth()+1)*100+u.getDate()})(),
   nk=s=>{const m=String(s||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return m?+m[1]*10000+ +m[2]*100+ +m[3]:0},
   dl=k=>String(k%100).padStart(2,'0')+' '+MB[Math.floor(k/100)%100-1]+' '+String(Math.floor(k/10000)).slice(-2),
   dt=k=>Date.UTC(Math.floor(k/10000),Math.floor(k/100)%100-1,k%100),
@@ -316,8 +317,8 @@ function pomggBook(D,R,tg,im){
   // i: 0 PO, 1 BPB, 2 NPB, 3 PO OUT (PO OUT hanya masuk TOTAL). Tanpa tanggal hanya masuk TOTAL
   add=(pl,p,d,i,q)=>{const m=G[pl];let o=m.get(p);if(!o)m.set(p,o={t:[0,0,0,0],d:new Map()});o.t[i]+=q;if(d>0&&i<3){let c=o.d.get(d);if(!c)o.d.set(d,c=[0,0,0]);c[i]+=q}};
  for(const r of rows){const p=pluOf(r[3],mm);if(p===undefined)continue;const pl=pol(p);if(!ok(pl))continue;
-  const rc=String(r[0]??'').trim().toUpperCase(),q=NUM(r[4]),bq=NUM(r[7]),d=dk(r[5]);
-  if((rc==='R'||rc==='H'||rc==='')&&q)add(pl,p,d,0,q);if(rc==='R'&&bq)add(pl,p,d,1,bq);if(rc===''&&q)add(pl,p,d,3,q)}
+  const rc=String(r[0]??'').trim().toUpperCase(),q=NUM(r[4]),bq=NUM(r[7]),d=dk(r[5]),po=!(d>hm1);
+  if(po&&(rc==='R'||rc==='H'||rc==='')&&q)add(pl,p,d,0,q);if(rc==='R'&&bq)add(pl,p,d,1,bq);if(po&&rc===''&&q)add(pl,p,d,3,q)}
  if(R&&tg)for(const x of R.rows){const t=tg.get(K(x[0]));if(!t)continue;const p=t[1],pl=pol(p);if(!ok(pl))continue;const q=NUM(x[2]);if(q)add(pl,p,nk(x[1]),2,q)}
  // semua tanggal dari awal sampai akhir, tanggal kosong tetap ada
  let mn=0,mx=0;for(const m of Object.values(G))for(const o of m.values())for(const d of o.d.keys()){if(!mn||d<mn)mn=d;if(d>mx)mx=d}
