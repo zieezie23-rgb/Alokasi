@@ -78,7 +78,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 .kvs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.kvs .st{padding:6px 10px;text-align:right}.kvs .st span{font-size:11px}.kvs .st b{font-size:clamp(13px,3.6vw,19px);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kvsec{font-size:13px;font-weight:700;color:var(--ac2,#8ab4ff);border-left:4px solid var(--yel);padding-left:8px;margin-top:2px}
 .kvrt{display:grid;gap:12px}.kvh{font-weight:700;font-size:13px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}.kvt tr.tot td{font-weight:700;border-top:1px solid var(--line);position:sticky;bottom:0;background:var(--pn,#141b2d)}.kvh span{font-weight:400;color:var(--mut);font-size:11.5px;margin-left:0;white-space:nowrap;text-align:right}
-.kvt{width:100%;margin:0;border-collapse:collapse}.kvt td{text-align:right;white-space:nowrap}.kvt td:first-child{text-align:left}.kvt tr.th td{font-size:11.5px;color:var(--mut);font-weight:600}
+.kvt{width:100%;margin:0;border-collapse:collapse}.kvt td{text-align:right;white-space:nowrap}.kvt td:first-child{text-align:left}.kvp td:nth-child(2){text-align:left}.kvt tr.th td{font-size:11.5px;color:var(--mut);font-weight:600}
 .kvit{overflow:auto;max-height:420px}.kvi2 td:nth-child(2),.kvi2 td:nth-child(3){text-align:left}.kvi2 td:nth-child(2){white-space:normal;min-width:140px}.kvi2 tr.th td{position:sticky;top:0;background:var(--pn,#141b2d)}
 @media(max-width:620px){.kvt td{padding:4px 5px;font-size:12px}.kvrt{gap:8px}.kvs{gap:5px}.kvs .st{padding:5px 6px;border-left-width:3px}.kvs .st span{font-size:10.5px}.kvs .st b{font-size:12.5px;letter-spacing:-.2px;overflow:visible;text-overflow:clip}.kvi2 td{font-size:11px;padding:4px 3px}.kvi2 td:nth-child(2){min-width:84px}}
 .c.isi.kvi{grid-template-columns:auto repeat(5,minmax(0,1fr)) auto}.kck{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}.c.isi.kvi label.ck{flex-direction:row;align-items:center;gap:5px;height:36px;box-sizing:border-box;white-space:nowrap;font-size:13px;cursor:pointer}.c.isi.kvi label.ck input{width:18px;height:18px;margin:0;padding:0;accent-color:var(--yel,#fc0)}.c.isi.kvi button{width:auto;padding:0 12px}#kv_hp{grid-template-columns:max-content minmax(0,1fr);align-items:baseline}#kv_hp b{white-space:nowrap}.kvb{display:flex;gap:6px;align-items:flex-end}.kvb a.dl{margin:0;height:36px;box-sizing:border-box;display:inline-flex;align-items:center;padding:0 14px;font-size:13px;white-space:nowrap}.kvb a.dl[hidden]{display:none}@media(max-width:620px){.c.isi.kvi{grid-template-columns:repeat(2,minmax(0,1fr))}.kck{grid-column:1/-1}.kvb{grid-column:1/-1}.kvb>*{flex:1;justify-content:center;text-align:center}}
@@ -808,7 +808,7 @@ function kvBook(res,dt){
  // --- sheet 1: KEBUTUHAN (per RIT; satu baris per PRDCD di tiap rit)
  const RG=new Map();for(const r of res){const rt=String(r.rit||'');let m=RG.get(rt);if(!m)RG.set(rt,m=new Map());const k=String(r.p);let g=m.get(k);if(!g)m.set(k,g={p:k,desc:r.desc,pola:r.p1,al:r.al,q:0,c:0,rp:0});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp}
  let R1='',r=5,tq=0,tc=0,tr=0;const m1=[],RL=[...RG.keys()].sort(srt);
- R1+=rw(2,cs(2,1,'KEBUTUHAN ALOKASI KANVAS '+String(dt.getDate()).padStart(2,'0')+' '+MB[dt.getMonth()]+' '+dt.getFullYear(),1),24)+rw(3,'',3);
+ R1+=rw(2,cs(2,1,'KEBUTUHAN ALOKASI KANVAS '+(d1=>String(d1.getDate()).padStart(2,'0')+' '+MB[d1.getMonth()]+' '+d1.getFullYear())(new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1)),1),24)+rw(3,'',3);
  for(const rt of RL){const L1=[...RG.get(rt).values()].sort((a,b)=>srt(a.p,b.p));let q=0,c=0,p=0;
   R1+=rw(r,cs(r,1,kvRl(rt),18),24);r++;
   R1+=rw(r,['PRDCD','DESC2','POLA1','ALAMAT','QTY','CTN','RP'].map((h,i)=>cs(r,i+1,h,2)).join(''),24);r++;
@@ -1057,11 +1057,11 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
    MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],bs=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1),per=String(bs.getDate()).padStart(2,'0')+' '+MB[bs.getMonth()]+' '+String(bs.getFullYear()).slice(-2);
   const u2=URL.createObjectURL(kvBook(res,dt));
   const PF=new Map();for(const r of res){let g=PF.get(r.paket);if(!g)PF.set(r.paket,g={n:r.paket,l:[]});g.l.push(r.t+','+r.p+','+r.q+',Alokasi Kanvas')}
-  const u3=URL.createObjectURL(zipStore([...PF.values()].sort((a,b)=>a.n.localeCompare(b.n,'id',{numeric:true})).map(g=>[g.n+'.csv','TOKO,PRDCD,QTY,KET\r\n'+g.l.join('\r\n')+'\r\n']),'application/zip'));
+  const u3=URL.createObjectURL(zipStore([...PF.values()].sort((a,b)=>a.n.localeCompare(b.n,'id',{numeric:true})).map(g=>['P'+(g.n.replace(/\D/g,'')||g.n)+' '+String(dt.getDate()).padStart(2,'0')+' '+MB[dt.getMonth()]+'.csv','TOKO,PRDCD,QTY,KET\r\n'+g.l.join('\r\n')+'\r\n']),'application/zip'));
   const PS=new Map();for(const r of res){let g=PS.get(r.paket);if(!g)PS.set(r.paket,g={zg:r.zg,rit:r.rit,car:new Set(),jad:new Set(),t:new Set(),it:new Set(),c:0});g.car.add(r.car);g.jad.add(r.jad);g.t.add(r.t);g.it.add(r.pk);g.c+=r.ctn}
   const PL_=[...PS].sort((a,b)=>a[0].localeCompare(b[0],'id',{numeric:true}));
   kvUrls=[u2,u3];
-  const pt=l=>'<table class="kvt"><tr class="th"><td>Paket</td><td>Toko</td><td>Item</td><td>CTN</td></tr>'+l.map(([k,g])=>'<tr><td>'+esc(k)+'</td><td>'+nf(g.t.size)+'</td><td>'+nf(g.it.size)+'</td><td>'+nf(g.c)+'</td></tr>').join('')+'</table>',
+  const pt=l=>'<table class="kvt kvp"><tr class="th"><td>Paket</td><td>CAR</td><td>Toko</td><td>Item</td><td>CTN</td></tr>'+l.map(([k,g])=>'<tr><td>'+esc(k)+'</td><td>'+esc([...g.car].filter(Boolean).sort().join('/'))+'</td><td>'+nf(g.t.size)+'</td><td>'+nf(g.it.size)+'</td><td>'+nf(g.c)+'</td></tr>').join('')+'</table>',
    RT=[...new Set(PL_.map(([,g])=>g.rit||'-'))].sort((x,y)=>String(x).localeCompare(String(y),'id',{numeric:true})),
    pg=RT.map(rt=>{const l=PL_.filter(([,g])=>(g.rit||'-')===rt),c=l.reduce((a,[,g])=>a+g.c,0);return'<div><div class="kvh">'+esc(kvRl(rt))+' <span>'+nf(l.length)+' paket · '+nf(c)+' ctn</span></div>'+pt(l)+'</div>'}).join(''),
    IR=RT.map(rt=>{const m=new Map();for(const r of res){if((r.rit||'-')!==rt)continue;let g=m.get(r.pk);if(!g)m.set(r.pk,g={p:r.p,desc:r.desc,pola:r.p1,q:0,c:0,rp:0});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp}
