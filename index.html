@@ -102,7 +102,8 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <b>Master</b><span>Master Stock</span><div class="hd" data-hd="master"></div>
 <b>Toko</b><span>KODE TOKO, NAMA TOKO, AM, KECAMATAN, KOTA</span><div class="hd" data-hd="toko"></div>
 <b>Item</b><span>PLU, DESC, POLA1, POLA2, KET NATARU</span><div class="hd" data-hd="item"></div>
-<b>Target</b><span>TOKO, PRDCD, QTY_NAT, QTY_SEA</span><div class="hd" data-hd="target"></div>
+<b>Target</b><span>TOKO, PRDCD, TGT_AWAL, TGT_TAMBAH, QTY_TGT</span><div class="hd" data-hd="target"></div>
+<b>FT_HO</b><span>GAB, FT_HO</span><div class="hd" data-hd="ftho"></div>
 <b>NPB</b><span>GAB, TANGGAL, QTY ALOK, KETER</span><div class="hd" data-hd="npb"></div>
 <b>POMGG</b><span>File tarikan Data Harian POMGG</span><div class="hd" data-hd="pomgg"></div></div>
 <div class="m" id="um" style="margin-top:8px;white-space:normal"></div><div id="ul" style="margin-top:6px"></div></section>
@@ -144,7 +145,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <b>Rute</b><span>Upload tiap alokasi (nama file memuat kata Rute): toko, ritase, CAR, dan kelompok paket (dipisah baris kosong)</span>
 <b>Sudah alokasi</b><span>GAB (12 karakter), PLU (8), atau TOKO (4). Yang ada di file ini tidak ikut dialokasi</span></div>
 <div class="m" id="kv_um" style="margin-top:8px;white-space:normal"></div><div id="kv_ul" style="margin-top:6px"></div></section>
-<section class="p gen"><div class="kvh0"><div class="alt">Alokasi</div><div class="kck"><label class="ck" title="Pola 1 Terkait: tercentang = QTY_NAT − NPB, tidak = QTY_SEA − NPB"><input type="checkbox" id="kv_nat">Nataru</label><label class="ck" title="Hasil perhitungan di bawah 5 ctn tidak diikutkan"><input type="checkbox" id="kv_m5">&gt;=5ctn</label><label class="ck" title="Hasil perhitungan di bawah 10 ctn tidak diikutkan"><input type="checkbox" id="kv_m10">&gt;=10ctn</label><label class="ck" title="Daftar item RIT1 dan RIT2 dibuat sama"><input type="checkbox" id="kv_same">Item Sama</label></div></div><div class="c isi kvi">
+<section class="p gen"><div class="kvh0"><div class="alt">Alokasi</div><div class="kck"><label class="ck" title="Pola 1 Terkait: tercentang = hanya item KET NATARU = NATARU (termin NATARU), tidak = item selain NATARU (termin Pola 2). Target = QTY_TGT"><input type="checkbox" id="kv_nat">Nataru</label><label class="ck" title="Hasil perhitungan di bawah 5 ctn tidak diikutkan"><input type="checkbox" id="kv_m5">&gt;=5ctn</label><label class="ck" title="Hasil perhitungan di bawah 10 ctn tidak diikutkan"><input type="checkbox" id="kv_m10">&gt;=10ctn</label><label class="ck" title="Daftar item RIT1 dan RIT2 dibuat sama"><input type="checkbox" id="kv_same">Item Sama</label></div></div><div class="c isi kvi">
 <label>Min stock (ctn)<input type="number" id="kv_ms" min="0" step="1" inputmode="numeric"></label>
 <label title="Batas qty per baris (toko x PLU). Hasil di atas batas dipotong ke batas, kosong = tanpa batas">Max Ctn<input type="number" id="kv_mx" min="0" step="1" inputmode="numeric"></label>
 <label>Max item<input type="number" id="kv_mi" min="0" step="1" inputmode="numeric"></label>
@@ -165,8 +166,12 @@ const $=s=>document.querySelector(s),tick=()=>new Promise(r=>setTimeout(r)),fn=n
 tpd=t=>{const m=String(t||'').match(/(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})(?:\D+(\d{1,2})[.:](\d{2}))?/);if(!m||+m[2]<1||+m[2]>12)return null;return new Date(+m[3],+m[2]-1,+m[1],+(m[4]||0),+(m[5]||0))},
 fdl=d=>d?['Min','Sen','Sel','Rab','Kam','Jum','Sab'][d.getDay()]+', '+String(d.getDate()).padStart(2,'0')+' '+['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][d.getMonth()]+' '+String(d.getFullYear()).slice(-2)+', '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'):'',
 luUpdate=async()=>{const e=$('#lu');if(!e)return;const meta=(await get('meta'))||{};let b=null;for(const k in meta){const d=tpd(meta[k]&&meta[k].time);if(d&&(!b||d>b))b=d}e.textContent=b?'Last Update : '+fdl(b):''};
-const COLS=["GUDANG ","AM","KECAMATAN","KOTA","TOKO","NAMA TOKO","GAB","PLU","DESC","POLA1","POLA2","KET NATARU","ZONA","ALAMAT","FRAC","MINOR","ACOST","PTAG","QTY_NAT","CTN_NAT","RP_NAT","QTY_SEA","CTN_SEA","RP_SEA","QTY_TGT","CTN_TGT","RP_TGT","QTY_NPB_NAT","CTN_NPB_NAT","RP_NPB_NAT","QTY_SISA_NAT","CTN_SISA_NAT","RP_SISA_NAT","% NAT","QTY_NPB_SEA","CTN_NPB_SEA","RP_NPB_SEA","QTY_SISA_SEA","CTN_SISA_SEA","RP_SISA_SEA","% SEA"];
-const SRC={master:['Master','Diganti seluruhnya'],toko:['Toko','Diganti seluruhnya'],item:['Item','Diganti seluruhnya'],target:['Target','GAB ada diperbarui, GAB baru ditambahkan'],npb:['NPB','Ditambahkan setiap upload'],pomgg:['POMGG','Yang berubah diperbarui, yang baru ditambahkan']};
+// header rekap = file REKAP.csv. QTY_SISA = QTY_TGT - QTY_NPB (ubah FT_KURANG ke true bila FT_HO ikut mengurangi sisa)
+const FT_KURANG=false;
+const COLS=["KODE_DC","AM","TOKO","NAMA_TOKO","KECAMATAN","KABUPATEN","GAB","PRDCD","DESC2","POLA1","POLA2","KET_NATARU","ZONA","ALAMAT","FRAC","MINOR","ACOST","PTAG","TGT_AWAL","TGT_TAMBAH","QTY_TGT","QTY_NPB","FT_HO","QTY_SISA","PERSEN"];
+// data Target format lama (QTY_NAT/QTY_SEA) hanya 4 kolom; format baru 5 kolom [toko, prdcd, awal, tambah, qty_tgt]
+const tgOld=m=>{for(const v of m.values())return v.length<5;return false},TGOLD='Data Target masih format lama (QTY_NAT/QTY_SEA). Reset database lalu upload Target baru (TOKO, PRDCD, TGT_AWAL, TGT_TAMBAH, QTY_TGT).';
+const SRC={master:['Master','Diganti seluruhnya'],toko:['Toko','Diganti seluruhnya'],item:['Item','Diganti seluruhnya'],target:['Target','GAB ada diperbarui, GAB baru ditambahkan'],ftho:['FT_HO','Diganti seluruhnya'],npb:['NPB','Ditambahkan setiap upload'],pomgg:['POMGG','Yang berubah diperbarui, yang baru ditambahkan']};
 // ---- IndexedDB
 const idb=new Promise((ok,no)=>{const q=indexedDB.open('rekap',1);q.onupgradeneeded=()=>q.result.createObjectStore('s');q.onsuccess=()=>ok(q.result);q.onerror=()=>no(q.error)});
 const tx=async(m,f)=>{const d=await idb;return new Promise((ok,no)=>{const t=d.transaction('s',m);const r=f(t.objectStore('s'));t.oncomplete=()=>ok(r.result);t.onerror=()=>no(t.error)})};
@@ -200,7 +205,8 @@ const NB=v=>v===''||v==null?null:v,CH=5000,PL=5000;
 let capsP=null;const caps=()=>capsP||(capsP=api({action:'caps'}).catch(()=>{capsP=null;return{}}));
 const CV={master:{to:m=>[...m].map(([p,a])=>[p,...a]),from:rs=>new Map(rs.map(r=>[String(r[0]),[NB(r[1]),NB(r[2]),NB(r[3]),NUM(r[4]),NUM(r[5]),NB(r[6]),NUM(r[7])]]))},
  toko:{to:m=>[...m].map(([p,a])=>[p,...a]),from:rs=>new Map(rs.map(r=>[String(r[0]),[NB(r[1]),NB(r[2]),NB(r[3]),NB(r[4])]]))},
- target:{to:m=>[...m.values()],from:rs=>new Map(rs.map(r=>[String(r[0])+String(r[1]),[String(r[0]),String(r[1]),NUM(r[2]),NUM(r[3])]]))}};
+ target:{to:m=>[...m.values()],from:rs=>new Map(rs.map(r=>[String(r[0])+String(r[1]),[String(r[0]),String(r[1]),NUM(r[2]),NUM(r[3]),NUM(r[4])]]))},
+ ftho:{to:m=>[...m],from:rs=>new Map(rs.map(r=>[String(r[0]),NUM(r[1])]))}};
 CV.item=CV.toko;
 // POMGG: hanya baris hasil filter yang disimpan (10 kolom). Disimpan di perangkat sebagai array baris.
 CV.pomgg={to:a=>a,from:rs=>rs.map(r=>[String(r[0]),String(r[1]),String(r[2]),String(r[3]),NUM(r[4]),NB(r[5]),NB(r[6]),NB(r[7])==null?null:NUM(r[7]),NB(r[8]),NB(r[9])])};
@@ -260,11 +266,16 @@ async function upload(k,f,mode){
   r.forEach((x,i)=>{if(i===0&&hd.test(N(x[0])))return;const p=K(x[0]);if(p&&!m.has(p))m.set(p,[V(x[1]),V(x[2]),V(x[3]),V(x[4])])});
   if(cl)ver=(await push(k,'replace',CV[k].to(m),{file:f.name,time:tm},prog)).ver;
   await put(k,m);msg=`${SRC[k][0]} diganti: ${fn(m.size)} baris.`;
- }else if(k==='target'){const[c,dt]=hdr(r,['TOKO','PRDCD']);const a=col(c,'QTY_NAT','QTY NAT'),b=col(c,'QTY_SEA','QTY SEA');
-  const m=(await get('target'))||new Map(),dl=new Map();const before=m.size;let n=0;
-  for(const x of dt){const t=K(x[c.TOKO]),p=K(x[c.PRDCD]);if(!t||!p)continue;const v=[t,p,NUM(x[a]),NUM(x[b])],o=m.get(t+p);if(!o||o[2]!==v[2]||o[3]!==v[3])dl.set(t+p,v);m.set(t+p,v);n++}
-  if(cl)ver=(await push('target','merge',[...dl.values()],{file:f.name,time:tm},prog)).ver;
+ }else if(k==='target'){if(cl&&!(await caps()).tgt)throw Error('Code.gs belum diperbarui. Tempel Code.gs terbaru, deploy versi baru, lalu klik Reset database.');const[c,dt]=hdr(r,['TOKO','PRDCD']);const a=col(c,'TGT_AWAL','TGT AWAL'),b=col(c,'TGT_TAMBAH','TGT TAMBAH'),qi=col(c,'QTY_TGT','QTY TGT');
+  const m=(await get('target'))||new Map(),dl=new Map();if(m.size&&tgOld(m))m.clear();const before=m.size;let n=0;
+  // semua pasangan TOKO+PRDCD disimpan, termasuk yang QTY_TGT = 0. QTY_TGT kosong = TGT_AWAL + TGT_TAMBAH
+  for(const x of dt){const t=K(x[c.TOKO]),p=K(x[c.PRDCD]);if(!t||!p)continue;const A=NUM(x[a]),Tm=NUM(x[b]),Q=x[qi]==null||K(x[qi])===''?A+Tm:NUM(x[qi]),v=[t,p,A,Tm,Q],o=m.get(t+p);if(!o||o.length<5||o[2]!==v[2]||o[3]!==v[3]||o[4]!==v[4])dl.set(t+p,v);m.set(t+p,v);n++}
+  if(cl)ver=(await push('target',before?'merge':'replace',[...dl.values()],{file:f.name,time:tm},prog)).ver;
   await put('target',m);msg=`Target: ${fn(n)} baris, ${fn(m.size-before)} GAB baru, ${fn(n-(m.size-before))} diperbarui. Total ${fn(m.size)}.`;
+ }else if(k==='ftho'){if(cl&&!(await caps()).tgt)throw Error('Code.gs belum diperbarui. Tempel Code.gs terbaru, deploy versi baru, lalu klik Reset database.');const[c,dt]=hdr(r,['GAB']);const q=col(c,'FT_HO','FT HO','FTHO'),m=new Map();
+  for(const x of dt){const g=K(x[c.GAB]);if(!g||N(g)==='GAB')continue;m.set(g,NUM(x[q]))}
+  if(cl)ver=(await push('ftho','replace',CV.ftho.to(m),{file:f.name,time:tm},prog)).ver;
+  await put('ftho',m);msg=`FT_HO diganti: ${fn(m.size)} GAB.`;
  }else if(k==='pomgg'){const tg=await get('target');
   if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target dulu (POMGG hanya menyimpan PLU yang ada di Target).');
   if(cl&&!(await caps()).pomgg)throw Error('Code.gs belum diperbarui. Tempel Code.gs terbaru lalu deploy versi baru.');
@@ -303,7 +314,7 @@ async function upload(k,f,mode){
 function dlCsv(nm,H,rows,o){o=o||{};const f=x=>x==null?'':typeof x==='number'?String(x):/[;,"\r\n]/.test(x)?'"'+String(x).replace(/"/g,'""')+'"':String(x),
  u=URL.createObjectURL(new Blob([(o.bom===false?'':'\ufeff')+(H?[H,...rows]:rows).map(r=>r.map(f).join(',')).join(o.eol||'\n')+(o.eol||'\n')],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');
  a.href=u;a.download=nm;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
-const DLH={toko:['KODE TOKO','NAMA TOKO','AM','KECAMATAN','KOTA'],item:['PLU','DESC','POLA1','POLA2','KET NATARU'],target:['TOKO','PRDCD','QTY_NAT','QTY_SEA'],npb:['GAB','QTY_NATARU','QTY_TOTAL'],pomgg:POH};
+const DLH={toko:['KODE TOKO','NAMA TOKO','AM','KECAMATAN','KOTA'],item:['PLU','DESC','POLA1','POLA2','KET NATARU'],target:['TOKO','PRDCD','TGT_AWAL','TGT_TAMBAH','QTY_TGT'],ftho:['GAB','FT_HO'],npb:['GAB','QTY_NATARU','QTY_TOTAL'],pomgg:POH};
 // unduh PO + NPB sebagai Excel 3 sheet: Detail PO, Detail NPB, Pertanggal (Basic + Terkait, kolom POLA1 di kanan PRDCD). RECID '1' (PO) tidak ikut.
 // Per tanggal: PO dan PO OUT dengan tanggal PO lebih dari H-1 (kemarin) tidak dibawa dan tidak masuk TOTAL (BPB/NPB tetap). PO = QTY recid R+H+kosong; BPB = BPB_QTY recid R (tanggal PO); NPB = QTY ALOK (tanggal NPB). TOTAL: PO, BPB, NPB, PO OUT (QTY recid kosong saja, juga ikut dihitung di PO)
 function pomggBook(D,R,tg,im){
@@ -354,7 +365,7 @@ async function draw(){const meta=(await get('meta'))||{},box=$('#src');box.inner
   `;
   if(k==='npb')nbn=n;box.appendChild(el);const hd=document.querySelector(`#hp [data-hd="${k}"]`);if(hd)hd.innerHTML=k==='pomgg'?((n||nbn)?`<button type="button" class="g" data-dl="pomgg" title="Unduh data PO dan NPB (Excel)">Unduh PO &amp; NPB</button>`:''):(n&&k!=='master'&&k!=='npb'?`<button type="button" class="g" data-dl="${k}" title="Unduh data ${SRC[k][0]}">Unduh</button>`:'')};luUpdate()}
 // ---- upload banyak file sekaligus (jenis file dikenali dari nama file / nama sheet)
-async function detect(f){const n=f.name.toLowerCase();for(const k in SRC)if(n.includes(k))return k;
+async function detect(f){const n=f.name.toLowerCase();if(/ft[ _-]?ho/.test(n))return'ftho';for(const k in SRC)if(n.includes(k))return k;
  if(/\.xls[xm]$/.test(n)){try{const w=XLSX.read(await f.arrayBuffer(),{type:'array',bookSheets:true});for(const k in SRC)if(w.SheetNames.some(s=>s.trim().toLowerCase()===k))return k}catch(e){}}
  return null}
 $('#hb').onclick=()=>{const h=$('#hp');h.hidden=!h.hidden;$('#hb').setAttribute('aria-expanded',String(!h.hidden))};
@@ -466,25 +477,23 @@ async function rekapWatch(){const fl=$('#fl'),jm=$('#jm');$('#bar').style.displa
 // ---- buat rekap
 $('#go').onclick=async()=>{const go=$('#go'),bar=$('#bar'),fl=$('#fl'),jm=$('#jm');go.disabled=true;$('#res').innerHTML='';bar.style.display='block';
  try{if(cloudOn()){jm.textContent='Mengecek data terbaru...';try{await syncAll()}catch(e){jm.textContent='Koneksi gagal, memakai data terakhir.';await tick()}}
-  const[ms,tk,im,tg,np]=await Promise.all(['master','toko','item','target','npb'].map(get));
-  if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target dulu.');
-  const T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),g=$('#gd').value||'G113',sp=',';
+  const[ms,tk,im,tg,np,ft]=await Promise.all(['master','toko','item','target','npb','ftho'].map(get));
+  if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target dulu.');if(tgOld(tg))throw Error(TGOLD);
+  const T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),FT=ft||new Map(),g=$('#gd').value||'G113',sp=',';
   const f=x=>typeof x==='number'?String(x):/[;,"\n]/.test(x)?'"'+String(x).replace(/"/g,'""')+'"':x;
-  const parts=['\ufeff'+COLS.join(sp)+'\n'];let buf=[],i=0,nt=0,nm=0,ni=0;const acc=()=>({nq:0,nc:0,nr:0,bq:0,bc:0,br:0,sq:0,sc:0,sr:0,iq:0,ic:0,ir:0,xs:new Set(),xn:new Set(),xt:new Set(),ys:new Set(),yn:new Set(),yt:new Set()}),SM={b:acc(),t:acc()};const cl=cloudOn(),srv=cl&&!!(await caps()).rekap,db=[],DBI=COLS.map((c,i)=>/^(CTN_|RP_|% )/.test(c)?-1:i).filter(i=>i>=0);
-  for(const[gab,[t,p,S,Vs]]of tg){const T=T0.get(t)||(nt++,[]),M=M0.get(p)||(nm++,[]),I=I0.get(p)||(ni++,[]),n=P.get(gab)||[0,0];
-   const fr=NUM(M[3]),ac=NUM(M[4]),AB=n[0],AI=n[1]-AB,Y=S+Vs,SN=S-AB,SS=Vs-AI;
-   const pl=String(z(I[1])).trim().toLowerCase(),G=pl==='basic'?SM.b:pl==='terkait'?SM.t:null;
-   if(G){if(Vs>0)G.xs.add(p);if(S>0)G.xn.add(p);if(S+Vs>0)G.xt.add(p);if(AI>0)G.ys.add(p);if(AB>0)G.yn.add(p);if(AB+AI>0)G.yt.add(p);G.nq+=S;G.nc+=d(S,fr);G.nr+=S*ac;G.bq+=AB;G.bc+=d(AB,fr);G.br+=AB*ac;G.sq+=Vs;G.sc+=d(Vs,fr);G.sr+=Vs*ac;G.iq+=AI;G.ic+=d(AI,fr);G.ir+=AI*ac}
-   const R=[g,z(T[1]),z(T[2]),z(T[3]),t,z(T[0]),gab,p,z(M[0]),z(I[1]),z(I[2]),z(I[3]),z(M[1]),z(M[2]),fr,NUM(M[6]),ac,z(M[5]),
-    S,d(S,fr),S*ac,Vs,d(Vs,fr),Vs*ac,Y,d(Y,fr),Y*ac,AB,d(AB,fr),AB*ac,SN,d(SN,fr),SN*ac,d(AB,S),AI,d(AI,fr),AI*ac,SS,d(SS,fr),SS*ac,d(AI,Vs)];if(cl&&!srv)db.push(DBI.map(i=>R[i]).map(x=>typeof x==='number'&&!Number.isInteger(x)?+x.toFixed(6):x));buf.push(R.map(f).join(sp));
+  const parts=['\ufeff'+COLS.join(sp)+'\n'];let buf=[],i=0,nt=0,nm=0,ni=0;const cl=cloudOn(),srv=cl&&!!(await caps()).rekap,db=[];
+  for(const[gab,[t,p,A,Tm,Q]]of tg){const T=T0.get(t)||(nt++,[]),M=M0.get(p)||(nm++,[]),I=I0.get(p)||(ni++,[]),n=P.get(gab)||[0,0];
+   const fr=NUM(M[3]),ac=NUM(M[4]),NP=n[1],FH=FT.get(gab)||0,SI=Q-NP-(FT_KURANG?FH:0);
+   const R=[g,z(T[1]),t,z(T[0]),z(T[2]),z(T[3]),gab,p,z(M[0]),z(I[1]),z(I[2]),z(I[3]),z(M[1]),z(M[2]),fr,NUM(M[6]),ac,z(M[5]),A,Tm,Q,NP,FH,SI,d(NP,Q)];
+   if(cl&&!srv)db.push(R.map(x=>typeof x==='number'&&!Number.isInteger(x)?+x.toFixed(6):x));buf.push(R.map(f).join(sp));
    if(++i%20000===0){parts.push(buf.join('\n')+'\n');buf=[];fl.style.width=(90*i/tg.size)+'%';jm.textContent=`Menghitung: ${pc(i,tg.size)}`;await tick()}}
-  parts.push(buf.join('\n')+'\n');let orphan=0;for(const k of P.keys())if(!tg.has(k))orphan++;
+  parts.push(buf.join('\n')+'\n');let orphan=0;for(const k of P.keys())if(!tg.has(k))orphan++;let orf=0;for(const k of FT.keys())if(!tg.has(k))orf++;
   const url=URL.createObjectURL(new Blob(parts,{type:'text/csv;charset=utf-8'}));fl.style.width='100%';jm.textContent='Selesai';
   const dt=new Date(),nm2='Rekap_'+(g.replace(/[^\w-]/g,'')||'G113')+'_'+String(dt.getDate()).padStart(2,'0')+'_'+['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'][dt.getMonth()]+'_'+String(dt.getFullYear()).slice(-2)+'.csv';
   $('#res').innerHTML=`<div class="ac"><a class="dl" href="${url}" download="${nm2}">Unduh ${nm2}</a></div><table>
   <tr><td>Baris rekap</td><td>${fn(tg.size)}</td></tr><tr><td>Toko tidak ada di data Toko</td><td>${dz(nt)}</td></tr>
   <tr><td>PLU tidak ada di Master</td><td>${dz(nm)}</td></tr><tr><td>PLU tidak ada di Item</td><td>${dz(ni)}</td></tr>
-  <tr><td>GAB di NPB tanpa Target (tidak ikut terhitung)</td><td>${dz(orphan)}</td></tr></table>`;
+  <tr><td>GAB di NPB tanpa Target (tidak ikut terhitung)</td><td>${dz(orphan)}</td></tr><tr><td>GAB di FT_HO tanpa Target (tidak ikut terhitung)</td><td>${dz(orf)}</td></tr></table>`;
   refreshSum();
   if(cl&&srv){fl.style.width='0%';jm.textContent='Memulai penyimpanan rekap...';
    try{const w=new Date().toLocaleString('id-ID');
@@ -511,6 +520,7 @@ let rt;$('#rs').onclick=async()=>{const b=$('#rs'),um=$('#um');
  b.disabled=false;b.classList.remove('ask');b.textContent='Reset database';$('#ulb').classList.remove('off')};
 // ---- ringkasan dari database terakhir (tanpa perlu Buat rekap)
 async function calcSM(){const[ms,im,tg,np,po]=await Promise.all(['master','item','target','npb','pomgg'].map(get));
+ if(tg&&tgOld(tg))throw Error(TGOLD);
  const M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
   // satu 'kind' = angka satu kotak: tg Target, po PO, ou PO Outstanding, bp BPB, np NPB, masing-masing [qty, ctn, rupiah] + himpunan PLU (Item)
   kd=()=>({tg:[0,0,0],po:[0,0,0],ou:[0,0,0],bp:[0,0,0],np:[0,0,0],ti:new Set(),pi:new Set(),oi:new Set(),gi:new Set(),ni:new Set()}),
@@ -518,9 +528,10 @@ async function calcSM(){const[ms,im,tg,np,po]=await Promise.all(['master','item'
   put=(o,f,p,q,fr,ac)=>{const a=o[f];a[0]+=q;a[1]+=d(q,fr);a[2]+=q*ac;if(q>0)o[IS[f]].add(p)},
   // s: 'n' = Nataru, 's' = Seasonal; dicatat ke total Pola 1 dan ke kotak per Pola 2
   hit=(G,l,s,f,p,q,fr,ac)=>{if(!q)return;const k=(l&&l!=='0'&&N(l))||'(TANPA POLA2)';let b=G.sub.get(k);if(!b)G.sub.set(k,b=acc());put(G.tot[s],f,p,q,fr,ac);put(b[s],f,p,q,fr,ac)};
- if(tg)for(const[gab,[t,p,S,Vs]]of tg){const M=M0.get(p)||[],I=I0.get(p)||[],n=P.get(gab)||[0,0],fr=NUM(M[3]),ac=NUM(M[4]),AB=n[0],AI=n[1]-AB,
+ // target = QTY_TGT, NPB = total. Kotak: Basic -> Seasonal; Terkait -> Nataru bila KET NATARU = NATARU, selain itu Seasonal (sama dengan aturan PO)
+ if(tg)for(const[gab,[t,p,A,Tm,Q]]of tg){const M=M0.get(p)||[],I=I0.get(p)||[],n=P.get(gab)||[0,0],fr=NUM(M[3]),ac=NUM(M[4]),
   pl=String(z(I[1])).trim().toLowerCase(),G=pl==='basic'?SM.b:pl==='terkait'?SM.t:null;
-  if(G){const l=String(z(I[2])).trim();hit(G,l,'n','tg',p,S,fr,ac);hit(G,l,'s','tg',p,Vs,fr,ac);hit(G,l,'n','np',p,AB,fr,ac);hit(G,l,'s','np',p,AI,fr,ac)}}
+  if(G){const l=String(z(I[2])).trim(),sk=pl==='terkait'&&N(z(I[3]))==='NATARU'?'n':'s';hit(G,l,sk,'tg',p,Q,fr,ac);hit(G,l,sk,'np',p,n[1],fr,ac)}}
  // PO, BPB, PO Outstanding (PO - BPB, minimal 0 per baris) dari POMGG: Basic -> Seasonal; Terkait -> Nataru bila KET NATARU = NATARU, selain itu Seasonal
  if(po&&tg){const mm=pluMap(tg);for(const r of po){const p=pluOf(r[3],mm);if(p===undefined)continue;
   const M=M0.get(p)||[],I=I0.get(p)||[],fr=NUM(M[3]),ac=NUM(M[4]),pl=String(z(I[1])).trim().toLowerCase(),G=pl==='basic'?SM.b:pl==='terkait'?SM.t:null;if(!G)continue;
@@ -677,7 +688,7 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
  try{if(!mrSet())throw Error('Isian Min Rp tidak dikenali. Contoh: 500rb, 1jt, 1,5jt.');
   if(cloudOn()){jm.textContent='Mengecek data terbaru...';try{await syncAll()}catch(e){}}
   const[ms,tk,im,tg,np,sk,pl,dn]=await Promise.all(['master','toko','item','target','npb','alk_stock','alk_plan','alk_done'].map(get));
-  if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target di tab Master.');
+  if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target di tab Master.');if(tgOld(tg))throw Error(TGOLD);
   if(!sk)throw Error('Upload Stock akhir dulu.');if(!pl)throw Error('Upload Plan picking dulu.');
   const sa=ALK.sa||'semua';if(sa!=='semua'&&!dn)throw Error('Pilihan Sudah/Belum alokasi butuh file Sudah alokasi. Upload dulu.');
   jm.textContent='Menghitung alokasi...';await tick();
@@ -686,7 +697,7 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
    used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim();let i=0,lolos=0;
   // isi file Sudah alokasi dikenali dari panjangnya: 12 = GAB, 8 = PLU, 4 = TOKO (salah satu cocok = sudah alokasi)
   const DNP=new Set(),DNT=new Set();if(DN)for(const g of DN){if(g.length===8)DNP.add(PK(g));else if(g.length===4)DNT.add(g.toUpperCase())}
-  for(const[gab,[t,p,S,Vs]]of tg){
+  for(const[gab,[t,p,A,Tm,Q]]of tg){
    if(++i%50000===0){jm.textContent='Menghitung: '+pc(i,tg.size);await tick()}
    const pk=PK(p);let stock=ST.get(pk);if(stock===undefined&&K(p).length<=7)stock=ST7.get(PK(K(p).slice(-7)));seen.add(pk);if(stock!=null)hit.add(pk);if(!(stock>=100)||!PL.has(K(t).toUpperCase()))continue;
    const M=M0.get(p)||[],I=I0.get(p)||[],zn=t2(M[1]),p1=t2(I[1]),p2=t2(I[2]);
@@ -694,17 +705,17 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
    if(nat&&N(z(I[3]))!=='NATARU')continue;
    if(DN){const has=DN.has(gab)||DNP.has(PK(p))||DNT.has(K(t).toUpperCase());if(sa==='sudah'&&!has||sa==='belum'&&has)continue}
    lolos++;
-   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,sisa=nat?S-AB:(S+Vs)-(AB+AI);
+   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,sisa=Q-(AB+AI);
    if(!(mn>0))continue;
-   // Nataru: TARGET=QTY_NAT, SISA=QTY_NAT-NPB nataru | Semua: TARGET=QTY_TGT (NAT+SEA), SISA=QTY_TGT-NPB total
+   // TARGET=QTY_TGT, SISA=QTY_TGT-NPB total. Pilihan Nataru hanya menyaring item ber-KET NATARU = NATARU
    // QTY alokasi = MAX(0, TARGET x % TARGET - NPB), lalu dibulatkan turun ke kelipatan MINOR
-   const target=nat?S:S+Vs;
+   const target=Q;
    const dasar=Math.max(0,target*ps/100-(target-sisa));
    let q=Math.floor(Math.max(0,dasar)/mn+1e-9)*mn;{const xm=Number(zn)===17?Math.max(10,mq||0):mq;if(xm!=null)q=Math.min(mn*xm,q)}
    // total alokasi item yang sama tidak boleh melebihi stock; setelah terlewati, baris berikutnya 0
    if(q>0){if(stop.has(pk))q=0;else{const u=(used.get(pk)||0)+q;if(u>stock){stop.add(pk);q=0}else used.set(pk,u)}}
    if(q<=0)continue;
-   const T=T0.get(t)||[];rows.push({al:z(M[2]),am:z(T[1]),kota:z(T[3]),t,nt:z(T[0]),gab,p,pk,desc:z(M[0]),zn,p1,p2,kt:z(I[3]),fr,mn,ac,stock,tg:target,npb:nat?AB:AB+AI,sisa,q,ctn:d(q,fr),rp:q*ac})}
+   const T=T0.get(t)||[];rows.push({al:z(M[2]),am:z(T[1]),kota:z(T[3]),t,nt:z(T[0]),gab,p,pk,desc:z(M[0]),zn,p1,p2,kt:z(I[3]),fr,mn,ac,stock,tg:target,npb:AB+AI,sisa,q,ctn:d(q,fr),rp:q*ac})}
   // max item per zona, urut total qty alokasi terbesar
   // Min Rp: total Rp alokasi satu PLU (semua toko) harus >= isian; PLU di bawahnya dibuang sebelum Max item
   let res=rows;
@@ -717,7 +728,7 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
   const A=new Set(),Z=new Map();let tq=0,tc=0,tr=0;
   for(const r of res){A.add(r.pk);tq+=r.q;tc+=r.ctn;tr+=r.rp;let g=Z.get(r.zn);if(!g)Z.set(r.zn,g={it:new Set(),q:0,c:0,r:0});g.it.add(r.pk);g.q+=r.q;g.c+=r.ctn;g.r+=r.rp}
   const nf=(v,dc=0)=>Number(v).toLocaleString('id-ID',{maximumFractionDigits:dc});
-  const H=['AM','KOTA','TOKO','NAMA TOKO','GAB','PLU','DESC','ZONA','POLA1','POLA2','KET NATARU','FRAC','MINOR','ACOST','STOCK_AKHIR',nat?'QTY_NAT':'QTY_SEA','QTY_NPB','SISA','QTY_ALOKASI','CTN_ALOKASI','RP_ALOKASI'],
+  const H=['AM','KOTA','TOKO','NAMA TOKO','GAB','PLU','DESC','ZONA','POLA1','POLA2','KET NATARU','FRAC','MINOR','ACOST','STOCK_AKHIR','QTY_TGT','QTY_NPB','SISA','QTY_ALOKASI','CTN_ALOKASI','RP_ALOKASI'],
    f=x=>typeof x==='number'?String(x):/[;,"\n]/.test(x)?'"'+String(x).replace(/"/g,'""')+'"':String(x),parts=['\ufeff'+H.join(',')+'\n'];let buf=[];
   for(const r of res)buf.push([r.am,r.kota,r.t,r.nt,r.gab,r.p,r.desc,r.zn,r.p1,r.p2,r.kt,r.fr,r.mn,r.ac,r.stock,r.tg,r.npb,r.sisa,r.q,+r.ctn.toFixed(4),+r.rp.toFixed(2)].map(f).join(','));
   parts.push(buf.join('\n')+'\n');if(alkUrl)URL.revokeObjectURL(alkUrl);alkUrl=URL.createObjectURL(new Blob(parts,{type:'text/csv;charset=utf-8'}));
@@ -997,7 +1008,7 @@ function kvPack(list){const n=list.length,tot=list.reduce((a,x)=>a+x[1],0);if(!n
 async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go.disabled=true;out.innerHTML='';jm.className='m';$('#kv_dl').hidden=true;
  try{if(cloudOn()){jm.textContent='Mengecek data terbaru...';try{await syncAll()}catch(e){}}
   const[ms,tk,im,tg,np,sk,dn]=await Promise.all(['master','toko','item','target','npb','kv_stock','kv_done'].map(get)),rk={rows:await kvRute()};
-  if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target di tab Master.');
+  if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target di tab Master.');if(tgOld(tg))throw Error(TGOLD);
   if(!sk)throw Error('Upload Stock akhir dulu.');
   jm.textContent='Menghitung alokasi...';await tick();KV_CONC=false;
   // Termin: persen kumulatif pola sampai hari ini (dari termin.json). Dipakai Terkait (3 x termin x target) dan Basic (belum masuk termin = tidak dibawa)
@@ -1012,16 +1023,16 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
    used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim();let i=0,lolos=0;
   if(RK.size>20&&KLP<2)throw Error('File Rute belum punya pemisah kelompok (baris kosong antar kelompok), jadi semua toko dianggap satu kelompok.');
   const DNP=new Set(),DNT=new Set();if(DN)for(const g of DN){if(g.length===8)DNP.add(PK(g));else if(g.length===4)DNT.add(g.toUpperCase())}
-  for(const[gab,[t,p,S,Vs]]of tg){
+  for(const[gab,[t,p,A,Tm,Q]]of tg){
    if(++i%50000===0){jm.textContent='Menghitung: '+pc(i,tg.size);await tick()}
    const pk=PK(p),tu=K(t).toUpperCase();let stock=ST.get(pk);if(stock===undefined&&K(p).length<=7)stock=ST7.get(PK(K(p).slice(-7)));seen.add(pk);if(stock!=null)hit.add(pk);if(!(stock>=100)||!RK.has(tu))continue;
    const M=M0.get(p)||[],I=I0.get(p)||[],zn=t2(M[1]);
    // Pola 1 Terkait: hanya zona 14, 15, dan 20. Pola 1 Basic: semua zona kecuali yang tidak punya zona (kosong / 0). Pola 1 lain tidak diikutkan
    const p1=String(z(I[1])).trim().toLowerCase(),zc=Number(zn);
-   if(p1==='terkait'){if(zc!==14&&zc!==15&&zc!==20)continue}else if(p1==='basic'){if(zn===''||zc===0)continue;if(!(kvTr(I[2])>0))continue}else continue;
+   if(p1==='terkait'){if(zc!==14&&zc!==15&&zc!==20)continue;if((N(z(I[3]))==='NATARU')!==nat)continue}else if(p1==='basic'){if(zn===''||zc===0)continue;if(!(kvTr(I[2])>0))continue}else continue;
    if(DN&&(DN.has(gab)||DNP.has(PK(p))||DNT.has(tu)))continue;
    lolos++;
-   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,target=p1==='basic'?S+Vs:(bq=>{if(!(fr>0&&bq/fr>20))return bq;const tp=(nat?kvTr('NATARU'):kvTr(I[2]))||0;return tp>65?bq:(tp>33?1.5:3)*tp/100*bq})(nat?S:Vs),npx=p1==='basic'?AB+AI:nat?AB:AI,sisa=p1==='basic'?target-npx:Math.max(0,target-npx);
+   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,target=p1==='basic'?Q:(bq=>{if(!(fr>0&&bq/fr>20))return bq;const tp=(nat?kvTr('NATARU'):kvTr(I[2]))||0;return tp>65?bq:(tp>33?1.5:3)*tp/100*bq})(Q),npx=AB+AI,sisa=p1==='basic'?target-npx:Math.max(0,target-npx);
    if(!(mn>0)||!(fr>0))continue;
    if(mst!=null&&!(stock/fr>=mst))continue;
    const cs=d(sisa,fr),qc=kvQc(mxc!=null?Math.min(cs,mxc):cs,kl);if(m5&&qc<mc)continue;const q=qc*fr;if(q<=0)continue;
