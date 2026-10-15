@@ -122,8 +122,8 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <b>Sudah alokasi</b><span>GAB (12 karakter), PLU (8), atau TOKO (4)</span></div>
 <div class="m" id="al_um" style="margin-top:8px;white-space:normal"></div><div id="al_ul" style="margin-top:6px"></div></section>
 <section class="p gen"><div class="alt">Pilihan</div><div class="alg">
-<div class="alf"><span>Ket Nataru</span><div id="al_ket"></div></div>
 <div class="alf"><span>Pola 1</span><div id="al_pola1"></div></div>
+<div class="alf"><span>Ket Nataru</span><div id="al_ket"></div></div>
 <div class="alf"><span>Pola 2</span><div id="al_pola2"></div></div>
 <div class="alf"><span>Zona</span><div id="al_zona"></div></div>
 <div class="alf"><span>Status alokasi</span><div id="al_sa"></div></div>
@@ -557,13 +557,13 @@ function alkDD(k,list,onch,P,S,sv){P=P||'al_';S=S||ALK;sv=sv||alkSave;const box=
  const sync=()=>{ca.checked=cbs.every(c=>c.checked);upd()};
  ca.onchange=()=>{cbs.forEach((c,i)=>{c.checked=ca.checked;ca.checked?ex.delete(list[i]):ex.add(list[i])});S.ex[k]=[...ex];sv();upd();onch&&onch()};
  det.append(sum,body);box.appendChild(det);sync()}
-// kategori zona: 14 & 15 = Bulky, 17 = Rokok, 0 = Non Aktif, lainnya = Bulky Fraction
-const ZO=['Bulky','Rokok','Non Aktif','Bulky Fraction'],zk=zn=>{const n=Number(zn);return n===14||n===15?ZO[0]:n===17?ZO[1]:n===0?ZO[2]:ZO[3]};
+// kategori zona: 14, 15 & 20 = Bulky, 17 = Rokok, 0 = Non Aktif, lainnya = Bulky Fraction
+const ZO=['Bulky','Rokok','Non Aktif','Bulky Fraction'],zk=zn=>{const n=Number(zn);return n===14||n===15||n===20?ZO[0]:n===17?ZO[1]:n===0?ZO[2]:ZO[3]};
 let ALKU=[];
-// urutan pilihan: Ket Nataru > Pola 1 > Pola 2 > Zona; daftar tiap pilihan hanya berisi turunan dari pilihan sebelumnya
-function alkRender(from){const nat=(ALK.ket||'all')==='nataru',F=[['pola1','a'],['pola2','b'],['zona','z']];let U=nat?ALKU.filter(x=>x.k==='NATARU'):ALKU;
- F.forEach(([k,f],i)=>{if(i>=from)alkDD(k,[...new Set(U.map(x=>x[f]).filter(v=>v&&v!=='0'))].sort((a,b)=>k==='zona'?ZO.indexOf(a)-ZO.indexOf(b):a.localeCompare(b,'id',{numeric:true})),()=>alkRender(i+1));
-  const X=new Set(ALK.ex[k]);U=U.filter(x=>!X.has(x[f]))})}
+// urutan pilihan: Pola 1 > Ket Nataru > Pola 2 > Zona; daftar tiap pilihan hanya berisi turunan dari pilihan sebelumnya
+function alkRender(from){const nat=(ALK.ket||'all')==='nataru',F=[['pola1','a',0],['pola2','b',2],['zona','z',3]];let U=ALKU;
+ F.forEach(([k,f,st])=>{if(st>=from)alkDD(k,[...new Set(U.map(x=>x[f]).filter(v=>v&&v!=='0'))].sort((a,b)=>k==='zona'?ZO.indexOf(a)-ZO.indexOf(b):a.localeCompare(b,'id',{numeric:true})),()=>alkRender(st+1));
+  const X=new Set(ALK.ex[k]);U=U.filter(x=>!X.has(x[f]));if(k==='pola1'&&nat)U=U.filter(x=>x.k==='NATARU')})}
 async function alkOpts(){try{const[ms,im]=await Promise.all([get('master'),get('item')]),t=v=>String(z(v)).trim();
  ALKU=[...new Set([...(ms?ms.keys():[]),...(im?im.keys():[])])].map(p=>{const M=(ms&&ms.get(p))||[],I=(im&&im.get(p))||[];return{k:N(z(I[3])),a:t(I[1]),b:t(I[2]),z:zk(t(M[1]))}});
  alkRender(0)}catch(e){}}
@@ -628,7 +628,7 @@ function alkSel(id,key,opts,dv,cb,S,sv){S=S||ALK;sv=sv||alkSave;const box=$('#'+
  let cur=opts.some(o=>o[0]===S[key])?S[key]:dv;const show=()=>{sum.textContent=opts.find(o=>o[0]===cur)[1]};
  for(const[v,l]of opts){const lb=document.createElement('label'),r=document.createElement('input');r.type='radio';r.name=id;r.checked=v===cur;r.onchange=()=>{cur=v;S[key]=v;sv();show();det.open=false;cb&&cb()};lb.append(r,' '+l);body.appendChild(lb)}
  show();det.append(sum,body);box.appendChild(det)}
-const alkSels=()=>{alkSel('al_ket','ket',[['all','All'],['nataru','Nataru']],'all',()=>alkRender(0));alkSel('al_sa','sa',[['semua','Semua'],['belum','Belum alokasi']],'semua');alkSel('al_ps','ps',[[25,'25%'],[50,'50%'],[75,'75%'],[100,'100%']],100)};alkSels();
+const alkSels=()=>{alkSel('al_ket','ket',[['all','All'],['nataru','Nataru']],'all',()=>alkRender(2));alkSel('al_sa','sa',[['semua','Semua'],['belum','Belum alokasi']],'semua');alkSel('al_ps','ps',[[25,'25%'],[50,'50%'],[75,'75%'],[100,'100%']],100)};alkSels();
 // tutup semua daftar pilihan saat klik/tap di luar daftar, atau tekan Esc
 document.addEventListener('pointerdown',e=>{document.querySelectorAll('details.dd[open]').forEach(d=>{if(!d.contains(e.target))d.open=false})},true);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('details.dd[open]').forEach(d=>d.open=false)});
