@@ -321,7 +321,7 @@ function pomggBook(D,R,tg,im){
   MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],
   dk=s=>{const m=String(s||'').match(/^(\d+)\/(\d+)\/(\d+)$/);return m?+m[3]*10000+ +m[1]*100+ +m[2]:0},
   hm1=(()=>{const u=new Date();u.setDate(u.getDate()-1);return u.getFullYear()*10000+(u.getMonth()+1)*100+u.getDate()})(),
-  nk=s=>{const m=String(s||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return m?+m[1]*10000+ +m[2]*100+ +m[3]:0},
+  nk=s=>{const t=String(s||'').trim();let m=t.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)return+m[1]*10000+ +m[2]*100+ +m[3];m=t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);return m?+m[3]*10000+ +m[1]*100+ +m[2]:0},
   dl=k=>String(k%100).padStart(2,'0')+' '+MB[Math.floor(k/100)%100-1]+' '+String(Math.floor(k/10000)).slice(-2),
   dt=k=>Date.UTC(Math.floor(k/10000),Math.floor(k/100)%100-1,k%100),
   G={basic:new Map(),terkait:new Map()},pol=p=>String(z((I0.get(p)||[])[1])).trim().toLowerCase(),ok=pl=>pl==='basic'||pl==='terkait',
