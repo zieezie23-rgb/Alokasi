@@ -251,7 +251,12 @@ let SYNCED=0;
 // detail NPB (GAB, TANGGAL, QTY ALOK, KETER) disimpan terpisah dari total per GAB; tanggal Excel diubah jadi YYYY-MM-DD
 const DTC=/TGL|TANGGAL|DATE/,DH=['GAB','TANGGAL','QTY ALOK','KETER'],xd=v=>{if(typeof v!=='number'||v<20000||v>80000)return v;const t=new Date(Date.UTC(1899,11,30)+Math.round(v*864e5)),p=n=>String(n).padStart(2,'0'),s=t.getUTCFullYear()+'-'+p(t.getUTCMonth()+1)+'-'+p(t.getUTCDate());return v%1?s+' '+p(t.getUTCHours())+':'+p(t.getUTCMinutes())+':'+p(t.getUTCSeconds()):s};
 function npbDetail(dt,c,q,ke,ov){const dk=Object.keys(c).find(n=>DTC.test(n)),di=dk==null?-1:c[dk],o=[];
- for(const x of dt){const g=K(x[c.GAB]);if(!g)continue;const kv=(ov&&ov(g))||x[ke];o.push([g,di<0?'':String(xd(x[di])??'').trim(),NUM(x[q]),String(kv??'').trim()])}return o}
+ for(const x of dt){const g=K(x[c.GAB]);if(!g)continue;const kv=(ov&&ov(g))||x[ke];o.push([g,di<0?'':String(xd(x[di])??'').trim(),NUM(x[q]),String(kv??'').trim()])}
+ // tanggal teks dd/mm/yyyy atau mm/dd/yyyy -> YYYY-MM-DD; urutan dikenali dari isi file (bagian pertama > 12 = hari dulu, bagian kedua > 12 = bulan dulu; sama-sama ambigu = hari dulu)
+ const sl=/^(\d{1,2})\/(\d{1,2})\/(\d{4})/;let dm=0,md=0;for(const r of o){const m=r[1].match(sl);if(m){if(+m[1]>12)dm=1;if(+m[2]>12)md=1}}
+ const mdy=md&&!dm,p2=n=>String(n).padStart(2,'0');
+ for(const r of o){const m=r[1].match(sl);if(!m)continue;let a=+m[1],b=+m[2],d,mo;if(a>12){d=a;mo=b}else if(b>12){mo=a;d=b}else if(mdy){mo=a;d=b}else{d=a;mo=b}if(mo>=1&&mo<=12&&d>=1&&d<=31)r[1]=m[3]+'-'+p2(mo)+'-'+p2(d)}
+ return o}
 async function npbRawSave(rows,replace){const R=(replace?null:await get('npb_raw'))||{l:DH,rows:[]};for(const r of rows)R.rows.push(r);R.l=DH;await put('npb_raw',R)}
 async function upload(k,f,mode){
  const cl=cloudOn(),mp=$('#um'),prog=(a,b)=>{mp.textContent='Mengirim data: '+pc(a,b)};
@@ -321,7 +326,8 @@ function pomggBook(D,R,tg,im){
   MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],
   dk=s=>{const m=String(s||'').match(/^(\d+)\/(\d+)\/(\d+)$/);return m?+m[3]*10000+ +m[1]*100+ +m[2]:0},
   hm1=(()=>{const u=new Date();u.setDate(u.getDate()-1);return u.getFullYear()*10000+(u.getMonth()+1)*100+u.getDate()})(),
-  nk=s=>{const t=String(s||'').trim();let m=t.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)return+m[1]*10000+ +m[2]*100+ +m[3];m=t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);return m?+m[3]*10000+ +m[1]*100+ +m[2]:0},
+  nmdy=(()=>{let dm=0,md=0;if(R)for(const x of R.rows){const m=String(x[1]||'').match(/^(\d{1,2})\/(\d{1,2})\/\d{4}/);if(m){if(+m[1]>12)dm=1;if(+m[2]>12)md=1}}return!!(md&&!dm)})(),
+  nk=s=>{const t=String(s||'').trim();let m=t.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)return+m[1]*10000+ +m[2]*100+ +m[3];m=t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(!m)return 0;const a=+m[1],b=+m[2];let d,mo;if(a>12){d=a;mo=b}else if(b>12){mo=a;d=b}else if(nmdy){mo=a;d=b}else{d=a;mo=b}return mo>=1&&mo<=12&&d>=1&&d<=31?+m[3]*10000+mo*100+d:0},
   dl=k=>String(k%100).padStart(2,'0')+' '+MB[Math.floor(k/100)%100-1]+' '+String(Math.floor(k/10000)).slice(-2),
   dt=k=>Date.UTC(Math.floor(k/10000),Math.floor(k/100)%100-1,k%100),
   G={basic:new Map(),terkait:new Map()},pol=p=>String(z((I0.get(p)||[])[1])).trim().toLowerCase(),ok=pl=>pl==='basic'||pl==='terkait',
