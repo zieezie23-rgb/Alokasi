@@ -144,7 +144,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <b>Rute</b><span>Upload tiap alokasi (nama file memuat kata Rute): toko, ritase, CAR, dan kelompok paket (dipisah baris kosong)</span>
 <b>Sudah alokasi</b><span>GAB (12 karakter), PLU (8), atau TOKO (4). Yang ada di file ini tidak ikut dialokasi</span></div>
 <div class="m" id="kv_um" style="margin-top:8px;white-space:normal"></div><div id="kv_ul" style="margin-top:6px"></div></section>
-<section class="p gen"><div class="kvh0"><div class="alt">Alokasi</div><div class="kck"><label class="ck" title="Pola 1 Terkait: tercentang = hanya item KET NATARU = NATARU (termin NATARU), tidak = item selain NATARU (termin Pola 2). Target = QTY_TGT"><input type="checkbox" id="kv_nat">Nataru</label><label class="ck" title="Tercentang: perhitungan memakai termin (Basic hanya pola yang sudah masuk termin; Terkait dengan target di atas 20 ctn diperkecil sesuai termin). Tidak tercentang: perhitungan normal, target QTY_TGT dipakai penuh tanpa termin"><input type="checkbox" id="kv_tm">Termin</label><label class="ck" title="Hasil perhitungan di bawah 5 ctn tidak diikutkan"><input type="checkbox" id="kv_m5">&gt;=5ctn</label><label class="ck" title="Hasil perhitungan di bawah 10 ctn tidak diikutkan"><input type="checkbox" id="kv_m10">&gt;=10ctn</label><label class="ck" title="Daftar item RIT1 dan RIT2 dibuat sama"><input type="checkbox" id="kv_same">Item Sama</label></div></div><div class="c isi kvi">
+<section class="p gen"><div class="kvh0"><div class="alt">Alokasi</div><div class="kck"><label class="ck" title="Pola 1 Terkait: tercentang = hanya item KET NATARU = NATARU (termin NATARU), tidak = item selain NATARU (termin Pola 2). Target = QTY_TGT"><input type="checkbox" id="kv_nat">Nataru</label><label class="ck" title="Tercentang: Terkait dengan target di atas 20 ctn diperkecil sesuai termin. Tidak tercentang: target QTY_TGT dipakai penuh. Basic selalu ikut tanpa melihat termin"><input type="checkbox" id="kv_tm">Termin</label><label class="ck" title="Hasil di bawah 5 ctn tidak ikut hitungan Kelipatan CTN (1, 2, 3, 4 tetap diikutkan); mulai 5 ctn dibulatkan turun ke Kelipatan CTN"><input type="checkbox" id="kv_m5">&gt;=5ctn</label><label class="ck" title="Hasil di bawah 10 ctn tidak ikut hitungan Kelipatan CTN (1 sampai 9 tetap diikutkan); mulai 10 ctn dibulatkan turun ke Kelipatan CTN"><input type="checkbox" id="kv_m10">&gt;=10ctn</label><label class="ck" title="Daftar item RIT1 dan RIT2 dibuat sama"><input type="checkbox" id="kv_same">Item Sama</label></div></div><div class="c isi kvi">
 <label>Min stock (ctn)<input type="number" id="kv_ms" min="0" step="1" inputmode="numeric"></label>
 <label title="Batas qty per baris (toko x PLU). Hasil di atas batas dipotong ke batas, kosong = tanpa batas">Max Ctn<input type="number" id="kv_mx" min="0" step="1" inputmode="numeric"></label>
 <label>Max item<input type="number" id="kv_mi" min="0" step="1" inputmode="numeric"></label>
@@ -876,7 +876,8 @@ function kvBook(res,dt){
   ['xl/_rels/workbook.xml.rels',HD+'<Relationships '+NS+'><Relationship Id="rId1" Type="'+RT+'worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="'+RT+'worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="'+RT+'worksheet" Target="worksheets/sheet3.xml"/><Relationship Id="rId4" Type="'+RT+'styles" Target="styles.xml"/><Relationship Id="rId5" Type="'+RT+'worksheet" Target="worksheets/sheet4.xml"/></Relationships>'],
   ['xl/styles.xml',styles],['xl/worksheets/sheet1.xml',S1],['xl/worksheets/sheet2.xml',S2],['xl/worksheets/sheet3.xml',S3],['xl/worksheets/sheet4.xml',S4]])}
 // qty alokasi (ctn) = rounddown(ctn sisa); bila hasilnya di atas Kelipatan CTN, dibulatkan turun ke kelipatan itu (isian kosong = tanpa pembulatan, awal = 5)
-const kvQc=(cs,kl)=>{let q=Math.floor(Math.max(0,cs)+1e-9);if(kl>1&&q>kl)q=Math.floor(q/kl)*kl;return q};
+// mc (>=5ctn / >=10ctn): hasil di bawah mc tidak ikut hitungan Kelipatan CTN (tetap ctn bulat, tidak dibuang). Mulai mc ke atas dibulatkan turun ke kelipatan
+const kvQc=(cs,kl,mc)=>{let q=Math.floor(Math.max(0,cs)+1e-9);if(kl>1&&q>kl&&q>=(mc||0))q=Math.floor(q/kl)*kl;return q};
 // ---- paket per kelompok RUTE: maks 8 toko; CAR A 130-180 (hanya dengan A), CAR B 180-240 (boleh campur B dan C), CAR C 200-260 (hanya dengan C); satu kelompok (ritase boleh campur, paket campur jadi rit terbesar); bila lebih dari batas dibagi serata mungkin
 const KV_TOL=0.97;let KV_MIN=180,KV_MAX=240;const KV_TK=8;let KV_CONC=false;
 const kvFk=r=>(r.carA?'\u0004':'')+'\u0005'+r.kel,kvA=k=>String(k).includes('\u0004'),kvLo=A=>A===true?130:A==='C'?200:180,kvDf=A=>kvLo(A),kvHi=A=>A===true?180:A==='C'?260:240;// mode paket: true = CAR A (130-180), false = CAR B / campur B+C (180-240), 'C' = hanya CAR C (200-260)
@@ -912,7 +913,7 @@ function kvSubPack(list,A){let cur=[...list].sort((a,b)=>b[1]-a[1]);const rest=[
 
 // ===================== PENENTUAN PAKET KANVAS =====================
 // Urutan proses (dipanggil dari kvCalc):
-//  1. kvTokoMin     buang toko yang totalnya di bawah 15 ctn
+//  1. kvTokoMin     buang toko yang totalnya di bawah KV_TOKO ctn
 //  2. kvKelompok    kelompokkan toko per CAR A / bukan A (ritase boleh campur; rit paket = rit mayoritas tokonya), dan kelompok RUTE (blok toko dipisah baris kosong di file Rekap Toko / RUTE)
 //  3. kvBentukPaket tiap kelompok dibagi jadi paket (CAR A 130-180, CAR B 180-240, CAR C 200-260 ctn); prioritas CAR sama (A hanya dengan A; B dan C lebih dulu dibentuk sendiri-sendiri, sisanya baru digabung B+C), isi dimaksimalkan mendekati batas atas, maks 8 toko per paket
 //  4. kvPilihPaket  terapkan batas stock (bergantian satu paket per rit, di tiap rit paket terbesar dulu), pilih paket terbesar per ritase sebanyak Max paket,
@@ -934,7 +935,8 @@ const kvSrt=(a,b)=>String(a).localeCompare(String(b),'id',{numeric:true});
 // ritase paket: kalau isinya campur RIT1 dan RIT2, paket mengikuti rit yang mayoritas (jumlah toko terbanyak; seri: ctn terbanyak, lalu rit lebih besar)
 const kvRit=(st,g)=>{const C=new Map();for(const t of st){const v=g.rt.get(t)||'',a=C.get(v)||[0,0];a[0]++;a[1]+=g.st.get(t)||0;C.set(v,a)}
  let b=null,ba=null;for(const[v,a]of C)if(b===null||a[0]>ba[0]||a[0]===ba[0]&&(a[1]>ba[1]||a[1]===ba[1]&&kvSrt(v,b)>0)){b=v;ba=a}return b===null?'':b};
-function kvTokoMin(rows){const T=new Map();for(const r of rows)T.set(r.t,(T.get(r.t)||0)+r.ctn);return rows.filter(r=>T.get(r.t)>=15)}
+const KV_TOKO=10; // batas minimal total ctn per toko
+function kvTokoMin(rows){const T=new Map();for(const r of rows)T.set(r.t,(T.get(r.t)||0)+r.ctn);return rows.filter(r=>T.get(r.t)>=KV_TOKO)}
 function kvKelompok(rows){const G=new Map();
  for(const r of rows){const key=kvFk(r);let g=G.get(key);if(!g)G.set(key,g={key,rit:r.rit0||'',A:!!r.carA,zg:new Set(),st:new Map(),sz:new Map(),cr:new Map(),rt:new Map()});g.rt.set(r.t,r.rit0??r.rit??'');g.zg.add(r.zg||'-');g.sz.set(r.t,r.zg||'-');g.cr.set(r.t,String(r.car||'').trim().toUpperCase()||'-');g.st.set(r.t,(g.st.get(r.t)||0)+r.ctn)}
  return G}
@@ -968,8 +970,8 @@ function kvPilihPaket(P,L,rows,o){const mc=o.mc||0,m5=mc>0,lim=o.mxp!=null?o.mxp
   lm=r=>{const rem=r.cap-(used.get(r.pk)||0);let nq=Math.max(0,Math.min(r.q0,Math.floor(rem/r.fr+1e-9)*r.fr));if(m5&&Math.round(nq/r.fr)<mc)nq=0;return nq},
   free=t=>{for(const r of RS.get(t)){used.set(r.pk,(used.get(r.pk)||0)-r.q);sv(r,0)}},
   back=t=>{for(const r of RS.get(t))sv(r,Math.round(r.q0/r.fr))},
-  // pakai stock untuk satu toko; toko yang jadi < 15 ctn tidak diikutkan (stock dikembalikan)
-  fit=t=>{for(const r of RS.get(t)){sv(r,Math.round(lm(r)/r.fr));used.set(r.pk,(used.get(r.pk)||0)+r.q)}if(ct(t)<15){free(t);return false}return true},
+  // pakai stock untuk satu toko; toko yang jadi < KV_TOKO ctn tidak diikutkan (stock dikembalikan)
+  fit=t=>{for(const r of RS.get(t)){sv(r,Math.round(lm(r)/r.fr));used.set(r.pk,(used.get(r.pk)||0)+r.q)}if(ct(t)<KV_TOKO){free(t);return false}return true},
   peek=t=>{let s=0;for(const r of RS.get(t))s+=Math.round(lm(r)/r.fr);return s};
  const coba=p=>{const lo=kvLo(p.A),sU=new Map(used),log=[],cl=[],keep=[],out=[];
   for(const t of p.st){for(const r of RS.get(t))log.push([r,r.q]);(fit(t)?keep:out).push(t)}
@@ -978,10 +980,10 @@ function kvPilihPaket(P,L,rows,o){const mc=o.mc||0,m5=mc>0,lim=o.mxp!=null?o.mxp
    for(const t of keep)for(const r of RS.get(t)){if(!(r.q<r.q0))continue;const need=lo-c;if(need<=0)break;
     const want=Math.min(need,Math.round(r.q0/r.fr)-rn(r));if(want<=0||(m5&&rn(r)+want<mc))continue;
     const dn=(byPK.get(r.pk)||[]).filter(x=>x.p.c>kvLo(x.p.A)&&rn(x.r)>minRem).sort((a,b)=>b.p.c-a.p.c);let got=0;
-    for(const x of dn){if(got>=want)break;const gv=Math.min(want-got,x.p.c-kvLo(x.p.A),rn(x.r)-minRem,ct(x.r.t)-15);if(gv<=0)continue;
+    for(const x of dn){if(got>=want)break;const gv=Math.min(want-got,x.p.c-kvLo(x.p.A),rn(x.r)-minRem,ct(x.r.t)-KV_TOKO);if(gv<=0)continue;
      log.push([x.r,x.r.q]);cl.push([x.p,x.p.c]);sv(x.r,rn(x.r)-gv);x.p.c-=gv;got+=gv}
     if(got>0){log.push([r,r.q]);sv(r,rn(r)+got);c+=got}}}
-  const ok=c>=lo&&keep.every(t=>ct(t)>=15);
+  const ok=c>=lo&&keep.every(t=>ct(t)>=KV_TOKO);
   if(!ok){for(let i=log.length-1;i>=0;i--){const[r,q]=log[i];sv(r,Math.round(q/r.fr))}for(let i=cl.length-1;i>=0;i--)cl[i][0].c=cl[i][1];used=sU;
    for(const t of p.st){back(t);D.push({t,g:p.g})}return false}
   for(const t of out){back(t);D.push({t,g:p.g})}
@@ -1000,7 +1002,7 @@ function kvPilihPaket(P,L,rows,o){const mc=o.mc||0,m5=mc>0,lim=o.mxp!=null?o.mxp
  for(const p of acc)p.c=p.st.reduce((a,t)=>a+ct(t),0);
  for(const p of [...acc].sort((a,b)=>a.c-b.c)){const hi=kvHi(p.A);
   while(p.st.length<KV_TK){let bi=-1,bc=0,bs=-1;const pc=new Set(p.st.map(crOf));
-   for(let i=0;i<cand.length;i++){if(cand[i].g.key!==p.g.key||p.A==='C'&&crOf(cand[i].t)!=='C')continue;const c=peek(cand[i].t),sm=pc.has(crOf(cand[i].t))?1:0;if(c>=15&&p.c+c<=hi&&(sm>bs||sm===bs&&c>bc)){bs=sm;bc=c;bi=i}}
+   for(let i=0;i<cand.length;i++){if(cand[i].g.key!==p.g.key||p.A==='C'&&crOf(cand[i].t)!=='C')continue;const c=peek(cand[i].t),sm=pc.has(crOf(cand[i].t))?1:0;if(c>=KV_TOKO&&p.c+c<=hi&&(sm>bs||sm===bs&&c>bc)){bs=sm;bc=c;bi=i}}
    if(bi<0)break;const[x]=cand.splice(bi,1);if(fit(x.t)){p.st.push(x.t);p.c+=ct(x.t)}}p.rit=kvRit(p.st,p.g)}
  return{acc,RS}}
 function kvNomor(S,G,P){const zk=p=>[...p.g.zg].sort(kvSrt)[0]||'',acc=[...S.acc].sort((a,b)=>kvSrt(a.rit,b.rit)||kvSrt(zk(a),zk(b))||b.c-a.c),res=[],inP=new Set();
@@ -1017,7 +1019,7 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target di tab Master.');if(tgOld(tg))throw Error(TGOLD);
   if(!sk)throw Error('Upload Stock akhir dulu.');
   jm.textContent='Menghitung alokasi...';await tick();KV_CONC=false;
-  // Termin: persen kumulatif pola sampai hari ini (dari termin.json). Dipakai Terkait (3 x termin x target) dan Basic (belum masuk termin = tidak dibawa)
+  // Termin: persen kumulatif pola sampai hari ini (dari termin.json). Dipakai Terkait (3 x termin x target). Basic selalu diikutkan, tidak melihat termin
   const tmn=KV.tm!==false;let TD=TR.data||null;if(tmn&&!TD){try{const r=await fetch('termin.json',{cache:'no-cache'});if(r.ok)TD=await r.json()}catch(e){}}
   if(tmn&&(!TD||!Array.isArray(TD.pola)||!Array.isArray(TD.minggu)))throw Error('termin.json tidak bisa dimuat. Alokasi Kanvas butuh data termin.');
   const NW=new Date(),TMc=new Map(),kvTr=nm=>{if(!tmn)return null;const q=String(nm||'').trim().toUpperCase();if(TMc.has(q))return TMc.get(q);const p=TD.pola.find(x=>String(x.nama).trim().toUpperCase()===q);let v=null;
@@ -1033,15 +1035,15 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
    if(++i%50000===0){jm.textContent='Menghitung: '+pc(i,tg.size);await tick()}
    const pk=PK(p),tu=K(t).toUpperCase();let stock=ST.get(pk);if(stock===undefined&&K(p).length<=7)stock=ST7.get(PK(K(p).slice(-7)));seen.add(pk);if(stock!=null)hit.add(pk);if(!(stock>=100)||!RK.has(tu))continue;
    const M=M0.get(p)||[],I=I0.get(p)||[],zn=t2(M[1]);
-   // Pola 1 Terkait: hanya zona 14, 15, dan 20. Pola 1 Basic: semua zona kecuali yang tidak punya zona (kosong / 0). Pola 1 lain tidak diikutkan
+   // Pola 1 Terkait: hanya zona 14, 15, dan 20. Pola 1 Basic: semua zona kecuali yang tidak punya zona (kosong / 0), diikutkan semua walaupun belum masuk termin. Pola 1 lain tidak diikutkan
    const p1=String(z(I[1])).trim().toLowerCase(),zc=Number(zn);
-   if(p1==='terkait'){if(zc!==14&&zc!==15&&zc!==20)continue;if((N(z(I[3]))==='NATARU')!==nat)continue}else if(p1==='basic'){if(zn===''||zc===0)continue;if(tmn&&!(kvTr(I[2])>0))continue}else continue;
+   if(p1==='terkait'){if(zc!==14&&zc!==15&&zc!==20)continue;if((N(z(I[3]))==='NATARU')!==nat)continue}else if(p1==='basic'){if(zn===''||zc===0)continue}else continue;
    if(DN&&(DN.has(gab)||DNP.has(PK(p))||DNT.has(tu)))continue;
    lolos++;
    const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,target=p1==='basic'?Q:(bq=>{if(!tmn||!(fr>0&&bq/fr>20))return bq;const tp=(nat?kvTr('NATARU'):kvTr(I[2]))||0;return tp>65?bq:(tp>33?1.5:3)*tp/100*bq})(Q),npx=AB+AI,sisa=p1==='basic'?target-npx:Math.max(0,target-npx);
    if(!(mn>0)||!(fr>0))continue;
    if(mst!=null&&!(stock/fr>=mst))continue;
-   const cs=d(sisa,fr),qc=kvQc(mxc!=null?Math.min(cs,mxc):cs,kl);if(m5&&qc<mc)continue;const q=qc*fr;if(q<=0)continue;
+   const cs=d(sisa,fr),qc=kvQc(mxc!=null?Math.min(cs,mxc):cs,kl,mc);const q=qc*fr;if(q<=0)continue;
    const T=T0.get(t)||[],R=RK.get(tu)||{};rows.push({al:z(M[2]),am:z(T[1]),kota:z(T[3])||R.kota||'',t,nt:z(T[0])||R.nm||'',rit:R.rit||'',rit0:R.rit||'',car:R.car||'',jad:R.jad||'',zg:'K'+String(R.kel||0).padStart(2,'0'),kel:R.kel||0,carA:String(R.car||'').trim().toUpperCase()==='A',zn_:R.zn||'',gr_:R.gr||'',kec:R.kec||'',gab,p,pk,desc:z(M[0]),zn,kt:z(I[3]),fr,mn,ac,stock,cap:p1==='terkait'?Math.floor(stock*.9+1e-9):stock,tg:target,npb:npx,p1:p1.toUpperCase(),sisa,cs,q,ctn:d(q,fr),rp:q*ac})}
   // Max item berlaku per RIT: item dipilih bertahap (Basic dulu, baru Terkait) yang paling menambah jumlah paket per kelompok
   // (aturan paket: kvPack). Item yang tidak membantu terbentuknya paket tidak memakai slot; urutan ukuran qty hanya pemecah seri.
@@ -1067,7 +1069,7 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
    res=res.filter(r=>keep.has(r.rit+'\u0001'+r.pk))}
   // ===== Penentuan paket: lihat urutan di atas kvTokoMin. Item Sama (bila dicentang) mengulang seluruh perhitungan dengan daftar item yang sama di tiap rit =====
   const hitung=r0=>{for(const r of r0){if(r.qo===undefined)r.qo=r.q;r.q=r.qo;r.ctn=d(r.q,r.fr);r.rp=r.q*r.ac}
-   const R1=kvTokoMin(r0),G=kvKelompok(R1),{P,L}=kvBentukPaket(G);return kvNomor(kvPilihPaket(P,L,R1,{mxp,mc}),G,P)};
+   const R1=kvTokoMin(r0),G=kvKelompok(R1),{P,L}=kvBentukPaket(G);return kvNomor(kvPilihPaket(P,L,R1,{mxp,mc:0}),G,P)};
   jm.textContent='Membentuk paket...';await tick();
   let B=hitung(res),base=res;const B0={np:B.np,mz:B.mz,uz:B.uz,nz_:B.nz_},skipN=B.skip;
   if(same){let r0=res;for(let it=0;it<12;it++){const S=new Map();for(const r of B.res){const k=r.rit||'';let s=S.get(k);if(!s)S.set(k,s=new Set());s.add(r.pk)}
