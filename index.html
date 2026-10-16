@@ -95,7 +95,6 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <div class="c t k">
 <div class="bg"><button class="g" type="button" id="hb" aria-expanded="false" aria-controls="hp" title="Format file yang diupload" style="font-weight:600">?</button><label class="bt" id="ulb">Upload file<input type="file" hidden multiple accept=".xlsx,.xlsm,.csv" id="fa"></label></div>
 <label class="md">Mode NPB<select id="md"><option value="tambah">Tambahkan</option><option value="ganti">Ganti semua</option></select></label>
-<label class="ck" title="Isi KETER NPB dari KET NATARU di data Item"><input type="checkbox" id="nk">Nataru</label>
 <button class="dg" type="button" id="rs" style="margin-left:auto">Reset database</button></div>
 <div id="src" style="margin-top:10px;padding-top:8px;border-top:1px solid var(--line)"></div>
 <div id="hp" class="hp" hidden>
@@ -145,7 +144,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <b>Rute</b><span>Upload tiap alokasi (nama file memuat kata Rute): toko, ritase, CAR, dan kelompok paket (dipisah baris kosong)</span>
 <b>Sudah alokasi</b><span>GAB (12 karakter), PLU (8), atau TOKO (4). Yang ada di file ini tidak ikut dialokasi</span></div>
 <div class="m" id="kv_um" style="margin-top:8px;white-space:normal"></div><div id="kv_ul" style="margin-top:6px"></div></section>
-<section class="p gen"><div class="kvh0"><div class="alt">Alokasi</div><div class="kck"><label class="ck" title="Pola 1 Terkait: tercentang = hanya item KET NATARU = NATARU (termin NATARU), tidak = item selain NATARU (termin Pola 2). Target = QTY_TGT"><input type="checkbox" id="kv_nat">Nataru</label><label class="ck" title="Hasil perhitungan di bawah 5 ctn tidak diikutkan"><input type="checkbox" id="kv_m5">&gt;=5ctn</label><label class="ck" title="Hasil perhitungan di bawah 10 ctn tidak diikutkan"><input type="checkbox" id="kv_m10">&gt;=10ctn</label><label class="ck" title="Daftar item RIT1 dan RIT2 dibuat sama"><input type="checkbox" id="kv_same">Item Sama</label></div></div><div class="c isi kvi">
+<section class="p gen"><div class="kvh0"><div class="alt">Alokasi</div><div class="kck"><label class="ck" title="Pola 1 Terkait: tercentang = hanya item KET NATARU = NATARU (termin NATARU), tidak = item selain NATARU (termin Pola 2). Target = QTY_TGT"><input type="checkbox" id="kv_nat">Nataru</label><label class="ck" title="Tercentang: perhitungan memakai termin (Basic hanya pola yang sudah masuk termin; Terkait dengan target di atas 20 ctn diperkecil sesuai termin). Tidak tercentang: perhitungan normal, target QTY_TGT dipakai penuh tanpa termin"><input type="checkbox" id="kv_tm">Termin</label><label class="ck" title="Hasil perhitungan di bawah 5 ctn tidak diikutkan"><input type="checkbox" id="kv_m5">&gt;=5ctn</label><label class="ck" title="Hasil perhitungan di bawah 10 ctn tidak diikutkan"><input type="checkbox" id="kv_m10">&gt;=10ctn</label><label class="ck" title="Daftar item RIT1 dan RIT2 dibuat sama"><input type="checkbox" id="kv_same">Item Sama</label></div></div><div class="c isi kvi">
 <label>Min stock (ctn)<input type="number" id="kv_ms" min="0" step="1" inputmode="numeric"></label>
 <label title="Batas qty per baris (toko x PLU). Hasil di atas batas dipotong ke batas, kosong = tanpa batas">Max Ctn<input type="number" id="kv_mx" min="0" step="1" inputmode="numeric"></label>
 <label>Max item<input type="number" id="kv_mi" min="0" step="1" inputmode="numeric"></label>
@@ -302,7 +301,7 @@ async function upload(k,f,mode){
  }else{const[c,dt]=hdr(r,['GAB']);const q=col(c,'QTY ALOK','QTY_ALOK','QTY'),ke=col(c,'KETER','KET');
   const h=await sha(buf);let o=(mode==='ganti'?null:await get('npb'))||{m:new Map(),f:[]};
   if(o.f.some(x=>x.h===h))throw Error('File ini sudah pernah diupload. Dibatalkan agar qty tidak terhitung dua kali. Pilih "Ganti semua" untuk mengulang dari awal.');
-  let ov=null;if($('#nk')&&$('#nk').checked){const im=await get('item');if(!im||!im.size)throw Error('Data Item belum ada, jadi KET NATARU belum bisa dipakai. Upload Item dulu, atau hilangkan centang Nataru.');const pm=new Map();for(const[p,a]of im)pm.set(PK(p),a[3]);ov=g=>g.length>4?(pm.get(PK(g.slice(4)))||''):''}
+  let ov=null;
   const dl=new Map();let n=0;for(const x of dt){const g=K(x[c.GAB]);if(!g)continue;const v=NUM(x[q]),e=dl.get(g)||[0,0];if(N((ov&&ov(g))||x[ke])==='NATARU')e[0]+=v;e[1]+=v;dl.set(g,e);n++}
   const dr=npbDetail(dt,c,q,ke,ov);if(cl&&!(await caps()).detail)throw Error('Code.gs belum diperbarui. Tempel Code.gs terbaru lalu deploy versi baru.');
   if(cl){ver=(await push('npb',mode==='ganti'?'replace':'merge',[...dl].map(([g,a])=>[g,a[0],a[1]]),{hash:h,file:f.name,time:tm,files:[{hash:h,name:f.name,n,time:tm}]},prog)).ver;await push('npbdetail',mode==='ganti'?'replace':'merge',dr,{file:f.name,time:tm},prog)}
@@ -795,6 +794,7 @@ const kvM5=$('#kv_m5'),kvM10=$('#kv_m10');kvM5.checked=!!KV.m5&&!KV.m10;kvM10.ch
 kvM5.onchange=()=>{if(kvM5.checked)kvM10.checked=false;KV.m5=kvM5.checked;KV.m10=kvM10.checked;kvSave()};
 kvM10.onchange=()=>{if(kvM10.checked)kvM5.checked=false;KV.m10=kvM10.checked;KV.m5=kvM5.checked;kvSave()};
 const kvSm=$('#kv_same');kvSm.checked=!!KV.same;kvSm.onchange=()=>{KV.same=kvSm.checked;kvSave()};
+const kvTm=$('#kv_tm');kvTm.checked=KV.tm!==false;kvTm.onchange=()=>{KV.tm=kvTm.checked;kvSave()};
 if(KV.gp===undefined)KV.gp=2;if(KV.gr===undefined)KV.gr=3;
 for(const[id,k]of[['kv_gp','gp'],['kv_gr','gr'],['kv_mi','mi'],['kv_mp','mp'],['kv_kl','kl'],['kv_ms','ms'],['kv_mx','mx']]){const e=$('#'+id);if(KV[k]!=null)e.value=KV[k];e.oninput=()=>{KV[k]=e.value===''?null:Math.max(0,Math.floor(+e.value));kvSave()}}
 let kvArt;$('#kv_rs').onclick=async()=>{const b=$('#kv_rs');
@@ -1012,9 +1012,9 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   if(!sk)throw Error('Upload Stock akhir dulu.');
   jm.textContent='Menghitung alokasi...';await tick();KV_CONC=false;
   // Termin: persen kumulatif pola sampai hari ini (dari termin.json). Dipakai Terkait (3 x termin x target) dan Basic (belum masuk termin = tidak dibawa)
-  let TD=TR.data||null;if(!TD){try{const r=await fetch('termin.json',{cache:'no-cache'});if(r.ok)TD=await r.json()}catch(e){}}
-  if(!TD||!Array.isArray(TD.pola)||!Array.isArray(TD.minggu))throw Error('termin.json tidak bisa dimuat. Alokasi Kanvas butuh data termin.');
-  const NW=new Date(),TMc=new Map(),kvTr=nm=>{const q=String(nm||'').trim().toUpperCase();if(TMc.has(q))return TMc.get(q);const p=TD.pola.find(x=>String(x.nama).trim().toUpperCase()===q);let v=null;
+  const tmn=KV.tm!==false;let TD=TR.data||null;if(tmn&&!TD){try{const r=await fetch('termin.json',{cache:'no-cache'});if(r.ok)TD=await r.json()}catch(e){}}
+  if(tmn&&(!TD||!Array.isArray(TD.pola)||!Array.isArray(TD.minggu)))throw Error('termin.json tidak bisa dimuat. Alokasi Kanvas butuh data termin.');
+  const NW=new Date(),TMc=new Map(),kvTr=nm=>{if(!tmn)return null;const q=String(nm||'').trim().toUpperCase();if(TMc.has(q))return TMc.get(q);const p=TD.pola.find(x=>String(x.nama).trim().toUpperCase()===q);let v=null;
    if(p){const[a,b,c]=TD.minggu[0].mulai.split('-').map(Number),n=Math.floor((Date.UTC(NW.getFullYear(),NW.getMonth(),NW.getDate())-Date.UTC(a,b-1,c))/864e5);
     if(n<0)v=0;else if(n>=TD.minggu.length*7)v=p.persen.reduce((t,x)=>t+(+x||0),0);else{const k=Math.floor(n/7);let t=0;for(let i=0;i<k;i++)t+=+p.persen[i]||0;v=t+(n%7+1)*(+p.persen[k]||0)/7}}
    TMc.set(q,v);return v};
@@ -1029,10 +1029,10 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
    const M=M0.get(p)||[],I=I0.get(p)||[],zn=t2(M[1]);
    // Pola 1 Terkait: hanya zona 14, 15, dan 20. Pola 1 Basic: semua zona kecuali yang tidak punya zona (kosong / 0). Pola 1 lain tidak diikutkan
    const p1=String(z(I[1])).trim().toLowerCase(),zc=Number(zn);
-   if(p1==='terkait'){if(zc!==14&&zc!==15&&zc!==20)continue;if((N(z(I[3]))==='NATARU')!==nat)continue}else if(p1==='basic'){if(zn===''||zc===0)continue;if(!(kvTr(I[2])>0))continue}else continue;
+   if(p1==='terkait'){if(zc!==14&&zc!==15&&zc!==20)continue;if((N(z(I[3]))==='NATARU')!==nat)continue}else if(p1==='basic'){if(zn===''||zc===0)continue;if(tmn&&!(kvTr(I[2])>0))continue}else continue;
    if(DN&&(DN.has(gab)||DNP.has(PK(p))||DNT.has(tu)))continue;
    lolos++;
-   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,target=p1==='basic'?Q:(bq=>{if(!(fr>0&&bq/fr>20))return bq;const tp=(nat?kvTr('NATARU'):kvTr(I[2]))||0;return tp>65?bq:(tp>33?1.5:3)*tp/100*bq})(Q),npx=AB+AI,sisa=p1==='basic'?target-npx:Math.max(0,target-npx);
+   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,target=p1==='basic'?Q:(bq=>{if(!tmn||!(fr>0&&bq/fr>20))return bq;const tp=(nat?kvTr('NATARU'):kvTr(I[2]))||0;return tp>65?bq:(tp>33?1.5:3)*tp/100*bq})(Q),npx=AB+AI,sisa=p1==='basic'?target-npx:Math.max(0,target-npx);
    if(!(mn>0)||!(fr>0))continue;
    if(mst!=null&&!(stock/fr>=mst))continue;
    const cs=d(sisa,fr),qc=kvQc(mxc!=null?Math.min(cs,mxc):cs,kl);if(m5&&qc<mc)continue;const q=qc*fr;if(q<=0)continue;
