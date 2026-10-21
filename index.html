@@ -562,8 +562,8 @@ function alkDD(k,list,onch,P,S,sv){P=P||'al_';S=S||ALK;sv=sv||alkSave;const box=
  const sync=()=>{ca.checked=cbs.every(c=>c.checked);upd()};
  ca.onchange=()=>{cbs.forEach((c,i)=>{c.checked=ca.checked;ca.checked?ex.delete(list[i]):ex.add(list[i])});S.ex[k]=[...ex];sv();upd();onch&&onch()};
  det.append(sum,body);box.appendChild(det);sync()}
-// kategori zona: 14, 15 & 20 = Bulky, 17 = Rokok, 0 = Non Aktif, lainnya = Bulky Fraction
-const ZO=['Bulky','Rokok','Non Aktif','Bulky Fraction'],zk=zn=>{const n=Number(zn);return n===14||n===15||n===20?ZO[0]:n===17?ZO[1]:n===0?ZO[2]:ZO[3]};
+// kategori zona: 14, 15 & 21 = Bulky, 17 = Rokok, 0 = Non Aktif, lainnya = Bulky Fraction
+const ZO=['Bulky','Rokok','Non Aktif','Bulky Fraction'],zk=zn=>{const n=Number(zn);return n===14||n===15||n===21?ZO[0]:n===17?ZO[1]:n===0?ZO[2]:ZO[3]};
 let ALKU=[];
 // urutan pilihan: Pola 1 > Ket Nataru > Pola 2 > Zona; daftar tiap pilihan hanya berisi turunan dari pilihan sebelumnya
 function alkRender(from){const nat=(ALK.ket||'all')==='nataru',F=[['pola1','a',0],['pola2','b',2],['zona','z',3]];let U=ALKU;
@@ -1035,9 +1035,9 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
    if(++i%50000===0){jm.textContent='Menghitung: '+pc(i,tg.size);await tick()}
    const pk=PK(p),tu=K(t).toUpperCase();let stock=ST.get(pk);if(stock===undefined&&K(p).length<=7)stock=ST7.get(PK(K(p).slice(-7)));seen.add(pk);if(stock!=null)hit.add(pk);if(!(stock>=100)||!RK.has(tu))continue;
    const M=M0.get(p)||[],I=I0.get(p)||[],zn=t2(M[1]);
-   // Pola 1 Terkait: hanya zona 14, 15, dan 20. Pola 1 Basic: semua zona kecuali yang tidak punya zona (kosong / 0), diikutkan semua walaupun belum masuk termin. Pola 1 lain tidak diikutkan
+   // Pola 1 Terkait: hanya zona 14, 15, dan 21. Pola 1 Basic: semua zona kecuali yang tidak punya zona (kosong / 0), diikutkan semua walaupun belum masuk termin. Pola 1 lain tidak diikutkan
    const p1=String(z(I[1])).trim().toLowerCase(),zc=Number(zn);
-   if(p1==='terkait'){if(zc!==14&&zc!==15&&zc!==20)continue;if((N(z(I[3]))==='NATARU')!==nat)continue}else if(p1==='basic'){if(zn===''||zc===0)continue}else continue;
+   if(p1==='terkait'){if(zc!==14&&zc!==15&&zc!==21)continue;if((N(z(I[3]))==='NATARU')!==nat)continue}else if(p1==='basic'){if(zn===''||zc===0)continue}else continue;
    if(DN&&(DN.has(gab)||DNP.has(PK(p))||DNT.has(tu)))continue;
    lolos++;
    const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,target=p1==='basic'?Q:(bq=>{if(!tmn||!(fr>0&&bq/fr>20))return bq;const tp=(nat?kvTr('NATARU'):kvTr(I[2]))||0;return tp>65?bq:(tp>33?1.5:3)*tp/100*bq})(Q),npx=AB+AI,sisa=p1==='basic'?target-npx:Math.max(0,target-npx);
