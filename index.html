@@ -130,6 +130,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 </div></section>
 <section class="p gen"><div class="alt">Isian</div><div class="c isi">
 <label>Max item (per zona)<input type="number" id="al_mi" min="0" step="1" inputmode="numeric"></label>
+<label>Min stock (PCS)<input type="number" id="al_ms" min="0" step="1" inputmode="numeric"></label>
 <label>Max qty (&times; minor)<input type="number" id="al_mq" min="0" step="1" inputmode="numeric"></label>
 <label>Min Rp (per PLU)<input type="text" id="al_mr" inputmode="numeric" autocomplete="off"></label>
 <button id="al_go">Hitung alokasi</button></div>
@@ -603,7 +604,7 @@ let art;$('#al_rs').onclick=async()=>{const b=$('#al_rs');
  clearTimeout(art);b.classList.remove('ask');b.textContent='Reset';b.disabled=true;
  try{for(const k of AKEYS)await tx('readwrite',s=>s.delete('alk_'+k));$('#al_res').innerHTML='';$('#al_msg').textContent='';$('#al_msg').className='m';$('#al_um').textContent='';$('#al_ul').innerHTML='';
   for(const k of Object.keys(ALK))delete ALK[k];ALK.ex={};alkSave();
-  for(const id of['al_mi','al_mq','al_mr']){const e=$('#'+id);e.value='';e.style.borderColor=''}
+  for(const id of['al_mi','al_mq','al_mr','al_ms']){const e=$('#'+id);e.value='';e.style.borderColor=''}
   for(const u of['alkUrl','alkUrl2','alkUrl3']){const v=u==='alkUrl'?alkUrl:u==='alkUrl2'?alkUrl2:alkUrl3;if(v)URL.revokeObjectURL(v)}alkUrl=alkUrl2=alkUrl3=null;
   alkSels();alkRender(0);await alkStat()}catch(e){$('#al_um').textContent='Gagal reset: '+(e.message||e)}
  b.disabled=false};
@@ -626,7 +627,7 @@ const pm=s=>{s=String(s).toLowerCase().replace(/\s/g,'');if(s==='')return null;c
  if(m){const t=m[1],u={rb:1e3,ribu:1e3,k:1e3,jt:1e6,juta:1e6,miliar:1e9}[m[2]],v=!t.includes(',')&&/^\d+\.\d{1,2}$/.test(t)?parseFloat(t):parseFloat(t.replace(/\./g,'').replace(',','.'));return isNaN(v)?false:Math.round(v*u)}
  return/^[\d.]+$/.test(s)?+s.replace(/\./g,''):false};
 const mrSet=()=>{const e=$('#al_mr'),n=pm(e.value);if(n===false){e.style.borderColor='var(--err)';return false}e.style.borderColor='';ALK.mr=n;e.value=rb(n);alkSave();return true};
-for(const[id,k]of[['al_mi','mi'],['al_mq','mq'],['al_mr','mr']]){const e=$('#'+id);if(ALK[k]!=null)e.value=k==='mr'?rb(ALK[k]):ALK[k];
+for(const[id,k]of[['al_mi','mi'],['al_mq','mq'],['al_mr','mr'],['al_ms','ms']]){const e=$('#'+id);if(ALK[k]!=null)e.value=k==='mr'?rb(ALK[k]):ALK[k];
  if(k==='mr'){e.onchange=mrSet;e.oninput=()=>{const r=e.value;e.style.borderColor='';if(/[a-z,]/i.test(r)||/^\d+\.\d{1,2}$/.test(r))return;const n=r.replace(/\D/g,'');ALK.mr=n===''?null:+n;e.value=rb(n);alkSave()}}
  else e.oninput=()=>{ALK[k]=e.value===''?null:Math.max(0,Math.floor(+e.value));alkSave()}}
 function alkSel(id,key,opts,dv,cb,S,sv){S=S||ALK;sv=sv||alkSave;const box=$('#'+id);box.innerHTML='';const det=document.createElement('details'),sum=document.createElement('summary'),body=document.createElement('div');det.className='dd';body.className='ddl';
@@ -699,12 +700,14 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
   jm.textContent='Menghitung alokasi...';await tick();
   const ST=alkStock(sk.rows),ST7=alkStock7(ST),PL=alkPlan(pl.rows),DN=dn?alkDone(dn.rows):null,T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
    XZ=new Set(ALK.ex.zona),X1=new Set(ALK.ex.pola1),X2=new Set(ALK.ex.pola2),nat=(ALK.ket||'all')==='nataru',mq=ALK.mq>0?ALK.mq:null,mi=ALK.mi>0?ALK.mi:null,mr=ALK.mr>0?ALK.mr:0,ps=ALK.ps>0?ALK.ps:100,
-   used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim();let i=0,lolos=0;
+   used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim(),minStock=ALK.ms==null?null:Math.max(0,Number(ALK.ms));let i=0,lolos=0;
   // isi file Sudah alokasi dikenali dari panjangnya: 12 = GAB, 8 = PLU, 4 = TOKO (salah satu cocok = sudah alokasi)
   const DNP=new Set(),DNT=new Set();if(DN)for(const g of DN){if(g.length===8)DNP.add(PK(g));else if(g.length===4)DNT.add(g.toUpperCase())}
-  for(const[gab,[t,p,A,Tm,Q]]of tg){
+  // Prioritaskan GAB yang NPB-nya belum ada atau total NPB = 0 agar mendapat stok lebih dahulu.
+  const targetRows=[...tg].sort((a,b)=>{const na=P.get(a[0]),nb=P.get(b[0]),za=!na||NUM(na[1])===0,zb=!nb||NUM(nb[1])===0;return za===zb?0:za?-1:1});
+  for(const[gab,[t,p,A,Tm,Q]]of targetRows){
    if(++i%50000===0){jm.textContent='Menghitung: '+pc(i,tg.size);await tick()}
-   const pk=PK(p);let stock=ST.get(pk);if(stock===undefined&&K(p).length<=7)stock=ST7.get(PK(K(p).slice(-7)));seen.add(pk);if(stock!=null)hit.add(pk);if(!(stock>=100)||!PL.has(K(t).toUpperCase()))continue;
+   const pk=PK(p);let stock=ST.get(pk);if(stock===undefined&&K(p).length<=7)stock=ST7.get(PK(K(p).slice(-7)));seen.add(pk);if(stock!=null)hit.add(pk);if(stock==null||(minStock!=null&&stock<minStock)||!PL.has(K(t).toUpperCase()))continue;
    const M=M0.get(p)||[],I=I0.get(p)||[],zn=t2(M[1]),p1=t2(I[1]),p2=t2(I[2]);
    if(XZ.has(zk(zn))||X1.has(p1)||X2.has(p2))continue;
    if(nat&&N(z(I[3]))!=='NATARU')continue;
@@ -721,11 +724,11 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
    if(q>0){if(stop.has(pk))q=0;else{const u=(used.get(pk)||0)+q;if(u>stock){stop.add(pk);q=0}else used.set(pk,u)}}
    if(q<=0)continue;
    const T=T0.get(t)||[];rows.push({al:z(M[2]),am:z(T[1]),kota:z(T[3]),t,nt:z(T[0]),gab,p,pk,desc:z(M[0]),zn,p1,p2,kt:z(I[3]),fr,mn,ac,stock,tg:target,npb:AB+AI,sisa,q,ctn:d(q,fr),rp:q*ac})}
-  // max item per zona, urut total qty alokasi terbesar
+  // max item per zona, urut total rupiah alokasi terbesar
   // Min Rp: total Rp alokasi satu PLU (semua toko) harus >= isian; PLU di bawahnya dibuang sebelum Max item
   let res=rows;
   if(mr){const rp=new Map();for(const r of rows)rp.set(r.pk,(rp.get(r.pk)||0)+r.rp);res=rows.filter(r=>rp.get(r.pk)>=mr)}
-  if(mi!=null){const zm=new Map();for(const r of res){let m=zm.get(r.zn);if(!m)zm.set(r.zn,m=new Map());m.set(r.pk,(m.get(r.pk)||0)+r.q)}
+  if(mi!=null){const zm=new Map();for(const r of res){let m=zm.get(r.zn);if(!m)zm.set(r.zn,m=new Map());m.set(r.pk,(m.get(r.pk)||0)+r.rp)}
    const keep=new Set();for(const[zn,m]of zm)[...m].sort((a,b)=>b[1]-a[1]||(a[0]<b[0]?-1:1)).slice(0,mi).forEach(([pk])=>keep.add(zn+'\u0001'+pk));
    res=res.filter(r=>keep.has(r.zn+'\u0001'+r.pk))}
   const dg=' PLU Target ditemukan di stock akhir: '+fn(hit.size)+' dari '+fn(seen.size)+'.';
