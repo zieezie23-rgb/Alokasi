@@ -239,7 +239,7 @@ async function syncAll(nodraw){if(!cloudOn())return;const{meta:cm}=await api({ac
     const j=await push(k,'replace',rows,{file:mt.file,time:mt.time,files:k==='npb'?D.f.map(x=>({hash:x.h,name:x.name,n:x.n,time:mt.time})):[]});
     if(k==='npb'){const R=await get('npb_raw');if(R&&R.rows.length&&(await caps()).detail)await push('npbdetail','replace',R.rows,{file:mt.file,time:mt.time})}
     lm[k]={file:mt.file,time:mt.time,ver:j.ver};ch++}continue}
-  if((lm[k]||{}).ver===c.ver&&loc)continue;
+  if((lm[k]||{}).ver===c.ver&&loc&&!((k==='target'||k==='npb')&&c.count&&loc!==c.count))continue;
   cst('Mengambil data '+SRC[k][0]+'...');const pg=(a,b)=>cst('Mengambil '+SRC[k][0]+': '+(b?Math.min(100,Math.floor(100*a/b)):100)+' %');
   if(k==='npb'){const rs=await pull('npb',pg,c.ver,'npb'),fs=await pull('npbfiles',null,c.ver,'npb');const m=new Map(rs.map(r=>[String(r[0]),[NUM(r[1]),NUM(r[2])]]));
    await put('npb',{m,f:fs.map(r=>({h:String(r[0]),name:String(r[1]),n:NUM(r[2])}))});{let R=null;if((await caps()).detail){const ds=await pull('npbdetail',null,c.ver,'npb');if(ds.length)R={l:DH,rows:ds.map(r=>[String(r[0]),String(r[1]??''),NUM(r[2]),String(r[3]??'')])}}
