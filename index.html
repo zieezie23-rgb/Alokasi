@@ -118,7 +118,8 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <div id="al_hp" class="hp" hidden>
 <b>Stock akhir</b><span>Tarikan LWA Stock Akhir</span>
 <b>Plan picking</b><span>TOKO, PLAN</span>
-<b>Sudah alokasi</b><span>GAB (12 karakter), PLU (8), atau TOKO (4)</span></div>
+<b>Sudah alokasi</b><span>GAB (12 karakter), PLU (8), atau TOKO (4)</span>
+<b>ODAS</b><span>TANGGAL, PLU, KODE_TOKO, QTY_ODAS, NO_PICKING. Total qty per toko + PLU ditambahkan ke NPB (hanya item Terkait)</span></div>
 <div class="m" id="al_um" style="margin-top:8px;white-space:normal"></div><div id="al_ul" style="margin-top:6px"></div></section>
 <section class="p gen"><div class="alt">Pilihan</div><div class="alg">
 <div class="alf"><span>Pola 1</span><div id="al_pola1"></div></div>
@@ -591,8 +592,12 @@ function alkPlan(r){const h=alkHead(r,isTk);if(!h)throw Error('Kolom TOKO tidak 
 function alkDone(r){const h=alkHead(r,x=>x==='GAB'),st=new Set();
  if(h){const ig=h[0].indexOf('GAB');for(const x of h[1]){const k=K(x[ig]);if(k)st.add(k)}return st}
  for(const x of r){const k=K((x||[])[0]);if(k&&N(k)!=='GAB')st.add(k)}return st}
-const PAR={stock:r=>fn(alkStock(r).size)+' PLU',plan:r=>fn(alkPlan(r).size)+' toko plan = 1',done:r=>fn(alkDone(r).size)+' baris'},AKEYS=['stock','plan','done'];
-const ALKN={stock:['Stock akhir','PLU'],plan:['Plan picking','toko'],done:['Sudah alokasi','baris']};
+// ODAS: tanggal, PLU, KODE_TOKO, QTY_ODAS, NO_PICKING (pemisah | atau koma). Total qty per toko+PLU, tanggal dan no picking tidak dipakai
+function alkOdas(r){const h=alkHead(r,x=>isTk(sq(x)));if(!h)throw Error('Kolom KODE_TOKO tidak ditemukan (dicari di 20 baris pertama).');const[n,b]=h,it=n.findIndex(x=>isTk(sq(x))),ip=n.findIndex(isPLU),iq=pick(n,x=>sq(x)==='QTYODAS',x=>/QTY/.test(x));
+ if(ip<0)throw Error('Kolom PLU tidak ditemukan. '+hd(n));if(iq<0)throw Error('Kolom QTY_ODAS tidak ditemukan. '+hd(n));
+ const m=new Map();for(const x of b){const t=K(x[it]).toUpperCase(),p=PK(x[ip]);if(!t||!p)continue;const q=NUM(x[iq]);if(q){const k=t+'|'+p;m.set(k,(m.get(k)||0)+q)}}return m}
+const PAR={odas:r=>fn(alkOdas(r).size)+' toko-PLU',stock:r=>fn(alkStock(r).size)+' PLU',plan:r=>fn(alkPlan(r).size)+' toko plan = 1',done:r=>fn(alkDone(r).size)+' baris'},AKEYS=['stock','plan','done','odas'];
+const ALKN={stock:['Stock akhir','PLU'],plan:['Plan picking','toko'],done:['Sudah alokasi','baris'],odas:['ODAS','toko-PLU']};
 async function alkStat(){const box=$('#al_src');box.innerHTML='';
  for(const k of AKEYS){const D=await get('alk_'+k),el=document.createElement('div');el.className='r';
   const n=D?((String(D.lb||'').match(/^[\d.,]+/)||[fn(Math.max(0,D.rows.length-1))])[0]):'';
@@ -613,14 +618,16 @@ let art;$('#al_rs').onclick=async()=>{const b=$('#al_rs');
 $('#al_hb').onclick=()=>{const h=$('#al_hp');h.hidden=!h.hidden;$('#al_hb').setAttribute('aria-expanded',String(!h.hidden))};
 // jenis file dikenali dari nama file, lalu dari kolomnya
 function alkDetect(f,r){const n=f.name.toLowerCase();
- if(/stock|stok/.test(n))return'stock';if(/plan|picking/.test(n))return'plan';if(/sudah|done|alok/.test(n))return'done';
+ if(/odas/.test(n))return'odas';if(/stock|stok/.test(n))return'stock';if(/plan|picking/.test(n))return'plan';if(/sudah|done|alok/.test(n))return'done';
+ if(alkHead(r,x=>sq(x)==='QTYODAS'))return'odas';
  try{PAR.plan(r);return'plan'}catch(e){}try{PAR.stock(r);return'stock'}catch(e){}
  if(alkHead(r,x=>x==='GAB'))return'done';return null}
 $('#al_fa').onchange=async e=>{const inp=e.target,fs=[...inp.files],um=$('#al_um');inp.value='';if(!fs.length)return;
  await runFiles(fs,$('#al_ul'),um,inp.parentNode,async(f,pre)=>{
   um.textContent=pre+'membaca file. File besar bisa butuh 1-2 menit...';await tick();
-  const[r]=await sheet(f,'');if(!r.length)throw Error('File kosong.');
-  const k=alkDetect(f,r);if(!k)throw Error('jenis file tidak dikenali. Tambahkan kata Stock / Plan / Sudah pada nama file.');
+  let[r]=await sheet(f,'');if(!r.length)throw Error('File kosong.');
+  if(r[0]&&r[0].length===1&&typeof r[0][0]==='string'&&r[0][0].includes('|'))r=r.map(x=>x&&typeof x[0]==='string'?x[0].split('|'):x);// CSV berpemisah |
+  const k=alkDetect(f,r);if(!k)throw Error('jenis file tidak dikenali. Tambahkan kata Stock / Plan / Sudah / ODAS pada nama file.');
   const lbl=PAR[k](r);await put('alk_'+k,{name:f.name,time:new Date().toLocaleString('id-ID'),rows:r,lb:lbl});
   return'['+ALKN[k][0]+'] '+lbl},alkStat)};
 const rb=v=>v===''||v==null?'':Number(v).toLocaleString('id-ID');
@@ -713,12 +720,12 @@ let alkUrl=null,alkUrl2=null,alkUrl3=null;
 async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');go.disabled=true;out.innerHTML='';jm.className='m';
  try{if(!mrSet())throw Error('Isian Min Rp tidak dikenali. Contoh: 500rb, 1jt, 1,5jt.');
   if(cloudOn()){jm.textContent='Mengecek data terbaru...';try{await syncAll()}catch(e){}}
-  const[ms,tk,im,tg,np,sk,pl,dn]=await Promise.all(['master','toko','item','target','npb','alk_stock','alk_plan','alk_done'].map(get));
+  const[ms,tk,im,tg,np,sk,pl,dn,od]=await Promise.all(['master','toko','item','target','npb','alk_stock','alk_plan','alk_done','alk_odas'].map(get));
   if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target di tab Master.');if(tgOld(tg))throw Error(TGOLD);
   if(!sk)throw Error('Upload Stock akhir dulu.');if(!pl)throw Error('Upload Plan picking dulu.');
   const sa=ALK.sa||'semua';if(sa!=='semua'&&!dn)throw Error('Pilihan Sudah/Belum alokasi butuh file Sudah alokasi. Upload dulu.');
   jm.textContent='Menghitung alokasi...';await tick();
-  const ST=alkStock(sk.rows),ST7=alkStock7(ST),PL=alkPlan(pl.rows),DN=dn?alkDone(dn.rows):null,T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
+  const ST=alkStock(sk.rows),ST7=alkStock7(ST),PL=alkPlan(pl.rows),DN=dn?alkDone(dn.rows):null,OD=od?alkOdas(od.rows):new Map(),T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
    XZ=new Set(ALK.ex.zona),X1=new Set(ALK.ex.pola1),X2=new Set(ALK.ex.pola2),nat=(ALK.ket||'all')==='nataru',mq=ALK.mq>0?ALK.mq:null,mqb=ALK.mqb>0?ALK.mqb:null,mqs=ALK.mqs>0?ALK.mqs:null,mxs=ALK.mxs>0?ALK.mxs:null,mxb=ALK.mxb>0?ALK.mxb:null,mi=ALK.mi>0?ALK.mi:null,mnb=ALK.mnb>0?ALK.mnb:null,mr=ALK.mr>0?ALK.mr:0,ps=ALK.ps>0?ALK.ps:100,
    used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim(),minStock=ALK.ms==null?null:Math.max(0,Number(ALK.ms));let i=0,lolos=0;
   // isi file Sudah alokasi dikenali dari panjangnya: 12 = GAB, 8 = PLU, 4 = TOKO (salah satu cocok = sudah alokasi)
@@ -735,12 +742,12 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
    if(nat&&N(z(I[3]))!=='NATARU')continue;
    if(DN){const has=DN.has(gab)||DNP.has(PK(p))||DNT.has(K(t).toUpperCase());if(sa==='sudah'&&!has||sa==='belum'&&has)continue}
    lolos++;
-   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,sisa=Q-(AB+AI);
+   const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,odq=p1.toLowerCase()==='terkait'?OD.get(K(t).toUpperCase()+'|'+PK(p))||0:0,sisa=Q-(AB+AI+odq);
    // Max stock (ctn): item Basic memakai isian Basic; item Bulky non-Basic memakai isian Bulky; stock (ctn) di atas isian tidak dialokasikan
    {const bsc=p1.toLowerCase()==='basic',mx=bsc?mxb:zk(zn)==='Bulky'?mxs:null;if(mx!=null&&fr>0&&stock/fr>mx)continue}
    if(!(mn>0))continue;
-   // TARGET=QTY_TGT, SISA=QTY_TGT-NPB total. Pilihan Nataru hanya menyaring item ber-KET NATARU = NATARU
-   // QTY alokasi = MAX(0, TARGET x % TARGET - NPB), lalu dibulatkan turun ke kelipatan MINOR
+   // TARGET=QTY_TGT, SISA=QTY_TGT-(NPB total + ODAS; ODAS hanya untuk item POLA1 Terkait). Pilihan Nataru hanya menyaring item ber-KET NATARU = NATARU
+   // QTY alokasi = MAX(0, TARGET x % TARGET - NPB - ODAS), lalu dibulatkan turun ke kelipatan MINOR
    const target=Q;
    const dasar=Math.max(0,target*ps/100-(target-sisa));
    let q=Math.floor(Math.max(0,dasar)/mn+1e-9)*mn;{// Max qty (x minor) per kelompok: Basic (POLA1 Basic) -> isian Basic; Bulky (zona 14/15/21, non Basic) -> isian Bulky; lainnya -> isian Non Bulky (zona 17 minimal 10)
@@ -748,7 +755,7 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
    // total alokasi item yang sama tidak boleh melebihi stock; setelah terlewati, baris berikutnya 0
    if(q>0){if(stop.has(pk))q=0;else{const u=(used.get(pk)||0)+q;if(u>stock){stop.add(pk);q=0}else used.set(pk,u)}}
    if(q<=0)continue;
-   const T=T0.get(t)||[];rows.push({al:z(M[2]),am:z(T[1]),kota:z(T[3]),t,nt:z(T[0]),gab,p,pk,desc:z(M[0]),zn,p1,p2,kt:z(I[3]),fr,mn,ac,stock,tg:target,npb:AB+AI,sisa,q,ctn:d(q,fr),rp:q*ac})}
+   const T=T0.get(t)||[];rows.push({al:z(M[2]),am:z(T[1]),kota:z(T[3]),t,nt:z(T[0]),gab,p,pk,desc:z(M[0]),zn,p1,p2,kt:z(I[3]),fr,mn,ac,stock,tg:target,npb:AB+AI,odas:odq,sisa,q,ctn:d(q,fr),rp:q*ac})}
   // max item per zona, urut total rupiah alokasi terbesar
   // Min Rp: total Rp alokasi satu PLU (semua toko) harus >= isian; PLU di bawahnya dibuang sebelum Max item
   let res=rows;
@@ -764,8 +771,8 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
   const A=new Set(),Z=new Map();let tq=0,tc=0,tr=0;
   for(const r of res){A.add(r.pk);tq+=r.q;tc+=r.ctn;tr+=r.rp;let g=Z.get(r.zn);if(!g)Z.set(r.zn,g={it:new Set(),q:0,c:0,r:0});g.it.add(r.pk);g.q+=r.q;g.c+=r.ctn;g.r+=r.rp}
   const nf=(v,dc=0)=>Number(v).toLocaleString('id-ID',{maximumFractionDigits:dc});
-  const H=['AM','KOTA','TOKO','NAMA TOKO','GAB','PLU','DESC','ZONA','POLA1','POLA2','KET NATARU','FRAC','MINOR','ACOST','STOCK_AKHIR','QTY_TGT','QTY_NPB','SISA','QTY_ALOKASI','CTN_ALOKASI','RP_ALOKASI'],
-   DR=res.map(r=>[r.am,r.kota,r.t,r.nt,r.gab,r.p,r.desc,r.zn,r.p1,r.p2,r.kt,r.fr,r.mn,r.ac,r.stock,r.tg,r.npb,r.sisa,r.q,+r.ctn.toFixed(4),+r.rp.toFixed(2)]);
+  const H=['AM','KOTA','TOKO','NAMA TOKO','GAB','PLU','DESC','ZONA','POLA1','POLA2','KET NATARU','FRAC','MINOR','ACOST','STOCK_AKHIR','QTY_TGT','QTY_NPB','QTY_ODAS','SISA','QTY_ALOKASI','CTN_ALOKASI','RP_ALOKASI'],
+   DR=res.map(r=>[r.am,r.kota,r.t,r.nt,r.gab,r.p,r.desc,r.zn,r.p1,r.p2,r.kt,r.fr,r.mn,r.ac,r.stock,r.tg,r.npb,r.odas,r.sisa,r.q,+r.ctn.toFixed(4),+r.rp.toFixed(2)]);
   if(alkUrl)URL.revokeObjectURL(alkUrl);alkUrl=URL.createObjectURL(alkSheet('Detail Alokasi',H,DR));
   const dt=new Date(),nm='Alokasi_'+(($('#gd').value||'G113').replace(/[^\w-]/g,'')||'G113')+'_'+String(dt.getDate()).padStart(2,'0')+'_'+['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'][dt.getMonth()]+'_'+String(dt.getFullYear()).slice(-2)+'.xlsx';
   const IT=new Map();for(const r of res){let g=IT.get(r.pk);if(!g)IT.set(r.pk,g={p:r.p,desc:r.desc,pola:nat?'NATARU':r.p2,bs:String(r.p1).toLowerCase()==='basic',rk:Number(r.zn)===17,zn:r.zn,al:r.al,fr:r.fr,mn:r.mn,ac:r.ac,st:r.stock,q:0,c:0,rp:0,tk:new Set()});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp;g.tk.add(r.t)}
@@ -1191,6 +1198,6 @@ async function boot(){const ld=$('#ld');
  catch(e){ld.className='on er';$('#ldt').textContent='Gagal membaca database';$('#ldm').className='m e';$('#ldm').textContent=(e&&e.message)||'Koneksi gagal.';$('#ldr').disabled=false}}
 $('#ldr').onclick=boot;boot();
 // versi aplikasi: sama dengan VER di sw.js (header, footer, dan cache service worker)
-const APP_VER='1.0.10';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
+const APP_VER='1.0.11';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
 </script></body></html>
