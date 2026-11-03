@@ -109,7 +109,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <section class="p gen"><div class="c">
 <label>Kode gudang<input type="text" id="gd" size="7" value="G113"></label>
 <button id="go" style="margin-left:auto">Buat rekap (CSV)</button></div>
-<div class="bar" id="bar"><i id="fl"></i></div><div class="m" id="jm"></div><div id="jx" hidden><button type="button" class="g" id="jstop">Hentikan pantauan</button><button type="button" class="g" id="jchk" hidden>Cek status</button></div><div id="res"></div></section>
+<div class="bar" id="bar"><i id="fl"></i></div><div class="m" id="jm"></div><div id="jx" hidden><button type="button" class="g" id="jstop">Hentikan pantauan</button><button type="button" class="g" id="jcancel" style="color:var(--err);border-color:var(--err)">Batalkan proses</button><button type="button" class="g" id="jchk" hidden>Cek status</button></div><div id="res"></div></section>
 </div>
 <div id="pg3" hidden>
 <section class="p gen"><div class="alt">Upload</div>
@@ -480,18 +480,25 @@ document.addEventListener('click',e=>{if(!e.target.closest('#sm .xm'))xlClose()}
 let rekapStop=false,rekapHold=false;
 const mnt=ms=>{const t=Math.floor(ms/1000),m=Math.floor(t/60);return m>0?m+' mnt '+String(t%60).padStart(2,'0')+' dtk':t+' dtk'};
 function rekapDone(j){const jm=$('#jm'),fl=$('#fl');fl.style.width='100%';jm.textContent=j.mode==='none'?'Data sumber tidak berubah sejak rekap terakhir, hasil rekap sudah terbaru.':j.mode==='diff'?'Selesai. '+fn(j.changed||0)+' dari '+fn(j.total)+' baris diperbarui.':'Selesai. Rekap sudah tersimpan.';if(j.url)slink(j.url)}
-async function rekapWatch(){const fl=$('#fl'),jm=$('#jm'),jx=$('#jx');$('#bar').style.display='block';rekapStop=false;rekapHold=false;jx.hidden=false;$('#jstop').hidden=false;$('#jchk').hidden=true;
+async function rekapWatch(){const fl=$('#fl'),jm=$('#jm'),jx=$('#jx');$('#bar').style.display='block';rekapStop=false;rekapHold=false;jx.hidden=false;$('#jstop').hidden=false;$('#jcancel').hidden=false;$('#jchk').hidden=true;
  const t0=Date.now();let ld=-1,lm=t0;
  for(;;){
-  if(rekapStop){rekapHold=true;$('#jstop').hidden=true;$('#jchk').hidden=false;jm.textContent='Pantauan dihentikan. Proses di server tetap berjalan dan tidak bisa dibatalkan dari sini. Klik "Cek status" untuk melihat sudah selesai atau belum.';return}
+  if(rekapStop){rekapHold=false;$('#jstop').hidden=true;$('#jcancel').hidden=true;$('#jchk').hidden=false;jm.textContent=rekapStop==='cancel'?'Proses dibatalkan di server. Klik Buat rekap lagi untuk menyimpan rekap.':'Pantauan dihentikan. Proses di server tetap berjalan. Klik "Cek status" untuk melihat sudah selesai atau belum.';if(rekapStop==='cancel')$('#jchk').hidden=true;jx.hidden=rekapStop==='cancel';return}
   let j;try{j=((await api({action:'rekapstatus'})).job)||{}}catch(e){jm.textContent='Menunggu koneksi... proses tetap berjalan.';await sleep(4000);continue}
   if(j.state==='running'){if(j.done!==ld){ld=j.done;lm=Date.now()}const idle=Date.now()-lm;fl.style.width=(j.total?100*j.done/j.total:0)+'%';
-   jm.textContent=({npb:'Memperbarui kolom NPB',master:'Memperbarui kolom Master & NPB',diff:'Memperbarui baris yang berubah'}[j.mode]||'Menyimpan rekap')+': '+pc(j.done,j.total)+' · dipantau '+mnt(Date.now()-t0)+(idle>120000?'. Belum ada kemajuan '+mnt(idle)+': server masih membandingkan data (persen baru naik saat penulisan). Rekap belum tersimpan sampai selesai.':' (proses tetap berjalan, boleh ditinggal)');await sleep(2000);continue}
+   jm.textContent=({npb:'Memperbarui kolom NPB',master:'Memperbarui kolom Master & NPB',diff:'Memperbarui baris yang berubah'}[j.mode]||'Menyimpan rekap')+(j.phase&&!j.done?' ('+j.phase.toLowerCase()+')':'')+': '+pc(j.done,j.total)+' · dipantau '+mnt(Date.now()-t0)+(j.resumed?' · dilanjutkan otomatis '+j.resumed+'x':'')+(idle>120000?'. Belum ada kemajuan '+mnt(idle)+': server masih membandingkan data (persen baru naik saat penulisan). Rekap belum tersimpan sampai selesai.':' (proses tetap berjalan, boleh ditinggal)');await sleep(2000);continue}
   jx.hidden=true;rekapHold=false;
   if(j.state==='error')throw Error(j.error||'Gagal menyimpan rekap.');
   if(j.state==='done')rekapDone(j);
   return}}
 $('#jstop').onclick=()=>{rekapStop=true};
+// batalkan proses di server (butuh Code.gs terbaru). Klik dua kali agar tidak terklik tanpa sengaja.
+let jcT;$('#jcancel').onclick=async()=>{const b=$('#jcancel'),jm=$('#jm');
+ if(!b.classList.contains('ask')){b.classList.add('ask');b.textContent='Yakin batalkan? Klik lagi';clearTimeout(jcT);jcT=setTimeout(()=>{b.classList.remove('ask');b.textContent='Batalkan proses'},5000);return}
+ clearTimeout(jcT);b.classList.remove('ask');b.textContent='Batalkan proses';b.disabled=true;
+ try{await api({action:'rekapcancel'});rekapStop='cancel'}
+ catch(e){jm.innerHTML='<span class="e">'+(/tidak dikenal/i.test(e.message)?'Code.gs di server belum versi terbaru, jadi belum bisa dibatalkan. Pasang Code.gs terbaru lalu deploy versi baru.':'Gagal membatalkan: '+e.message)+'</span>'}
+ b.disabled=false};
 $('#jchk').onclick=async()=>{const jm=$('#jm'),b=$('#jchk');b.disabled=true;
  try{const j=((await api({action:'rekapstatus'})).job)||{};
   if(j.state==='running'){const go=$('#go');go.disabled=true;try{await rekapWatch()}catch(e){jm.innerHTML='<span class="e">'+e.message+'</span>'}go.disabled=rekapHold}
@@ -1212,6 +1219,6 @@ async function boot(){const ld=$('#ld');
  catch(e){ld.className='on er';$('#ldt').textContent='Gagal membaca database';$('#ldm').className='m e';$('#ldm').textContent=(e&&e.message)||'Koneksi gagal.';$('#ldr').disabled=false}}
 $('#ldr').onclick=boot;boot();
 // versi aplikasi: sama dengan VER di sw.js (header, footer, dan cache service worker)
-const APP_VER='1.0.12';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
+const APP_VER='1.0.13';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
 </script></body></html>
