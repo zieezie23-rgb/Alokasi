@@ -43,7 +43,7 @@ input[type=number]{font:inherit;padding:5px 8px;border:1px solid var(--line);bor
 .st{border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:var(--pn2)}.st span{display:block;font-size:12px;color:var(--mut)}.st b{display:block;font-size:19px;margin-top:2px}#alz td,#kvz td,#kvp td{text-align:right}#alz td:first-child,#kvz td:first-child,#kvp td:first-child{text-align:left}#alz tr.th td,#kvz tr.th td,#kvp tr.th td{font-size:11.5px;color:var(--mut);font-weight:600}select.al{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--pn2);color:var(--ink);width:100%}
 .tabs button.on{color:var(--ac2);border-bottom-color:var(--red)}.tabs button:hover{color:var(--ac2)}.alt{border-left:4px solid var(--yel);padding-left:8px}.st{border-left:4px solid var(--yel)}
 .alu{display:flex;gap:12px}.alu>.alf{flex:1 1 0;min-width:0}.alu .u{flex-wrap:nowrap;gap:4px;justify-content:flex-start}.alu label.bt,.alu button{padding:6px 10px}.alu .m{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hp{display:grid;grid-template-columns:max-content minmax(0,1fr) max-content;gap:6px 16px;align-items:baseline;margin-top:10px;padding:12px 16px;border-radius:4px;background:var(--pn2);font-size:13.5px;line-height:1.5}.hp[hidden]{display:none}.hp b::after{content:":";font-weight:400}.hp span{white-space:normal;overflow-wrap:anywhere}.hp{align-items:center}.hp .hd{text-align:right;min-height:26px}#al_hp{grid-template-columns:max-content minmax(0,1fr)}.hp button{padding:0 8px;height:26px;font-size:12px}
+#jx:not([hidden]){display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.hp{display:grid;grid-template-columns:max-content minmax(0,1fr) max-content;gap:6px 16px;align-items:baseline;margin-top:10px;padding:12px 16px;border-radius:4px;background:var(--pn2);font-size:13.5px;line-height:1.5}.hp[hidden]{display:none}.hp b::after{content:":";font-weight:400}.hp span{white-space:normal;overflow-wrap:anywhere}.hp{align-items:center}.hp .hd{text-align:right;min-height:26px}#al_hp{grid-template-columns:max-content minmax(0,1fr)}.hp button{padding:0 8px;height:26px;font-size:12px}
 .isg{grid-column:1/-1;font-weight:600;font-size:13px;color:var(--yel,#fc0);margin-top:6px;padding-top:8px;border-top:1px solid rgba(255,255,255,.12)}.isg:first-child{margin-top:0;padding-top:0;border-top:0}.c.isi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:end}.c.isi label{white-space:normal;min-width:0;line-height:1.25}.c.isi input,.c.isi button{width:100%;height:36px;padding:0 8px;min-width:0}.c.isi button{font-size:13px;line-height:1.15;white-space:normal}
 #src .r{grid-template-columns:60px minmax(0,1fr) 100px}#al_src .r{grid-template-columns:78px minmax(0,1fr) 104px 28px}#al_src .r button{padding:0 8px;height:26px;font-size:12px}#al_src .r>div:nth-child(n+4){text-align:right}
 #ld{display:none;position:fixed;inset:0;z-index:99;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px}#ld.on{display:flex}#ld .sp{width:46px;height:46px;border:5px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}#ld .t{font-weight:600;font-size:17px}#ld .m{max-width:min(420px,90vw);white-space:normal;overflow-wrap:anywhere}#ld.er .sp{display:none}#ldr{display:none}#ld.er #ldr{display:inline-block}
@@ -109,7 +109,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <section class="p gen"><div class="c">
 <label>Kode gudang<input type="text" id="gd" size="7" value="G113"></label>
 <button id="go" style="margin-left:auto">Buat rekap (CSV)</button></div>
-<div class="bar" id="bar"><i id="fl"></i></div><div class="m" id="jm"></div><div id="res"></div></section>
+<div class="bar" id="bar"><i id="fl"></i></div><div class="m" id="jm"></div><div id="jx" hidden><button type="button" class="g" id="jstop">Hentikan pantauan</button><button type="button" class="g" id="jchk" hidden>Cek status</button></div><div id="res"></div></section>
 </div>
 <div id="pg3" hidden>
 <section class="p gen"><div class="alt">Upload</div>
@@ -477,12 +477,26 @@ $('#sm').addEventListener('click',async e=>{const m=e.target.closest('button[dat
  try{if(b.dataset.x==='xlsx')await smXlsx(P);else await smJpg(P,i)}catch(er){alert(er.message||er)}mb.textContent=old;mb.disabled=false});
 document.addEventListener('click',e=>{if(!e.target.closest('#sm .xm'))xlClose()});
 // ---- pantau rekap latar belakang di server (progres = baris selesai / total)
-async function rekapWatch(){const fl=$('#fl'),jm=$('#jm');$('#bar').style.display='block';
- for(;;){let j;try{j=((await api({action:'rekapstatus'})).job)||{}}catch(e){jm.textContent='Menunggu koneksi... proses tetap berjalan.';await sleep(4000);continue}
-  if(j.state==='running'){fl.style.width=(j.total?100*j.done/j.total:0)+'%';jm.textContent=({npb:'Memperbarui kolom NPB',master:'Memperbarui kolom Master & NPB',diff:'Memperbarui baris yang berubah'}[j.mode]||'Menyimpan rekap')+': '+pc(j.done,j.total)+' (proses tetap berjalan, boleh ditinggal)';await sleep(2000);continue}
+let rekapStop=false,rekapHold=false;
+const mnt=ms=>{const t=Math.floor(ms/1000),m=Math.floor(t/60);return m>0?m+' mnt '+String(t%60).padStart(2,'0')+' dtk':t+' dtk'};
+function rekapDone(j){const jm=$('#jm'),fl=$('#fl');fl.style.width='100%';jm.textContent=j.mode==='none'?'Data sumber tidak berubah sejak rekap terakhir, hasil rekap sudah terbaru.':j.mode==='diff'?'Selesai. '+fn(j.changed||0)+' dari '+fn(j.total)+' baris diperbarui.':'Selesai. Rekap sudah tersimpan.';if(j.url)slink(j.url)}
+async function rekapWatch(){const fl=$('#fl'),jm=$('#jm'),jx=$('#jx');$('#bar').style.display='block';rekapStop=false;rekapHold=false;jx.hidden=false;$('#jstop').hidden=false;$('#jchk').hidden=true;
+ const t0=Date.now();let ld=-1,lm=t0;
+ for(;;){
+  if(rekapStop){rekapHold=true;$('#jstop').hidden=true;$('#jchk').hidden=false;jm.textContent='Pantauan dihentikan. Proses di server tetap berjalan dan tidak bisa dibatalkan dari sini. Klik "Cek status" untuk melihat sudah selesai atau belum.';return}
+  let j;try{j=((await api({action:'rekapstatus'})).job)||{}}catch(e){jm.textContent='Menunggu koneksi... proses tetap berjalan.';await sleep(4000);continue}
+  if(j.state==='running'){if(j.done!==ld){ld=j.done;lm=Date.now()}const idle=Date.now()-lm;fl.style.width=(j.total?100*j.done/j.total:0)+'%';
+   jm.textContent=({npb:'Memperbarui kolom NPB',master:'Memperbarui kolom Master & NPB',diff:'Memperbarui baris yang berubah'}[j.mode]||'Menyimpan rekap')+': '+pc(j.done,j.total)+' · dipantau '+mnt(Date.now()-t0)+(idle>120000?'. Belum ada kemajuan '+mnt(idle)+': server masih membandingkan data (persen baru naik saat penulisan). Rekap belum tersimpan sampai selesai.':' (proses tetap berjalan, boleh ditinggal)');await sleep(2000);continue}
+  jx.hidden=true;rekapHold=false;
   if(j.state==='error')throw Error(j.error||'Gagal menyimpan rekap.');
-  if(j.state==='done'){fl.style.width='100%';jm.textContent=j.mode==='none'?'Data sumber tidak berubah sejak rekap terakhir, hasil rekap sudah terbaru.':j.mode==='diff'?'Selesai. '+fn(j.changed||0)+' dari '+fn(j.total)+' baris diperbarui.':'Selesai. Rekap sudah tersimpan.';if(j.url)slink(j.url)}
+  if(j.state==='done')rekapDone(j);
   return}}
+$('#jstop').onclick=()=>{rekapStop=true};
+$('#jchk').onclick=async()=>{const jm=$('#jm'),b=$('#jchk');b.disabled=true;
+ try{const j=((await api({action:'rekapstatus'})).job)||{};
+  if(j.state==='running'){const go=$('#go');go.disabled=true;try{await rekapWatch()}catch(e){jm.innerHTML='<span class="e">'+e.message+'</span>'}go.disabled=rekapHold}
+  else{$('#jx').hidden=true;rekapHold=false;$('#go').disabled=false;if(j.state==='done')rekapDone(j);else if(j.state==='error')jm.innerHTML='<span class="e">'+(j.error||'Gagal menyimpan rekap.')+'</span>';else jm.textContent='Tidak ada proses rekap yang berjalan di server.'}}
+ catch(e){jm.innerHTML='<span class="e">Gagal cek status: '+e.message+'</span>'}b.disabled=false};
 // ---- buat rekap
 $('#go').onclick=async()=>{const go=$('#go'),bar=$('#bar'),fl=$('#fl'),jm=$('#jm');go.disabled=true;$('#res').innerHTML='';bar.style.display='block';
  try{if(cloudOn()){jm.textContent='Mengecek data terbaru...';try{await syncAll()}catch(e){jm.textContent='Koneksi gagal, memakai data terakhir.';await tick()}}
@@ -513,7 +527,7 @@ $('#go').onclick=async()=>{const go=$('#go'),bar=$('#bar'),fl=$('#fl'),jm=$('#jm
    try{await push('rekap','replace',db,{file:nm2,time:new Date().toLocaleString('id-ID')},(a,b)=>{fl.style.width=(100*a/b)+'%';jm.textContent='Menyimpan rekap: '+pc(a,b)},10000);
     jm.textContent='Selesai. Rekap juga sudah tersimpan.'}
    catch(e){jm.innerHTML='<span class="e">CSV siap diunduh, tetapi rekap belum tersimpan: '+e.message+'</span>'}}
- }catch(e){jm.innerHTML='<span class="e">'+e.message+'</span>'}go.disabled=false};
+ }catch(e){jm.innerHTML='<span class="e">'+e.message+'</span>'}go.disabled=rekapHold};
 const DEF_KEY='00000';
 const DEF_URL='https://script.google.com/macros/s/AKfycbwymu26Dh5II0KEVYTJFEOzrp1Zp7o9dYye9FYBdTq_Ciqja13HCb7WADsfdagx5V6n/exec';
 let rt;$('#rs').onclick=async()=>{const b=$('#rs'),um=$('#um');
@@ -1190,7 +1204,7 @@ document.addEventListener('click',e=>{if(!e.target.closest('#mn'))mc()});documen
 function tab(n){for(const i of[1,2,3,4,5]){$('#pg'+i).hidden=i!==n;const b=$('#t'+i);b.classList.toggle('on',i===n);b.setAttribute('aria-selected',i===n)}}
 $('#t1').onclick=()=>tab(1);$('#t2').onclick=()=>tab(2);$('#t3').onclick=()=>tab(3);$('#t5').onclick=()=>tab(5);$('#t4').onclick=()=>{tab(4);trLoad()};trLoad();
 draw();
-const jobCheck=async()=>{try{if(!(await caps()).bg)return;const j=(await api({action:'rekapstatus'})).job;if(j&&j.state==='running'){const go=$('#go');go.disabled=true;try{await rekapWatch()}catch(e){$('#jm').innerHTML='<span class="e">'+e.message+'</span>'}go.disabled=false}}catch(e){}};
+const jobCheck=async()=>{try{if(!(await caps()).bg)return;const j=(await api({action:'rekapstatus'})).job;if(j&&j.state==='running'){const go=$('#go');go.disabled=true;try{await rekapWatch()}catch(e){$('#jm').innerHTML='<span class="e">'+e.message+'</span>'}go.disabled=rekapHold}}catch(e){}};
 async function boot(){const ld=$('#ld');
  if(!cloudOn()){ld.className='';cst('Belum tersambung, data belum disinkronkan.');return}
  ld.className='on';$('#ldt').textContent='Membaca database...';$('#ldm').className='m';$('#ldm').textContent='Menghubungkan ke database...';$('#ldr').disabled=true;
@@ -1198,6 +1212,6 @@ async function boot(){const ld=$('#ld');
  catch(e){ld.className='on er';$('#ldt').textContent='Gagal membaca database';$('#ldm').className='m e';$('#ldm').textContent=(e&&e.message)||'Koneksi gagal.';$('#ldr').disabled=false}}
 $('#ldr').onclick=boot;boot();
 // versi aplikasi: sama dengan VER di sw.js (header, footer, dan cache service worker)
-const APP_VER='1.0.11';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
+const APP_VER='1.0.12';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
 </script></body></html>
