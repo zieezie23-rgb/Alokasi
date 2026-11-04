@@ -136,6 +136,8 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <label>Min Rp (per PLU)<input type="text" id="al_mr" inputmode="numeric" autocomplete="off"></label>
 <label>Max item (per zona)<input type="number" id="al_mnb" min="0" step="1" inputmode="numeric"></label>
 <label>Max qty (&times; minor)<input type="number" id="al_mq" min="0" step="1" inputmode="numeric"></label>
+<div class="isg">Item Rokok</div>
+<label>Max item (per zona)<input type="number" id="al_mrk" min="0" step="1" inputmode="numeric"></label>
 <div class="isg">Item Bulky</div>
 <label>Max item (per zona)<input type="number" id="al_mi" min="0" step="1" inputmode="numeric"></label>
 <label>Max qty (&times; minor)<input type="number" id="al_mqb" min="0" step="1" inputmode="numeric"></label>
@@ -282,11 +284,11 @@ async function upload(k,f,mode){
   if(cl)ver=(await push(k,'replace',CV[k].to(m),{file:f.name,time:tm},prog)).ver;
   await put(k,m);msg=`${SRC[k][0]} diganti: ${fn(m.size)} baris.`;
  }else if(k==='target'){if(cl&&!(await caps()).tgt)throw Error('Code.gs belum diperbarui. Tempel Code.gs terbaru, deploy versi baru, lalu klik Reset database.');const[c,dt]=hdr(r,['TOKO','PRDCD']);const a=col(c,'TGT_AWAL','TGT AWAL'),b=col(c,'TGT_TAMBAH','TGT TAMBAH'),qi=col(c,'QTY_TGT','QTY TGT');
-  const m=(await get('target'))||new Map(),dl=new Map();if(m.size&&tgOld(m))m.clear();const before=m.size;let n=0;
+  const prev=(await get('target'))||new Map(),m=new Map(),dl=new Map();const before=0;let n=0;
   // semua pasangan TOKO+PRDCD disimpan, termasuk yang QTY_TGT = 0. QTY_TGT kosong = TGT_AWAL + TGT_TAMBAH
-  for(const x of dt){const t=K(x[c.TOKO]),p=K(x[c.PRDCD]);if(!t||!p)continue;const A=NUM(x[a]),Tm=NUM(x[b]),Q=x[qi]==null||K(x[qi])===''?A+Tm:NUM(x[qi]),v=[t,p,A,Tm,Q],o=m.get(t+p);if(!o||o.length<5||o[2]!==v[2]||o[3]!==v[3]||o[4]!==v[4])dl.set(t+p,v);m.set(t+p,v);n++}
-  if(cl)ver=(await push('target',before?'merge':'replace',[...dl.values()],{file:f.name,time:tm},prog)).ver;
-  await put('target',m);msg=`Target: ${fn(n)} baris, ${fn(m.size-before)} GAB baru, ${fn(n-(m.size-before))} diperbarui. Total ${fn(m.size)}.`;
+  for(const x of dt){const t=K(x[c.TOKO]),p=K(x[c.PRDCD]);if(!t||!p)continue;const A=NUM(x[a]),Tm=NUM(x[b]),Q=x[qi]==null||K(x[qi])===''?A+Tm:NUM(x[qi]),v=[t,p,A,Tm,Q];dl.set(t+p,v);m.set(t+p,v);n++}
+  if(cl)ver=(await push('target','replace',[...dl.values()],{file:f.name,time:tm},prog)).ver;
+  await put('target',m);msg=`Target diganti semua: ${fn(m.size)} pasangan TOKO+PRDCD dari ${fn(n)} baris (sebelumnya ${fn(prev.size)}).`;
  }else if(k==='ftho'){if(cl&&!(await caps()).tgt)throw Error('Code.gs belum diperbarui. Tempel Code.gs terbaru, deploy versi baru, lalu klik Reset database.');const[c,dt]=hdr(r,['GAB']);const q=col(c,'FT_HO','FT HO','FTHO'),m=new Map();
   for(const x of dt){const g=K(x[c.GAB]);if(!g||N(g)==='GAB')continue;m.set(g,NUM(x[q]))}
   if(cl)ver=(await push('ftho','replace',CV.ftho.to(m),{file:f.name,time:tm},prog)).ver;
@@ -632,7 +634,7 @@ let art;$('#al_rs').onclick=async()=>{const b=$('#al_rs');
  clearTimeout(art);b.classList.remove('ask');b.textContent='Reset';b.disabled=true;
  try{for(const k of AKEYS)await tx('readwrite',s=>s.delete('alk_'+k));$('#al_res').innerHTML='';$('#al_msg').textContent='';$('#al_msg').className='m';$('#al_um').textContent='';$('#al_ul').innerHTML='';
   for(const k of Object.keys(ALK))delete ALK[k];ALK.ex={};alkSave();
-  for(const id of['al_mi','al_mnb','al_mq','al_mqb','al_mqs','al_mxs','al_mxb','al_mr','al_ms']){const e=$('#'+id);e.value='';e.style.borderColor=''}
+  for(const id of['al_mi','al_mrk','al_mnb','al_mq','al_mqb','al_mqs','al_mxs','al_mxb','al_mr','al_ms']){const e=$('#'+id);e.value='';e.style.borderColor=''}
   for(const u of['alkUrl','alkUrl2','alkUrl3']){const v=u==='alkUrl'?alkUrl:u==='alkUrl2'?alkUrl2:alkUrl3;if(v)URL.revokeObjectURL(v)}alkUrl=alkUrl2=alkUrl3=null;
   alkSels();alkRender(0);await alkStat()}catch(e){$('#al_um').textContent='Gagal reset: '+(e.message||e)}
  b.disabled=false};
@@ -657,7 +659,7 @@ const pm=s=>{s=String(s).toLowerCase().replace(/\s/g,'');if(s==='')return null;c
  if(m){const t=m[1],u={rb:1e3,ribu:1e3,k:1e3,jt:1e6,juta:1e6,miliar:1e9}[m[2]],v=!t.includes(',')&&/^\d+\.\d{1,2}$/.test(t)?parseFloat(t):parseFloat(t.replace(/\./g,'').replace(',','.'));return isNaN(v)?false:Math.round(v*u)}
  return/^[\d.]+$/.test(s)?+s.replace(/\./g,''):false};
 const mrSet=()=>{const e=$('#al_mr'),n=pm(e.value);if(n===false){e.style.borderColor='var(--err)';return false}e.style.borderColor='';ALK.mr=n;e.value=rb(n);alkSave();return true};
-for(const[id,k]of[['al_mi','mi'],['al_mnb','mnb'],['al_mq','mq'],['al_mqb','mqb'],['al_mqs','mqs'],['al_mxs','mxs'],['al_mxb','mxb'],['al_mr','mr'],['al_ms','ms']]){const e=$('#'+id);if(ALK[k]!=null)e.value=k==='mr'?rb(ALK[k]):ALK[k];
+for(const[id,k]of[['al_mi','mi'],['al_mrk','mrk'],['al_mnb','mnb'],['al_mq','mq'],['al_mqb','mqb'],['al_mqs','mqs'],['al_mxs','mxs'],['al_mxb','mxb'],['al_mr','mr'],['al_ms','ms']]){const e=$('#'+id);if(ALK[k]!=null)e.value=k==='mr'?rb(ALK[k]):ALK[k];
  if(k==='mr'){e.onchange=mrSet;e.oninput=()=>{const r=e.value;e.style.borderColor='';if(/[a-z,]/i.test(r)||/^\d+\.\d{1,2}$/.test(r))return;const n=r.replace(/\D/g,'');ALK.mr=n===''?null:+n;e.value=rb(n);alkSave()}}
  else e.oninput=()=>{ALK[k]=e.value===''?null:Math.max(0,Math.floor(+e.value));alkSave()}}
 function alkSel(id,key,opts,dv,cb,S,sv){S=S||ALK;sv=sv||alkSave;const box=$('#'+id);box.innerHTML='';const det=document.createElement('details'),sum=document.createElement('summary'),body=document.createElement('div');det.className='dd';body.className='ddl';
@@ -747,7 +749,7 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
   const sa=ALK.sa||'semua';if(sa!=='semua'&&!dn)throw Error('Pilihan Sudah/Belum alokasi butuh file Sudah alokasi. Upload dulu.');
   jm.textContent='Menghitung alokasi...';await tick();
   const ST=alkStock(sk.rows),ST7=alkStock7(ST),PL=alkPlan(pl.rows),DN=dn?alkDone(dn.rows):null,OD=od?alkOdas(od.rows):new Map(),T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
-   XZ=new Set(ALK.ex.zona),X1=new Set(ALK.ex.pola1),X2=new Set(ALK.ex.pola2),nat=(ALK.ket||'all')==='nataru',mq=ALK.mq>0?ALK.mq:null,mqb=ALK.mqb>0?ALK.mqb:null,mqs=ALK.mqs>0?ALK.mqs:null,mxs=ALK.mxs>0?ALK.mxs:null,mxb=ALK.mxb>0?ALK.mxb:null,mi=ALK.mi>0?ALK.mi:null,mnb=ALK.mnb>0?ALK.mnb:null,mr=ALK.mr>0?ALK.mr:0,ps=ALK.ps>0?ALK.ps:100,
+   XZ=new Set(ALK.ex.zona),X1=new Set(ALK.ex.pola1),X2=new Set(ALK.ex.pola2),nat=(ALK.ket||'all')==='nataru',mq=ALK.mq>0?ALK.mq:null,mqb=ALK.mqb>0?ALK.mqb:null,mqs=ALK.mqs>0?ALK.mqs:null,mxs=ALK.mxs>0?ALK.mxs:null,mxb=ALK.mxb>0?ALK.mxb:null,mi=ALK.mi>0?ALK.mi:null,mnb=ALK.mnb>0?ALK.mnb:null,mrk=ALK.mrk>0?ALK.mrk:null,mr=ALK.mr>0?ALK.mr:0,ps=ALK.ps>0?ALK.ps:100,
    used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim(),minStock=ALK.ms==null?null:Math.max(0,Number(ALK.ms));let i=0,lolos=0;
   // isi file Sudah alokasi dikenali dari panjangnya: 12 = GAB, 8 = PLU, 4 = TOKO (salah satu cocok = sudah alokasi)
   const DNP=new Set(),DNT=new Set();if(DN)for(const g of DN){if(g.length===8)DNP.add(PK(g));else if(g.length===4)DNT.add(g.toUpperCase())}
@@ -782,10 +784,10 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
   let res=rows;
   const nbk=r=>String(r.p1).toLowerCase()!=='basic'&&zk(r.zn)!=='Bulky';// Min Rp hanya untuk item Non Bulky
   if(mr){const rp=new Map();for(const r of rows)rp.set(r.pk,(rp.get(r.pk)||0)+r.rp);res=rows.filter(r=>!nbk(r)||rp.get(r.pk)>=mr)}
-  // Max item per zona, urut total Rp terbesar: item Bulky (non Basic) memakai isian Bulky, item non Bulky (non Basic) memakai isian Non Bulky; item Basic tidak dibatasi
-  const mxG=r=>String(r.p1).toLowerCase()==='basic'?null:zk(r.zn)==='Bulky'?'b':'n',mxL={b:mi,n:mnb};
-  if(mi!=null||mnb!=null){const zm=new Map();for(const r of res){const g=mxG(r);if(!g||mxL[g]==null)continue;let m=zm.get(r.zn);if(!m)zm.set(r.zn,m=new Map());m.set(r.pk,(m.get(r.pk)||0)+r.rp)}
-   const keep=new Set();for(const[zn,m]of zm){const lim=mxL[zk(zn)==='Bulky'?'b':'n'];[...m].sort((a,b)=>b[1]-a[1]||(a[0]<b[0]?-1:1)).slice(0,lim).forEach(([pk])=>keep.add(zn+'\u0001'+pk))}
+  // Max item per zona, urut total Rp terbesar: item Bulky (non Basic) memakai isian Bulky, item Rokok (zona 17, non Basic) memakai isian Rokok (kosong = ikut isian Non Bulky), item non Bulky lainnya (non Basic) memakai isian Non Bulky; item Basic tidak dibatasi
+  const gz=zn=>{const k=zk(zn);return k==='Bulky'?'b':k==='Rokok'?'r':'n'},mxG=r=>String(r.p1).toLowerCase()==='basic'?null:gz(r.zn),mxL={b:mi,n:mnb,r:mrk!=null?mrk:mnb};
+  if(mi!=null||mnb!=null||mrk!=null){const zm=new Map();for(const r of res){const g=mxG(r);if(!g||mxL[g]==null)continue;let m=zm.get(r.zn);if(!m)zm.set(r.zn,m=new Map());m.set(r.pk,(m.get(r.pk)||0)+r.rp)}
+   const keep=new Set();for(const[zn,m]of zm){const lim=mxL[gz(zn)];[...m].sort((a,b)=>b[1]-a[1]||(a[0]<b[0]?-1:1)).slice(0,lim).forEach(([pk])=>keep.add(zn+'\u0001'+pk))}
    res=res.filter(r=>{const g=mxG(r);return !g||mxL[g]==null||keep.has(r.zn+'\u0001'+r.pk)})}
   const dg=' PLU Target ditemukan di stock akhir: '+fn(hit.size)+' dari '+fn(seen.size)+'.';
   if(!res.length){jm.textContent='Tidak ada baris alokasi yang memenuhi syarat ('+fn(lolos)+' baris lolos filter).'+dg;go.disabled=false;return}
@@ -1219,6 +1221,6 @@ async function boot(){const ld=$('#ld');
  catch(e){ld.className='on er';$('#ldt').textContent='Gagal membaca database';$('#ldm').className='m e';$('#ldm').textContent=(e&&e.message)||'Koneksi gagal.';$('#ldr').disabled=false}}
 $('#ldr').onclick=boot;boot();
 // versi aplikasi: sama dengan VER di sw.js (header, footer, dan cache service worker)
-const APP_VER='1.0.13';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
+const APP_VER='1.0.15';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
 </script></body></html>
