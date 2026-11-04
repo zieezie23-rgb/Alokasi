@@ -44,7 +44,7 @@ input[type=number]{font:inherit;padding:5px 8px;border:1px solid var(--line);bor
 .tabs button.on{color:var(--ac2);border-bottom-color:var(--red)}.tabs button:hover{color:var(--ac2)}.alt{border-left:4px solid var(--yel);padding-left:8px}.st{border-left:4px solid var(--yel)}
 .alu{display:flex;gap:12px}.alu>.alf{flex:1 1 0;min-width:0}.alu .u{flex-wrap:nowrap;gap:4px;justify-content:flex-start}.alu label.bt,.alu button{padding:6px 10px}.alu .m{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #jx:not([hidden]){display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.hp{display:grid;grid-template-columns:max-content minmax(0,1fr) max-content;gap:6px 16px;align-items:baseline;margin-top:10px;padding:12px 16px;border-radius:4px;background:var(--pn2);font-size:13.5px;line-height:1.5}.hp[hidden]{display:none}.hp b::after{content:":";font-weight:400}.hp span{white-space:normal;overflow-wrap:anywhere}.hp{align-items:center}.hp .hd{text-align:right;min-height:26px}#al_hp{grid-template-columns:max-content minmax(0,1fr)}.hp button{padding:0 8px;height:26px;font-size:12px}
-.isg{grid-column:1/-1;font-weight:600;font-size:13px;color:var(--yel,#fc0);margin-top:6px;padding-top:8px;border-top:1px solid rgba(255,255,255,.12)}.isg:first-child{margin-top:0;padding-top:0;border-top:0}.c.isi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:end}.c.isi label{white-space:normal;min-width:0;line-height:1.25}.c.isi input,.c.isi button{width:100%;height:36px;padding:0 8px;min-width:0}.c.isi button{font-size:13px;line-height:1.15;white-space:normal}
+.isg{grid-column:1/-1;font-weight:600;font-size:13px;color:var(--yel,#fc0);margin-top:6px;padding-top:8px;border-top:1px solid rgba(255,255,255,.12)}.isg:first-child{margin-top:0;padding-top:0;border-top:0}.c.isi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:end}.c.isi label{white-space:normal;min-width:0;line-height:1.25}.c.isi input,.c.isi button{width:100%;height:36px;padding:0 8px;min-width:0}.c.isi button{font-size:13px;line-height:1.15;white-space:normal}.c.isi #al_go{grid-column:4;justify-self:end;width:auto;padding:0 18px}
 #src .r{grid-template-columns:60px minmax(0,1fr) 100px}#al_src .r{grid-template-columns:78px minmax(0,1fr) 104px 28px}#al_src .r button{padding:0 8px;height:26px;font-size:12px}#al_src .r>div:nth-child(n+4){text-align:right}
 #ld{display:none;position:fixed;inset:0;z-index:99;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px}#ld.on{display:flex}#ld .sp{width:46px;height:46px;border:5px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}#ld .t{font-weight:600;font-size:17px}#ld .m{max-width:min(420px,90vw);white-space:normal;overflow-wrap:anywhere}#ld.er .sp{display:none}#ldr{display:none}#ld.er #ldr{display:inline-block}
 
@@ -86,7 +86,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 .c.k label.ck{flex-direction:row;align-items:center;gap:5px;align-self:flex-end;height:38px;box-sizing:border-box;white-space:nowrap;font-size:13px;cursor:pointer}.c.k label.ck input{width:18px;height:18px;margin:0;accent-color:var(--yel,#fc0)}
 @media(max-width:560px){.c.t.k{flex-wrap:wrap;row-gap:8px}}
 </style></head><body><div id="ld" class="on" role="status" aria-live="polite"><div class="sp"></div><div class="t" id="ldt">Membaca database...</div><div class="m" id="ldm">Menghubungkan ke database...</div><button type="button" id="ldr">Sinkron ulang</button></div><main>
-<div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1><span class="hv" id="hv">v1.0.1</span>
+<div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1><span class="hv" id="hv">v1.1.6</span>
 <nav class="mn" id="mn" hidden><button type="button" id="t2" aria-selected="false">Master</button><button type="button" id="t3" aria-selected="false">Alokasi DPD</button><button type="button" id="t5" aria-selected="false">Alokasi Kanvas</button><a href="https://docs.google.com/spreadsheets/d/1sNZO22t6ZnRRiFcIFOpMFJiKqLt9BpcUGDLfw5qrQdg/edit?pli=1&amp;gid=0#gid=0" class="db" target="_blank" rel="noopener">&#9888;&#xFE0E; DATABASE</a></nav></div>
 <div class="tabs" role="tablist"><button type="button" role="tab" id="t1" class="on" aria-selected="true">Ringkasan</button><button type="button" role="tab" id="t4" aria-selected="false">Trend Termin</button></div>
 <div id="pg1"><section class="p gen"><div id="sm"></div></section></div>
@@ -126,25 +126,23 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <div class="alf"><span>Ket Nataru</span><div id="al_ket"></div></div>
 <div class="alf"><span>Pola 2</span><div id="al_pola2"></div></div>
 <div class="alf"><span>Zona</span><div id="al_zona"></div></div>
-<div class="alf"><span>Status alokasi</span><div id="al_sa"></div></div>
-<div class="alf"><span>% Target</span><div id="al_ps"></div></div>
 </div></section>
 <section class="p gen"><div class="alt">Isian</div><div class="c isi">
 
+<div class="isg">Item Basic</div>
+<label>Max qty (&times; minor)<input type="number" id="al_mqs" min="0" step="1" inputmode="numeric"></label>
+<label>Max stock (ctn)<input type="number" id="al_mxb" min="0" step="1" inputmode="numeric"></label>
 <div class="isg">Item Non Bulky</div>
 <label>Min stock (PCS)<input type="number" id="al_ms" min="0" step="1" inputmode="numeric"></label>
 <label>Min Rp (per PLU)<input type="text" id="al_mr" inputmode="numeric" autocomplete="off"></label>
 <label>Max item (per zona)<input type="number" id="al_mnb" min="0" step="1" inputmode="numeric"></label>
 <label>Max qty (&times; minor)<input type="number" id="al_mq" min="0" step="1" inputmode="numeric"></label>
-<div class="isg">Item Rokok</div>
-<label>Max item (per zona)<input type="number" id="al_mrk" min="0" step="1" inputmode="numeric"></label>
 <div class="isg">Item Bulky</div>
 <label>Max item (per zona)<input type="number" id="al_mi" min="0" step="1" inputmode="numeric"></label>
 <label>Max qty (&times; minor)<input type="number" id="al_mqb" min="0" step="1" inputmode="numeric"></label>
 <label>Max stock (ctn)<input type="number" id="al_mxs" min="0" step="1" inputmode="numeric"></label>
-<div class="isg">Item Basic</div>
-<label>Max qty (&times; minor)<input type="number" id="al_mqs" min="0" step="1" inputmode="numeric"></label>
-<label>Max stock (ctn)<input type="number" id="al_mxb" min="0" step="1" inputmode="numeric"></label>
+<div class="isg">Item Rokok</div>
+<label>Max item (per zona)<input type="number" id="al_mrk" min="0" step="1" inputmode="numeric"></label>
 <button id="al_go">Hitung alokasi</button></div>
 <div class="m" id="al_msg" style="margin-top:12px;white-space:normal"></div><div id="al_res" style="margin-top:12px"></div></section>
 </div>
@@ -169,7 +167,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <div class="m" id="kv_msg" style="margin-top:12px;white-space:normal"></div><div id="kv_res" style="margin-top:12px"></div></section>
 </div>
 <div id="pg4" hidden><section class="p gen"><div class="sg"><button type="button" class="g on" data-v="k">Kumulatif</button><button type="button" class="g" data-v="h">Per hari</button></div><div class="m" id="trn" style="margin:0 0 8px;white-space:normal"></div><div class="trw" id="trw"></div></section></div>
-<footer>Resep Rahasia Krabby Patty <span id="fv">v1.0.1</span> @2026 &bull; Zie Project</footer>
+<footer>Resep Rahasia Krabby Patty <span id="fv">v1.1.6</span> @2026 &bull; Zie Project</footer>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -666,7 +664,7 @@ function alkSel(id,key,opts,dv,cb,S,sv){S=S||ALK;sv=sv||alkSave;const box=$('#'+
  let cur=opts.some(o=>o[0]===S[key])?S[key]:dv;const show=()=>{sum.textContent=opts.find(o=>o[0]===cur)[1]};
  for(const[v,l]of opts){const lb=document.createElement('label'),r=document.createElement('input');r.type='radio';r.name=id;r.checked=v===cur;r.onchange=()=>{cur=v;S[key]=v;sv();show();det.open=false;cb&&cb()};lb.append(r,' '+l);body.appendChild(lb)}
  show();det.append(sum,body);box.appendChild(det)}
-const alkSels=()=>{alkSel('al_ket','ket',[['all','All'],['nataru','Nataru']],'all',()=>alkRender(2));alkSel('al_sa','sa',[['semua','Semua'],['belum','Belum alokasi']],'semua');alkSel('al_ps','ps',[[25,'25%'],[50,'50%'],[75,'75%'],[100,'100%']],100)};alkSels();
+const alkSels=()=>{alkSel('al_ket','ket',[['all','All'],['nataru','Nataru']],'all',()=>alkRender(2))};alkSels();
 // tutup semua daftar pilihan saat klik/tap di luar daftar, atau tekan Esc
 document.addEventListener('pointerdown',e=>{document.querySelectorAll('details.dd[open]').forEach(d=>{if(!d.contains(e.target))d.open=false})},true);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('details.dd[open]').forEach(d=>d.open=false)});
@@ -746,10 +744,10 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
   const[ms,tk,im,tg,np,sk,pl,dn,od]=await Promise.all(['master','toko','item','target','npb','alk_stock','alk_plan','alk_done','alk_odas'].map(get));
   if(!tg||!tg.size)throw Error('Data Target masih kosong. Upload Target di tab Master.');if(tgOld(tg))throw Error(TGOLD);
   if(!sk)throw Error('Upload Stock akhir dulu.');if(!pl)throw Error('Upload Plan picking dulu.');
-  const sa=ALK.sa||'semua';if(sa!=='semua'&&!dn)throw Error('Pilihan Sudah/Belum alokasi butuh file Sudah alokasi. Upload dulu.');
+  const sa='belum';
   jm.textContent='Menghitung alokasi...';await tick();
   const ST=alkStock(sk.rows),ST7=alkStock7(ST),PL=alkPlan(pl.rows),DN=dn?alkDone(dn.rows):null,OD=od?alkOdas(od.rows):new Map(),T0=tk||new Map(),M0=ms||new Map(),I0=im||new Map(),P=np?np.m:new Map(),
-   XZ=new Set(ALK.ex.zona),X1=new Set(ALK.ex.pola1),X2=new Set(ALK.ex.pola2),nat=(ALK.ket||'all')==='nataru',mq=ALK.mq>0?ALK.mq:null,mqb=ALK.mqb>0?ALK.mqb:null,mqs=ALK.mqs>0?ALK.mqs:null,mxs=ALK.mxs>0?ALK.mxs:null,mxb=ALK.mxb>0?ALK.mxb:null,mi=ALK.mi>0?ALK.mi:null,mnb=ALK.mnb>0?ALK.mnb:null,mrk=ALK.mrk>0?ALK.mrk:null,mr=ALK.mr>0?ALK.mr:0,ps=ALK.ps>0?ALK.ps:100,
+   XZ=new Set(ALK.ex.zona),X1=new Set(ALK.ex.pola1),X2=new Set(ALK.ex.pola2),nat=(ALK.ket||'all')==='nataru',mq=ALK.mq>0?ALK.mq:null,mqb=ALK.mqb>0?ALK.mqb:null,mqs=ALK.mqs>0?ALK.mqs:null,mxs=ALK.mxs>0?ALK.mxs:null,mxb=ALK.mxb>0?ALK.mxb:null,mi=ALK.mi>0?ALK.mi:null,mnb=ALK.mnb>0?ALK.mnb:null,mrk=ALK.mrk>0?ALK.mrk:null,mr=ALK.mr>0?ALK.mr:0,ps=100,
    used=new Map(),stop=new Set(),rows=[],seen=new Set(),hit=new Set(),t2=v=>String(z(v)).trim(),minStock=ALK.ms==null?null:Math.max(0,Number(ALK.ms));let i=0,lolos=0;
   // isi file Sudah alokasi dikenali dari panjangnya: 12 = GAB, 8 = PLU, 4 = TOKO (salah satu cocok = sudah alokasi)
   const DNP=new Set(),DNT=new Set();if(DN)for(const g of DN){if(g.length===8)DNP.add(PK(g));else if(g.length===4)DNT.add(g.toUpperCase())}
@@ -1221,6 +1219,6 @@ async function boot(){const ld=$('#ld');
  catch(e){ld.className='on er';$('#ldt').textContent='Gagal membaca database';$('#ldm').className='m e';$('#ldm').textContent=(e&&e.message)||'Koneksi gagal.';$('#ldr').disabled=false}}
 $('#ldr').onclick=boot;boot();
 // versi aplikasi: sama dengan VER di sw.js (header, footer, dan cache service worker)
-const APP_VER='1.0.15';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
+const APP_VER='1.1.6';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
 </script></body></html>
