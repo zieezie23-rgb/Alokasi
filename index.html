@@ -86,7 +86,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 .c.k label.ck{flex-direction:row;align-items:center;gap:5px;align-self:flex-end;height:38px;box-sizing:border-box;white-space:nowrap;font-size:13px;cursor:pointer}.c.k label.ck input{width:18px;height:18px;margin:0;accent-color:var(--yel,#fc0)}
 @media(max-width:560px){.c.t.k{flex-wrap:wrap;row-gap:8px}}
 </style></head><body><div id="ld" class="on" role="status" aria-live="polite"><div class="sp"></div><div class="t" id="ldt">Membaca database...</div><div class="m" id="ldm">Menghubungkan ke database...</div><button type="button" id="ldr">Sinkron ulang</button></div><main>
-<div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1><span class="hv" id="hv">v1.1.9</span>
+<div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1><span class="hv" id="hv">v1.2.0</span>
 <nav class="mn" id="mn" hidden><button type="button" id="t2" aria-selected="false">Master</button><button type="button" id="t3" aria-selected="false">Alokasi DPD</button><button type="button" id="t5" aria-selected="false">Alokasi Kanvas</button><a href="https://docs.google.com/spreadsheets/d/1sNZO22t6ZnRRiFcIFOpMFJiKqLt9BpcUGDLfw5qrQdg/edit?pli=1&amp;gid=0#gid=0" class="db" target="_blank" rel="noopener">&#9888;&#xFE0E; DATABASE</a></nav></div>
 <div class="tabs" role="tablist"><button type="button" role="tab" id="t1" class="on" aria-selected="true">Ringkasan</button><button type="button" role="tab" id="t4" aria-selected="false">Trend Termin</button></div>
 <div id="pg1"><section class="p gen"><div id="sm"></div></section></div>
@@ -167,7 +167,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <div class="m" id="kv_msg" style="margin-top:12px;white-space:normal"></div><div id="kv_res" style="margin-top:12px"></div></section>
 </div>
 <div id="pg4" hidden><section class="p gen"><div class="sg"><button type="button" class="g on" data-v="k">Kumulatif</button><button type="button" class="g" data-v="h">Per hari</button></div><div class="m" id="trn" style="margin:0 0 8px;white-space:normal"></div><div class="trw" id="trw"></div></section></div>
-<footer>Resep Rahasia Krabby Patty <span id="fv">v1.1.9</span> @2026 &bull; Zie Project</footer>
+<footer>Resep Rahasia Krabby Patty <span id="fv">v1.2.0</span> @2026 &bull; Zie Project</footer>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -935,9 +935,9 @@ function kvBook(res,dt){
   ['xl/workbook.xml',HD+'<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="'+RT.slice(0,-1)+'"><sheets><sheet name="KEBUTUHAN" sheetId="1" r:id="rId1"/><sheet name="PAKET" sheetId="2" r:id="rId2"/><sheet name="RINGKASAN PAKET" sheetId="3" r:id="rId3"/><sheet name="Detail" sheetId="4" r:id="rId5"/></sheets></workbook>'],
   ['xl/_rels/workbook.xml.rels',HD+'<Relationships '+NS+'><Relationship Id="rId1" Type="'+RT+'worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="'+RT+'worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="'+RT+'worksheet" Target="worksheets/sheet3.xml"/><Relationship Id="rId4" Type="'+RT+'styles" Target="styles.xml"/><Relationship Id="rId5" Type="'+RT+'worksheet" Target="worksheets/sheet4.xml"/></Relationships>'],
   ['xl/styles.xml',styles],['xl/worksheets/sheet1.xml',S1],['xl/worksheets/sheet2.xml',S2],['xl/worksheets/sheet3.xml',S3],['xl/worksheets/sheet4.xml',S4]])}
-// qty alokasi (ctn) = rounddown(ctn sisa); bila hasilnya di atas Kelipatan CTN, dibulatkan turun ke kelipatan itu (isian kosong = tanpa pembulatan, awal = 5)
+// qty alokasi (ctn) = rounddown(ctn sisa); dibulatkan turun ke Kelipatan CTN (tanpa centang >=5/>=10: semua qty, jadi di bawah kelipatan hasilnya 0 dan baris dibuang) (isian kosong = tanpa pembulatan, awal = 5)
 // mc (>=5ctn / >=10ctn): hasil di bawah mc tidak ikut hitungan Kelipatan CTN (tetap ctn bulat, tidak dibuang). Mulai mc ke atas dibulatkan turun ke kelipatan
-const kvQc=(cs,kl,mc)=>{let q=Math.floor(Math.max(0,cs)+1e-9);if(kl>1&&q>kl&&q>=(mc||0))q=Math.floor(q/kl)*kl;return q};
+const kvQc=(cs,kl,mc)=>{let q=Math.floor(Math.max(0,cs)+1e-9);if(kl>1&&q>=(mc||0)&&(!mc||q>kl))q=Math.floor(q/kl)*kl;return q};
 // ---- paket per kelompok RUTE: maks 8 toko; CAR A 130-180 (hanya dengan A), CAR B 180-240 (boleh campur B dan C) [dengan centang AMDK/SYRUP: A 90-110, B 180-220, C 190-230; lihat kvLo/kvHi], CAR C 200-260 (hanya dengan C); satu kelompok (ritase boleh campur, paket campur jadi rit terbesar); bila lebih dari batas dibagi serata mungkin
 const KV_TOL=0.97;let KV_MIN=180,KV_MAX=240;const KV_TK=8;let KV_CONC=false;
 let KV_AS=false;const kvFk=r=>(r.carA?'\u0004':'')+'\u0005'+r.kel,kvA=k=>String(k).includes('\u0004'),kvLo=A=>KV_AS?(A===true?90:A==='C'?190:180):(A===true?130:A==='C'?200:180),kvDf=A=>kvLo(A),kvHi=A=>KV_AS?(A===true?110:A==='C'?230:220):(A===true?180:A==='C'?260:240);// mode paket: true = CAR A (130-180), false = CAR B / campur B+C (180-240), 'C' = hanya CAR C (200-260); bila KV_AS (centang AMDK/SYRUP): A 90-110, B 180-220, C 190-230
@@ -1220,6 +1220,6 @@ async function boot(){const ld=$('#ld');
  catch(e){ld.className='on er';$('#ldt').textContent='Gagal membaca database';$('#ldm').className='m e';$('#ldm').textContent=(e&&e.message)||'Koneksi gagal.';$('#ldr').disabled=false}}
 $('#ldr').onclick=boot;boot();
 // versi aplikasi: sama dengan VER di sw.js (header, footer, dan cache service worker)
-const APP_VER='1.1.9';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
+const APP_VER='1.2.0';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
 </script></body></html>
