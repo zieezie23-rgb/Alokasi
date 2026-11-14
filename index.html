@@ -86,7 +86,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 .c.k label.ck{flex-direction:row;align-items:center;gap:5px;align-self:flex-end;height:38px;box-sizing:border-box;white-space:nowrap;font-size:13px;cursor:pointer}.c.k label.ck input{width:18px;height:18px;margin:0;accent-color:var(--yel,#fc0)}
 @media(max-width:560px){.c.t.k{flex-wrap:wrap;row-gap:8px}}
 </style></head><body><div id="ld" class="on" role="status" aria-live="polite"><div class="sp"></div><div class="t" id="ldt">Membaca database...</div><div class="m" id="ldm">Menghubungkan ke database...</div><button type="button" id="ldr">Sinkron ulang</button></div><main>
-<div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1><span class="hv" id="hv">v1.2.0</span>
+<div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1><span class="hv" id="hv">v1.2.3</span>
 <nav class="mn" id="mn" hidden><button type="button" id="t2" aria-selected="false">Master</button><button type="button" id="t3" aria-selected="false">Alokasi DPD</button><button type="button" id="t5" aria-selected="false">Alokasi Kanvas</button><a href="https://docs.google.com/spreadsheets/d/1sNZO22t6ZnRRiFcIFOpMFJiKqLt9BpcUGDLfw5qrQdg/edit?pli=1&amp;gid=0#gid=0" class="db" target="_blank" rel="noopener">&#9888;&#xFE0E; DATABASE</a></nav></div>
 <div class="tabs" role="tablist"><button type="button" role="tab" id="t1" class="on" aria-selected="true">Ringkasan</button><button type="button" role="tab" id="t4" aria-selected="false">Trend Termin</button></div>
 <div id="pg1"><section class="p gen"><div id="sm"></div></section></div>
@@ -167,7 +167,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <div class="m" id="kv_msg" style="margin-top:12px;white-space:normal"></div><div id="kv_res" style="margin-top:12px"></div></section>
 </div>
 <div id="pg4" hidden><section class="p gen"><div class="sg"><button type="button" class="g on" data-v="k">Kumulatif</button><button type="button" class="g" data-v="h">Per hari</button></div><div class="m" id="trn" style="margin:0 0 8px;white-space:normal"></div><div class="trw" id="trw"></div></section></div>
-<footer>Resep Rahasia Krabby Patty <span id="fv">v1.2.0</span> @2026 &bull; Zie Project</footer>
+<footer>Resep Rahasia Krabby Patty <span id="fv">v1.2.3</span> @2026 &bull; Zie Project</footer>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -590,10 +590,10 @@ function alkDD(k,list,onch,P,S,sv){P=P||'al_';S=S||ALK;sv=sv||alkSave;const box=
 // kategori zona: 14, 15 & 21 = Bulky, 17 = Rokok, 0 = Non Aktif, lainnya = Bulky Fraction
 const ZO=['Bulky','Rokok','Non Aktif','Bulky Fraction'],zk=zn=>{const n=Number(zn);return n===14||n===15||n===21?ZO[0]:n===17?ZO[1]:n===0?ZO[2]:ZO[3]};
 let ALKU=[];
-// urutan pilihan: Pola 1 > Ket Nataru > Pola 2 > Zona; daftar tiap pilihan hanya berisi turunan dari pilihan sebelumnya
+// urutan pilihan: Pola 1 > Ket Nataru > Pola 2 > Zona; daftar tiap pilihan hanya berisi turunan dari pilihan sebelumnya; Ket Nataru hanya berlaku untuk item Terkait (turunan Basic selalu ada)
 function alkRender(from){const nat=(ALK.ket||'all')==='nataru',F=[['pola1','a',0],['pola2','b',2],['zona','z',3]];let U=ALKU;
  F.forEach(([k,f,st])=>{if(st>=from)alkDD(k,[...new Set(U.map(x=>x[f]).filter(v=>v&&v!=='0'))].sort((a,b)=>k==='zona'?ZO.indexOf(a)-ZO.indexOf(b):a.localeCompare(b,'id',{numeric:true})),()=>alkRender(st+1));
-  const X=new Set(ALK.ex[k]);U=U.filter(x=>!X.has(x[f]));if(k==='pola1'&&nat)U=U.filter(x=>x.k==='NATARU')})}
+  const X=new Set(ALK.ex[k]);U=U.filter(x=>!X.has(x[f]));if(k==='pola1'&&nat)U=U.filter(x=>x.k==='NATARU'||String(x.a).toLowerCase()==='basic')})}
 async function alkOpts(){try{const[ms,im]=await Promise.all([get('master'),get('item')]),t=v=>String(z(v)).trim();
  ALKU=[...new Set([...(ms?ms.keys():[]),...(im?im.keys():[])])].map(p=>{const M=(ms&&ms.get(p))||[],I=(im&&im.get(p))||[];return{k:N(z(I[3])),a:t(I[1]),b:t(I[2]),z:zk(t(M[1]))}});
  alkRender(0)}catch(e){}}
@@ -633,7 +633,7 @@ let art;$('#al_rs').onclick=async()=>{const b=$('#al_rs');
  try{for(const k of AKEYS)await tx('readwrite',s=>s.delete('alk_'+k));$('#al_res').innerHTML='';$('#al_msg').textContent='';$('#al_msg').className='m';$('#al_um').textContent='';$('#al_ul').innerHTML='';
   for(const k of Object.keys(ALK))delete ALK[k];ALK.ex={};alkSave();
   for(const id of['al_mi','al_mrk','al_mnb','al_mq','al_mqb','al_mqs','al_mxs','al_mxb','al_mr','al_ms']){const e=$('#'+id);e.value='';e.style.borderColor=''}
-  for(const u of['alkUrl','alkUrl2','alkUrl3']){const v=u==='alkUrl'?alkUrl:u==='alkUrl2'?alkUrl2:alkUrl3;if(v)URL.revokeObjectURL(v)}alkUrl=alkUrl2=alkUrl3=null;
+  for(const u of['alkUrl','alkUrl2','alkUrl3']){const v=u==='alkUrl'?alkUrl:u==='alkUrl2'?alkUrl2:alkUrl3;if(v)URL.revokeObjectURL(v)}alkUrl=alkUrl2=alkUrl3=null;for(const u of alkUrls)if(u)URL.revokeObjectURL(u);alkUrls=[];
   alkSels();alkRender(0);await alkStat()}catch(e){$('#al_um').textContent='Gagal reset: '+(e.message||e)}
  b.disabled=false};
 $('#al_hb').onclick=()=>{const h=$('#al_hp');h.hidden=!h.hidden;$('#al_hb').setAttribute('aria-expanded',String(!h.hidden))};
@@ -737,7 +737,7 @@ function alkSheet(name,H,rows){
   ['xl/workbook.xml',HD+'<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="'+X(name)+'" sheetId="1" r:id="rId1"/></sheets></workbook>'],
   ['xl/_rels/workbook.xml.rels',HD+'<Relationships '+NS+'><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'],
   ['xl/styles.xml',styles],['xl/worksheets/sheet1.xml',out.join('')]])}
-let alkUrl=null,alkUrl2=null,alkUrl3=null;
+let alkUrl=null,alkUrl2=null,alkUrl3=null,alkUrls=[];
 async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');go.disabled=true;out.innerHTML='';jm.className='m';
  try{if(!mrSet())throw Error('Isian Min Rp tidak dikenali. Contoh: 500rb, 1jt, 1,5jt.');
   if(cloudOn()){jm.textContent='Mengecek data terbaru...';try{await syncAll()}catch(e){}}
@@ -760,14 +760,14 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
    if(XZ.has(zk(zn))||X1.has(p1)||X2.has(p2))continue;
    // Min stock (PCS) hanya untuk item Non Bulky (bukan Basic, bukan zona Bulky)
    if(minStock!=null&&stock<minStock&&p1.toLowerCase()!=='basic'&&zk(zn)!=='Bulky')continue;
-   if(nat&&N(z(I[3]))!=='NATARU')continue;
+   if(nat&&p1.toLowerCase()!=='basic'&&N(z(I[3]))!=='NATARU')continue;
    if(DN){const has=DN.has(gab)||DNP.has(PK(p))||DNT.has(K(t).toUpperCase());if(sa==='sudah'&&!has||sa==='belum'&&has)continue}
    lolos++;
    const mn=NUM(M[6]),fr=NUM(M[3]),ac=NUM(M[4]),n=P.get(gab)||[0,0],AB=n[0],AI=n[1]-AB,odq=p1.toLowerCase()==='terkait'?OD.get(K(t).toUpperCase()+'|'+PK(p))||0:0,sisa=Q-(AB+AI+odq);
    // Max stock (ctn): item Basic memakai isian Basic; item Bulky non-Basic memakai isian Bulky; stock (ctn) di atas isian tidak dialokasikan
    {const bsc=p1.toLowerCase()==='basic',mx=bsc?mxb:zk(zn)==='Bulky'?mxs:null;if(mx!=null&&fr>0&&stock/fr>mx)continue}
    if(!(mn>0))continue;
-   // TARGET=QTY_TGT, SISA=QTY_TGT-(NPB total + ODAS; ODAS hanya untuk item POLA1 Terkait). Pilihan Nataru hanya menyaring item ber-KET NATARU = NATARU
+   // TARGET=QTY_TGT, SISA=QTY_TGT-(NPB total + ODAS; ODAS hanya untuk item POLA1 Terkait). Pilihan Nataru hanya menyaring item Terkait ber-KET NATARU = NATARU (item Basic tidak disaring)
    // QTY alokasi = MAX(0, TARGET x % TARGET - NPB - ODAS), lalu dibulatkan turun ke kelipatan MINOR
    const target=Q;
    const dasar=Math.max(0,target*ps/100-(target-sisa));
@@ -793,23 +793,25 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
   for(const r of res){A.add(r.pk);tq+=r.q;tc+=r.ctn;tr+=r.rp;let g=Z.get(r.zn);if(!g)Z.set(r.zn,g={it:new Set(),q:0,c:0,r:0});g.it.add(r.pk);g.q+=r.q;g.c+=r.ctn;g.r+=r.rp}
   const nf=(v,dc=0)=>Number(v).toLocaleString('id-ID',{maximumFractionDigits:dc});
   const H=['AM','KOTA','TOKO','NAMA TOKO','GAB','PLU','DESC','ZONA','POLA1','POLA2','KET NATARU','FRAC','MINOR','ACOST','STOCK_AKHIR','QTY_TGT','QTY_NPB','QTY_ODAS','SISA','QTY_ALOKASI','CTN_ALOKASI','RP_ALOKASI'],
-   DR=res.map(r=>[r.am,r.kota,r.t,r.nt,r.gab,r.p,r.desc,r.zn,r.p1,r.p2,r.kt,r.fr,r.mn,r.ac,r.stock,r.tg,r.npb,r.odas,r.sisa,r.q,+r.ctn.toFixed(4),+r.rp.toFixed(2)]);
-  if(alkUrl)URL.revokeObjectURL(alkUrl);alkUrl=URL.createObjectURL(alkSheet('Detail Alokasi',H,DR));
-  const dt=new Date(),nm='Alokasi_'+(($('#gd').value||'G113').replace(/[^\w-]/g,'')||'G113')+'_'+String(dt.getDate()).padStart(2,'0')+'_'+['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'][dt.getMonth()]+'_'+String(dt.getFullYear()).slice(-2)+'.xlsx';
-  const IT=new Map();for(const r of res){let g=IT.get(r.pk);if(!g)IT.set(r.pk,g={p:r.p,desc:r.desc,pola:nat?'NATARU':r.p2,bs:String(r.p1).toLowerCase()==='basic',rk:Number(r.zn)===17,zn:r.zn,al:r.al,fr:r.fr,mn:r.mn,ac:r.ac,st:r.stock,q:0,c:0,rp:0,tk:new Set()});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp;g.tk.add(r.t)}
-  const items=[...IT.values()].sort((a,b)=>String(a.zn).localeCompare(String(b.zn),'id',{numeric:true})||b.rp-a.rp),
-   MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],bs=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1),per=String(bs.getDate()).padStart(2,'0')+' '+MB[bs.getMonth()]+' '+String(bs.getFullYear()).slice(-2),
-   nx=nm.replace(/^Alokasi_/,'Rekap_Alokasi_');
-  if(alkUrl2)URL.revokeObjectURL(alkUrl2);alkUrl2=URL.createObjectURL(alkBook(items,per));
-  const PF=new Map();for(const r of res){let g=PF.get(r.pk);if(!g)PF.set(r.pk,g={n:String(r.p).replace(/[^\w.-]/g,'_'),l:[]});g.l.push(r.p+','+r.t+','+r.q)}
-  const nz=nm.replace(/^Alokasi_/,'Alokasi_CSV_per_item_').replace(/\.xlsx$/,'.zip');
-  if(alkUrl3)URL.revokeObjectURL(alkUrl3);alkUrl3=URL.createObjectURL(zipStore([...PF.values()].map(g=>[g.n+'.csv','PLU,TOKO,QTY\r\n'+g.l.join('\r\n')+'\r\n']),'application/zip'));
+   mkDR=r=>[r.am,r.kota,r.t,r.nt,r.gab,r.p,r.desc,r.zn,r.p1,r.p2,r.kt,r.fr,r.mn,r.ac,r.stock,r.tg,r.npb,r.odas,r.sisa,r.q,+r.ctn.toFixed(4),+r.rp.toFixed(2)];
+  const dt=new Date(),dd=String(dt.getDate()).padStart(2,'0')+' '+['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][dt.getMonth()]+' '+String(dt.getFullYear()).slice(-2),
+   tl=(($('#gd').value||'G113').replace(/[^\w-]/g,'')||'G113')+'_'+String(dt.getDate()).padStart(2,'0')+'_'+['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'][dt.getMonth()]+'_'+String(dt.getFullYear()).slice(-2),
+   MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],bs=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1),per=String(bs.getDate()).padStart(2,'0')+' '+MB[bs.getMonth()]+' '+String(bs.getFullYear()).slice(-2);
+  const mkItems=list=>{const IT=new Map();for(const r of list){let g=IT.get(r.pk);if(!g)IT.set(r.pk,g={p:r.p,desc:r.desc,pola:nat&&String(r.p1).toLowerCase()!=='basic'?'NATARU':r.p2,bs:String(r.p1).toLowerCase()==='basic',rk:Number(r.zn)===17,zn:r.zn,al:r.al,fr:r.fr,mn:r.mn,ac:r.ac,st:r.stock,q:0,c:0,rp:0,tk:new Set()});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp;g.tk.add(r.t)}
+   return[...IT.values()].sort((a,b)=>String(a.zn).localeCompare(String(b.zn),'id',{numeric:true})||b.rp-a.rp)};
+  // file dipisah: item Basic dan item Terkait (selain Basic) masing-masing punya Bahan, Rekap, dan zip CSV per item
+  for(const u of alkUrls)if(u)URL.revokeObjectURL(u);alkUrls=[];const DLF=[];
+  for(const[lb,list]of[['Basic',res.filter(r=>String(r.p1).toLowerCase()==='basic')],['',res.filter(r=>String(r.p1).toLowerCase()!=='basic')]]){if(!list.length)continue;
+   const sf=lb?lb+' ':'',PF=new Map();for(const r of list){let g=PF.get(r.pk);if(!g)PF.set(r.pk,g={n:String(r.p).replace(/[^\w.-]/g,'_'),l:[]});g.l.push(r.p+','+r.t+','+r.q)}
+   const u1=URL.createObjectURL(alkSheet('Detail Alokasi',H,list.map(mkDR))),u2=URL.createObjectURL(alkBook(mkItems(list),per)),
+    u3=URL.createObjectURL(zipStore([...PF.values()].map(g=>[g.n+'.csv','PLU,TOKO,QTY\r\n'+g.l.join('\r\n')+'\r\n']),'application/zip'));
+   alkUrls.push(u1,u2,u3);DLF.push([u1,'Bahan '+sf+dd+'.xlsx'],[u2,'Rekap '+sf+dd+'.xlsx'],[u3,'Alokasi_CSV_per_item_'+(lb?lb+'_':'')+tl+'.zip'])}
   const zr=[...Z].sort((a,b)=>a[0]<b[0]?-1:1).map(([zn,g])=>'<tr><td>'+esc(zn||'-')+'</td><td>'+nf(g.it.size)+'</td><td>'+nf(g.q)+'</td><td>'+nf(g.c,2)+'</td><td>'+nf(g.r)+'</td></tr>').join('');
   out.innerHTML='<div class="alr"><div class="alrt"><table id="alz"><tr class="th"><td>Zona</td><td>Item</td><td>Qty</td><td>CTN</td><td>Rp</td></tr>'+zr+'</table></div>'
    +'<div class="alrs"><div class="st"><span>Jumlah item</span><b>'+nf(A.size)+'</b></div><div class="st"><span>Total qty</span><b>'+nf(tq)+'</b></div><div class="st"><span>Total ctn</span><b>'+nf(tc,2)+'</b></div><div class="st"><span>Total Rp</span><b>'+nf(tr)+'</b></div>'
    +'<div class="alrd"><a class="dl" href="#" id="al_dl">Unduh</a></div></div></div>';
   const TKD=new Set(res.map(r=>K(r.t).toUpperCase()));// KELSEASONAL: hanya toko yang masuk detail alokasi
-  $('#al_dl').onclick=e=>{e.preventDefault();alkDlAll([[alkUrl,nm],[alkUrl2,nx],[alkUrl3,nz]],TKD)};
+  $('#al_dl').onclick=e=>{e.preventDefault();alkDlAll(DLF,TKD)};
   jm.textContent='Selesai. '+nf(res.length)+' baris alokasi.'+dg}
  catch(e){jm.className='m e';jm.textContent=e.message}
  go.disabled=false}
@@ -1155,7 +1157,7 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   const items=[...IT.values()].sort((a,b)=>String(a.zn).localeCompare(String(b.zn),'id',{numeric:true})||b.q-a.q),
    MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],bs=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1),per=String(bs.getDate()).padStart(2,'0')+' '+MB[bs.getMonth()]+' '+String(bs.getFullYear()).slice(-2);
   const u2=URL.createObjectURL(kvBook(res,dt));
-  const PF=new Map();for(const r of res){let g=PF.get(r.paket);if(!g)PF.set(r.paket,g={n:r.paket,l:[]});g.l.push(r.t+','+r.p+','+r.q+',Alokasi Kanvas')}
+  const PF=new Map();for(const r of res){let g=PF.get(r.paket);if(!g)PF.set(r.paket,g={n:r.paket,l:[]});g.l.push(r.t+','+r.p+','+r.q+',SEASONAL')}
   const u3=URL.createObjectURL(zipStore([...PF.values()].sort((a,b)=>a.n.localeCompare(b.n,'id',{numeric:true})).map(g=>['P'+(g.n.replace(/\D/g,'')||g.n)+' '+String(dt.getDate()).padStart(2,'0')+' '+MB[dt.getMonth()]+'.csv','TOKO,PRDCD,QTY,KET\r\n'+g.l.join('\r\n')+'\r\n']),'application/zip'));
   const PS=new Map();for(const r of res){let g=PS.get(r.paket);if(!g)PS.set(r.paket,g={zg:r.zg,rit:r.rit,car:new Set(),jad:new Set(),t:new Set(),it:new Set(),c:0});g.car.add(r.car);g.jad.add(r.jad);g.t.add(r.t);g.it.add(r.pk);g.c+=r.ctn}
   const PL_=[...PS].sort((a,b)=>a[0].localeCompare(b[0],'id',{numeric:true}));
@@ -1220,6 +1222,6 @@ async function boot(){const ld=$('#ld');
  catch(e){ld.className='on er';$('#ldt').textContent='Gagal membaca database';$('#ldm').className='m e';$('#ldm').textContent=(e&&e.message)||'Koneksi gagal.';$('#ldr').disabled=false}}
 $('#ldr').onclick=boot;boot();
 // versi aplikasi: sama dengan VER di sw.js (header, footer, dan cache service worker)
-const APP_VER='1.2.0';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
+const APP_VER='1.2.3';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
 </script></body></html>
