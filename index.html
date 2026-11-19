@@ -37,9 +37,10 @@ a.dl.g{background:var(--pn);color:var(--ac2)}a.dl{border:1px solid var(--acc);di
 .tt td.wk{text-align:center;color:var(--mut)}.tt td.z{color:var(--mut)}
 .tt tr.w1 td{border-top:2px solid var(--ac2)}.tt tr.cur td{font-weight:700}.tt tr.cur td:first-child{box-shadow:inset 4px 0 0 var(--yel)}
 .tabs{display:flex;gap:6px;margin:0 0 16px;border-bottom:1px solid var(--line)}.tabs button{background:transparent;color:var(--mut);border:0;border-bottom:3px solid transparent;border-radius:0;padding:8px 16px;font-weight:600;margin-bottom:-1px}.tabs button.on{color:var(--ac2);border-bottom-color:var(--acc)}#sm .hd td{font-size:13px;font-weight:700;color:var(--ac2);padding:0 0 6px 10px;border-top:0;vertical-align:middle}#sm .hd td:first-child{padding-left:0}#sm .hd td:not(:first-child){color:var(--mut);font-size:11.5px}
-@media(max-width:560px){.alg{grid-template-columns:1fr;gap:7px}.alf{grid-template-columns:minmax(78px,92px) minmax(0,1fr);gap:6px}.alf>span{font-size:12.5px}details.dd summary,.dd1{padding:6px 8px}}
-input[type=number]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:4px;background:var(--pn2);color:var(--ink);width:150px}.alg{display:grid;gap:8px 14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));align-items:center}.alg>div{min-width:0}.alt{font-weight:700;color:var(--ac2);margin:0 0 10px;font-size:14px}
-.alf{display:grid;grid-template-columns:minmax(82px,96px) minmax(0,1fr);gap:7px;align-items:center;font-size:13px;color:var(--mut)}.alf>span{min-width:0;line-height:1.15}.alf>div{min-width:0}.alf .m{white-space:normal}details.dd,.dd1{border:1px solid var(--line);border-radius:4px;background:var(--pn2)}.dd1{padding:6px 10px;color:var(--ink);font-size:14px}details.dd summary{cursor:pointer;padding:6px 10px;color:var(--ink);font-size:14px}.ddl{max-height:210px;overflow:auto;border-top:1px solid var(--line);padding:6px 10px}.ddl label{display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--ink);padding:2px 0;white-space:nowrap}
+@media(max-width:560px){.alg{gap:6px}.alf>span{font-size:12px}.alg details.dd summary{padding:6px 11px 6px 5px;font-size:11.5px}.alg details.dd summary::after{right:3px;font-size:9px}}
+input[type=number]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:4px;background:var(--pn2);color:var(--ink);width:150px}.alg{display:grid;gap:8px;grid-template-columns:repeat(4,minmax(0,1fr));align-items:start}.alg>div{min-width:0}.alt{font-weight:700;color:var(--ac2);margin:0 0 10px;font-size:14px}
+.alf{display:grid;grid-template-columns:minmax(0,1fr);gap:3px;align-items:stretch;font-size:12.5px;color:var(--mut)}.alf>span{min-width:0;line-height:1.15}.alf>div{min-width:0}.alf .m{white-space:normal}details.dd,.dd1{border:1px solid var(--line);border-radius:4px;background:var(--pn2)}.dd1{padding:6px 10px;color:var(--ink);font-size:14px}details.dd summary{cursor:pointer;padding:6px 10px;color:var(--ink);font-size:14px}.ddl{max-height:210px;overflow:auto;border-top:1px solid var(--line);padding:6px 10px}.ddl label{display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--ink);padding:2px 0;white-space:nowrap}
+.alg details.dd{position:relative}.alg details.dd summary{display:block;position:relative;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:18px}.alg details.dd summary::after{content:'\25BE';position:absolute;right:6px;top:50%;transform:translateY(-50%);color:var(--mut)}.alg .ddl{position:absolute;z-index:6;top:100%;left:0;width:max-content;min-width:100%;max-width:80vw;background:var(--pn2);border:1px solid var(--line);border-radius:4px;box-shadow:0 4px 12px rgba(0,0,0,.35)}.alf:nth-child(n+3) .ddl{left:auto;right:0}
 .st{border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:var(--pn2)}.st span{display:block;font-size:12px;color:var(--mut)}.st b{display:block;font-size:19px;margin-top:2px}#alz td,#kvz td,#kvp td{text-align:right}#alz td:first-child,#kvz td:first-child,#kvp td:first-child{text-align:left}#alz tr.th td,#kvz tr.th td,#kvp tr.th td{font-size:11.5px;color:var(--mut);font-weight:600}select.al{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--pn2);color:var(--ink);width:100%}
 .tabs button.on{color:var(--ac2);border-bottom-color:var(--red)}.tabs button:hover{color:var(--ac2)}.alt{border-left:4px solid var(--yel);padding-left:8px}.st{border-left:4px solid var(--yel)}
 .alu{display:flex;gap:12px}.alu>.alf{flex:1 1 0;min-width:0}.alu .u{flex-wrap:nowrap;gap:4px;justify-content:flex-start}.alu label.bt,.alu button{padding:6px 10px}.alu .m{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -86,7 +87,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 .c.k label.ck{flex-direction:row;align-items:center;gap:5px;align-self:flex-end;height:38px;box-sizing:border-box;white-space:nowrap;font-size:13px;cursor:pointer}.c.k label.ck input{width:18px;height:18px;margin:0;accent-color:var(--yel,#fc0)}
 @media(max-width:560px){.c.t.k{flex-wrap:wrap;row-gap:8px}}
 </style></head><body><div id="ld" class="on" role="status" aria-live="polite"><div class="sp"></div><div class="t" id="ldt">Membaca database...</div><div class="m" id="ldm">Menghubungkan ke database...</div><button type="button" id="ldr">Sinkron ulang</button></div><main>
-<div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1><span class="hv" id="hv">v1.2.5</span>
+<div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1><span class="hv" id="hv">v1.3.2</span>
 <nav class="mn" id="mn" hidden><button type="button" id="t2" aria-selected="false">Master</button><button type="button" id="t3" aria-selected="false">Alokasi DPD</button><button type="button" id="t5" aria-selected="false">Alokasi Kanvas</button><a href="https://docs.google.com/spreadsheets/d/1sNZO22t6ZnRRiFcIFOpMFJiKqLt9BpcUGDLfw5qrQdg/edit?pli=1&amp;gid=0#gid=0" class="db" target="_blank" rel="noopener">&#9888;&#xFE0E; DATABASE</a></nav></div>
 <div class="tabs" role="tablist"><button type="button" role="tab" id="t1" class="on" aria-selected="true">Ringkasan</button><button type="button" role="tab" id="t4" aria-selected="false">Trend Termin</button></div>
 <div id="pg1"><section class="p gen"><div id="sm"></div></section></div>
@@ -167,7 +168,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <div class="m" id="kv_msg" style="margin-top:12px;white-space:normal"></div><div id="kv_res" style="margin-top:12px"></div></section>
 </div>
 <div id="pg4" hidden><section class="p gen"><div class="sg"><button type="button" class="g on" data-v="k">Kumulatif</button><button type="button" class="g" data-v="h">Per hari</button></div><div class="m" id="trn" style="margin:0 0 8px;white-space:normal"></div><div class="trw" id="trw"></div></section></div>
-<footer>Resep Rahasia Krabby Patty <span id="fv">v1.2.5</span> @2026 &bull; Zie Project</footer>
+<footer>Resep Rahasia Krabby Patty <span id="fv">v1.3.2</span> @2026 &bull; Zie Project</footer>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -692,11 +693,11 @@ function alkBook(items,per,ttl){
  grp=(list,lb)=>{let q=0,c=0,p=0;list.forEach(g=>{no++;q+=g.q;c+=g.c;p+=g.rp;
   R+=rw(r,cn(r,0,no,10)+cs(r,1,g.p,5)+cs(r,2,g.desc,4)+cs(r,3,g.pola,5)+cs(r,4,g.zn,5)+cs(r,5,g.al,5)+cn(r,6,g.fr,10)+cn(r,7,g.mn,10)+cn(r,8,g.ac,6)+cn(r,9,g.st,6)+cn(r,10,g.q,6)+cn(r,11,g.c,6)+cn(r,12,g.rp,6)+cn(r,14,g.tk.size,10)+cn(r,15,g.tk.size?g.c/g.tk.size:0,7),18);r++});
   if(list.length){tq+=q;tc+=c;tr+=p;if(lb){sp();gtRow(q,c,p,lb)}sp()}};
- // urutan: item Basic, Total Basic, item non Rokok, Total non Rokok, item Rokok, GRAND TOTAL (tiap bagian dipisah 1 baris kosong)
+ // urutan (rekap gabungan): header, Basic, Total Basic, Terkait (selain Basic & Rokok), Total Terkait, Rokok, Total Rokok, GRAND TOTAL; tiap bagian dipisah baris kecil
  const BS=items.filter(g=>g.bs),NR=items.filter(g=>!g.bs&&!g.rk),RK=items.filter(g=>!g.bs&&g.rk);
- grp(BS,'Total Basic');grp(NR,'Total non Rokok');grp(RK,null);
+ grp(BS,'Total Basic');grp(NR,'Total Terkait');grp(RK,'Total Rokok');
  gtRow(tq,tc,tr,'GRAND TOTAL');
- r++;R+=rw(r,cs(r,2,'Mengetahui,',11));r+=5;
+ sp();r++;R+=rw(r,cs(r,2,'Mengetahui,',11));r+=5;
  R+=rw(r,cs(r,2,'( DCM/DDCM )',11)+cs(r,7,'( SPV Warehouse )',11)+cs(r,12,'( SPV ADM )',11));
  const W=[2,5,11,46,16,7,11,7,8,11,10,11,10,15,2,10,14],
  sheet='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0" showGridLines="0"><pane ySplit="6" topLeftCell="A7" activePane="bottomLeft" state="frozen"/><selection pane="bottomLeft"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols>'
@@ -790,18 +791,18 @@ async function alkCalc(){const jm=$('#al_msg'),go=$('#al_go'),out=$('#al_res');g
   const nf=(v,dc=0)=>Number(v).toLocaleString('id-ID',{maximumFractionDigits:dc});
   const H=['AM','KOTA','TOKO','NAMA TOKO','GAB','PLU','DESC','ZONA','POLA1','POLA2','KET NATARU','FRAC','MINOR','ACOST','STOCK_AKHIR','QTY_TGT','QTY_NPB','SISA','QTY_ALOKASI','CTN_ALOKASI','RP_ALOKASI'],
    mkDR=r=>[r.am,r.kota,r.t,r.nt,r.gab,r.p,r.desc,r.zn,r.p1,r.p2,r.kt,r.fr,r.mn,r.ac,r.stock,r.tg,r.npb,r.sisa,r.q,+r.ctn.toFixed(4),+r.rp.toFixed(2)];
-  const dt=new Date(),dd=String(dt.getDate()).padStart(2,'0')+' '+['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][dt.getMonth()]+' '+String(dt.getFullYear()).slice(-2),
-   tl=(($('#gd').value||'G113').replace(/[^\w-]/g,'')||'G113')+'_'+String(dt.getDate()).padStart(2,'0')+'_'+['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'][dt.getMonth()]+'_'+String(dt.getFullYear()).slice(-2),
-   MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],bs=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1),per=String(bs.getDate()).padStart(2,'0')+' '+MB[bs.getMonth()]+' '+String(bs.getFullYear()).slice(-2);
+  const dt=new Date(),
+   MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],bs=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1),per=String(bs.getDate()).padStart(2,'0')+' '+MB[bs.getMonth()]+' '+String(bs.getFullYear()).slice(-2),dd=per;// semua nama file export memakai tanggal H+1
   const mkItems=list=>{const IT=new Map();for(const r of list){let g=IT.get(r.pk);if(!g)IT.set(r.pk,g={p:r.p,desc:r.desc,pola:nat&&String(r.p1).toLowerCase()!=='basic'?'NATARU':r.p2,bs:String(r.p1).toLowerCase()==='basic',rk:Number(r.zn)===17,zn:r.zn,al:r.al,fr:r.fr,mn:r.mn,ac:r.ac,st:r.stock,q:0,c:0,rp:0,tk:new Set()});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp;g.tk.add(r.t)}
    return[...IT.values()].sort((a,b)=>String(a.zn).localeCompare(String(b.zn),'id',{numeric:true})||b.rp-a.rp)};
-  // file dipisah: item Basic dan item Terkait (selain Basic) masing-masing punya Bahan, Rekap, dan zip CSV per item
+  // Bahan dan zip CSV per item dipisah Basic / Terkait (selain Basic); Rekap digabung jadi satu file (Basic, Terkait, Rokok + total masing-masing, lalu Grand Total)
   for(const u of alkUrls)if(u)URL.revokeObjectURL(u);alkUrls=[];const DLF=[];
   for(const[lb,list]of[['Basic',res.filter(r=>String(r.p1).toLowerCase()==='basic')],['',res.filter(r=>String(r.p1).toLowerCase()!=='basic')]]){if(!list.length)continue;
    const sf=lb?lb+' ':'',PF=new Map();for(const r of list){let g=PF.get(r.pk);if(!g)PF.set(r.pk,g={n:String(r.p).replace(/[^\w.-]/g,'_'),l:[]});g.l.push(r.p+','+r.t+','+r.q)}
-   const u1=URL.createObjectURL(alkSheet('Detail Alokasi',H,list.map(mkDR))),u2=URL.createObjectURL(alkBook(mkItems(list),per)),
+   const u1=URL.createObjectURL(alkSheet('Detail Alokasi',H,list.map(mkDR))),
     u3=URL.createObjectURL(zipStore([...PF.values()].map(g=>[g.n+'.csv','PLU,TOKO,QTY\r\n'+g.l.join('\r\n')+'\r\n']),'application/zip'));
-   alkUrls.push(u1,u2,u3);DLF.push([u1,'Bahan '+sf+dd+'.xlsx'],[u2,'Rekap '+sf+dd+'.xlsx'],[u3,'Alokasi_CSV_per_item_'+(lb?lb+'_':'')+tl+'.zip'])}
+   alkUrls.push(u1,u3);DLF.push([u1,'Bahan '+sf+dd+'.xlsx'],[u3,'Item '+(lb||'Terkait')+' '+dd+'.zip'])}
+  {const u2=URL.createObjectURL(alkBook(mkItems(res),per));alkUrls.push(u2);DLF.push([u2,'Rekap '+dd+'.xlsx'])}
   const zr=[...Z].sort((a,b)=>a[0]<b[0]?-1:1).map(([zn,g])=>'<tr><td>'+esc(zn||'-')+'</td><td>'+nf(g.it.size)+'</td><td>'+nf(g.q)+'</td><td>'+nf(g.c,2)+'</td><td>'+nf(g.r)+'</td></tr>').join('');
   out.innerHTML='<div class="alr"><div class="alrt"><table id="alz"><tr class="th"><td>Zona</td><td>Item</td><td>Qty</td><td>CTN</td><td>Rp</td></tr>'+zr+'</table></div>'
    +'<div class="alrs"><div class="st"><span>Jumlah item</span><b>'+nf(A.size)+'</b></div><div class="st"><span>Total qty</span><b>'+nf(tq)+'</b></div><div class="st"><span>Total ctn</span><b>'+nf(tc,2)+'</b></div><div class="st"><span>Total Rp</span><b>'+nf(tr)+'</b></div>'
@@ -877,10 +878,11 @@ function kvBook(res,dt){
   cs=(r,c,v,st)=>'<c r="'+CL(c)+r+'" s="'+st+'" t="inlineStr"><is><t xml:space="preserve">'+X(v)+'</t></is></c>',
   cn=(r,c,v,st)=>'<c r="'+CL(c)+r+'" s="'+st+'"><v>'+(+(+v).toFixed(4))+'</v></c>',ce=(r,c,st)=>'<c r="'+CL(c)+r+'" s="'+st+'"/>',
   rw=(r,cells,ht)=>'<row r="'+r+'"'+(ht?' ht="'+ht+'" customHeight="1"':'')+'>'+cells+'</row>',
+  cf=(r,c,f,v,st)=>'<c r="'+CL(c)+r+'" s="'+st+'"><f>'+f+'</f><v>'+(+(+v).toFixed(4))+'</v></c>',
   srt=(a,b)=>String(a).localeCompare(String(b),'id',{numeric:true}),
   MB=['JANUARI','FEBRUARI','MARET','APRIL','MEI','JUNI','JULI','AGUSTUS','SEPTEMBER','OKTOBER','NOVEMBER','DESEMBER'],
-  WS=(rows,cols,mg,land)=>'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols>'
-   +cols.map(([a,b,w])=>'<col min="'+a+'" max="'+b+'" width="'+w+'" customWidth="1"/>').join('')+'</cols><sheetData>'+rows+'</sheetData>'+(mg.length?'<mergeCells count="'+mg.length+'">'+mg.map(m=>'<mergeCell ref="'+m+'"/>').join('')+'</mergeCells>':'')
+  WS=(rows,cols,mg,land,ex)=>'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols>'
+   +cols.map(([a,b,w])=>'<col min="'+a+'" max="'+b+'" width="'+w+'" customWidth="1"/>').join('')+'</cols><sheetData>'+rows+'</sheetData>'+(mg.length?'<mergeCells count="'+mg.length+'">'+mg.map(m=>'<mergeCell ref="'+m+'"/>').join('')+'</mergeCells>':'')+(ex||'')
    +'<pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup orientation="'+(land?'landscape':'portrait')+'" fitToWidth="1" fitToHeight="0"/></worksheet>';
  // --- sheet 1: KEBUTUHAN (per RIT; satu baris per PRDCD di tiap rit)
  const RG=new Map();for(const r of res){const rt=String(r.rit||'');let m=RG.get(rt);if(!m)RG.set(rt,m=new Map());const k=String(r.p);let g=m.get(k);if(!g)m.set(k,g={p:k,desc:r.desc,pola:r.p1,al:r.al,q:0,c:0,rp:0});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp}
@@ -891,41 +893,52 @@ function kvBook(res,dt){
   R1+=rw(r,['PRDCD','DESC2','POLA1','ALAMAT','QTY','CTN','RP'].map((h,i)=>cs(r,i+1,h,2)).join(''),24);r++;
   for(const g of L1){q+=g.q;c+=g.c;p+=g.rp;R1+=rw(r,cs(r,1,g.p,3)+cs(r,2,g.desc,4)+cs(r,3,g.pola,4)+cs(r,4,g.al,4)+cn(r,5,g.q,5)+cn(r,6,g.c,5)+cn(r,7,g.rp,5),24);r++}
   R1+=rw(r,cs(r,1,RL.length>1?'Total '+kvRl(rt):'Grand Total',7)+ce(r,2,8)+ce(r,3,8)+ce(r,4,8)+cn(r,5,q,6)+cn(r,6,c,6)+cn(r,7,p,6),24);m1.push('B'+r+':E'+r);r+=2;tq+=q;tc+=c;tr+=p}
- if(RL.length>1){R1+=rw(r,cs(r,1,'Grand Total',7)+ce(r,2,8)+ce(r,3,8)+ce(r,4,8)+cn(r,5,tq,6)+cn(r,6,tc,6)+cn(r,7,tr,6),24);m1.push('B'+r+':E'+r)}
+ if(RL.length>1){// tabel total kebutuhan gabungan semua rit (satu baris per PRDCD)
+  const AG=new Map();for(const m of RG.values())for(const g of m.values()){let a=AG.get(g.p);if(!a)AG.set(g.p,a={p:g.p,desc:g.desc,pola:g.pola,al:g.al,q:0,c:0,rp:0});a.q+=g.q;a.c+=g.c;a.rp+=g.rp}
+  R1+=rw(r,cs(r,1,'TOTAL '+RL.map(x=>kvRl(x)).join(' + '),18),24);r++;
+  R1+=rw(r,['PRDCD','DESC2','POLA1','ALAMAT','QTY','CTN','RP'].map((h,i)=>cs(r,i+1,h,2)).join(''),24);r++;
+  for(const g of[...AG.values()].sort((a,b)=>srt(a.p,b.p))){R1+=rw(r,cs(r,1,g.p,3)+cs(r,2,g.desc,4)+cs(r,3,g.pola,4)+cs(r,4,g.al,4)+cn(r,5,g.q,5)+cn(r,6,g.c,5)+cn(r,7,g.rp,5),24);r++}
+  R1+=rw(r,cs(r,1,'Grand Total',7)+ce(r,2,8)+ce(r,3,8)+ce(r,4,8)+cn(r,5,tq,6)+cn(r,6,tc,6)+cn(r,7,tr,6),24);m1.push('B'+r+':E'+r)}
  const S1=WS(R1,[[2,2,12.14],[3,3,56.57],[4,4,9.14],[5,5,11.71],[6,6,11.86],[7,7,9.14],[8,8,15.71]],m1,false);
  // --- sheet 2: PAKET (satu blok per paket: item x toko, isi = ctn alokasi)
  const PK=new Map();for(const r of res){let g=PK.get(r.paket);if(!g)PK.set(r.paket,g={n:r.paket,rit:r.rit,t:new Set(),it:new Map()});g.t.add(r.t);const k=String(r.p);let i=g.it.get(k);if(!i)g.it.set(k,i={p:k,desc:r.desc,al:r.al,fr:r.fr,c:new Map()});i.c.set(r.t,(i.c.get(r.t)||0)+r.ctn)}
- let R2='',y=1;const mg=[];
+ let R2='',y=1;const mg=[],PTc=new Map(),PA=new Map();
  for(const g of [...PK.values()].sort((a,b)=>srt(a.n,b.n))){
   const T=[...g.t].sort(),nt=T.length,tcI=5+nt,no=+(String(g.n).match(/\d+/)||[0])[0]||g.n;
   R2+=rw(y,cs(y,0,'PAKET',9)+cn(y,1,no,9)+ce(y,8,10)+cs(y,9,'No pick : ',11)+ce(y,10,12)+ce(y,11,12)+ce(y,12,12),42)+rw(y+1,'',5.1);y+=2;
   R2+=rw(y,['PRDCD','DESC2','ALAMAT','FRAC','RIT'].concat(T,['Total']).map((h,i)=>cs(y,i,h,13)).join(''),42);y++;
-  const cT=new Array(nt).fill(0);let gt=0;
+  const cT=new Array(nt).fill(0),y0=y;let gt=0;
   for(const i of [...g.it.values()].sort((a,b)=>srt(a.p,b.p))){let s=0,cells=cs(y,0,i.p,14)+cs(y,1,i.desc,15)+cs(y,2,i.al,15)+cn(y,3,i.fr,14)+cs(y,4,kvRl(g.rit),14);
-   T.forEach((t,k)=>{const v=i.c.get(t);if(v){cells+=cn(y,5+k,v,14);s+=v;cT[k]+=v}else cells+=ce(y,5+k,14)});
-   gt+=s;R2+=rw(y,cells+cn(y,tcI,s,16),42);y++}
-  R2+=rw(y,cs(y,0,'Total',16)+ce(y,1,17)+ce(y,2,17)+ce(y,3,17)+ce(y,4,17)+cT.map((v,k)=>cn(y,5+k,v,16)).join('')+cn(y,tcI,gt,16),42);mg.push('A'+y+':E'+y);y+=2}
+   T.forEach((t,k)=>{PA.set(g.n+'\u0001'+i.p+'\u0001'+t,CL(5+k)+y);const v=i.c.get(t);if(v){cells+=cn(y,5+k,v,14);s+=v;cT[k]+=v}else cells+=ce(y,5+k,14)});
+   gt+=s;R2+=rw(y,cells+cf(y,tcI,'SUM('+CL(5)+y+':'+CL(4+nt)+y+')',s,16),42);y++}
+  R2+=rw(y,cs(y,0,'Total',16)+ce(y,1,17)+ce(y,2,17)+ce(y,3,17)+ce(y,4,17)+cT.map((v,k)=>cf(y,5+k,'SUM('+CL(5+k)+y0+':'+CL(5+k)+(y-1)+')',v,16)).join('')+cf(y,tcI,'SUM('+CL(tcI)+y0+':'+CL(tcI)+(y-1)+')',gt,16),42);mg.push('A'+y+':E'+y);PTc.set(g.n,CL(tcI)+y);y+=2}
  const S2=WS(R2,[[1,1,11.86],[2,2,56.14],[3,3,13],[4,4,8.71],[5,14,9.14]],mg,true);
  // --- sheet 3: RINGKASAN PAKET (satu baris per paket)
  const PS3=new Map();for(const r of res){let g=PS3.get(r.paket);if(!g)PS3.set(r.paket,g={zg:r.zg,rit:r.rit,car:new Set(),jad:new Set(),t:new Set(),it:new Set(),c:0});g.car.add(r.car);g.jad.add(r.jad);g.t.add(r.t);g.it.add(r.pk);g.c+=r.ctn}
- let R3=rw(1,['PAKET','KELOMPOK','RITASE','CAR','JADWAL','JML_TOKO','JML_ITEM','TOTAL_CTN','TOKO'].map((x,i)=>cs(1,i,x,13)).join(''),30),y3=2,tT=0,tC=0;
- for(const[k,g]of[...PS3].sort((a,b)=>srt(a[0],b[0]))){tT+=g.t.size;tC+=g.c;
-  R3+=rw(y3,cs(y3,0,k,14)+cs(y3,1,g.zg||'',14)+cs(y3,2,kvRl(g.rit),14)+cs(y3,3,[...g.car].filter(Boolean).join('/'),14)+cs(y3,4,[...g.jad].filter(Boolean).join('/'),14)+cn(y3,5,g.t.size,14)+cn(y3,6,g.it.size,14)+cn(y3,7,g.c,14)+cs(y3,8,[...g.t].sort().join(' '),15),24);y3++}
- R3+=rw(y3,cs(y3,0,'Total',16)+ce(y3,1,17)+ce(y3,2,17)+ce(y3,3,17)+ce(y3,4,17)+cn(y3,5,tT,16)+ce(y3,6,17)+cn(y3,7,tC,16)+ce(y3,8,17),24);
- const S3=WS(R3,[[1,1,12],[2,2,9],[3,3,9],[4,4,16],[5,5,14],[6,8,11],[9,9,70]],['A'+y3+':A'+y3].slice(0,0),true);
+ // tabel kiri: Paket, No pick (dikosongkan), Total Ctn, Real Paket (rumus ke total paket di sheet PAKET; sel berwarna bila beda dari Total Ctn) + baris Total. Tabel kanan (terpisah): Paket dan Toko, satu toko per baris
+ const SP=[...PS3].sort((a,b)=>srt(a[0],b[0])),LF=SP.map(([k,g])=>[k,g.c]),RR=SP.flatMap(([k,g])=>[...g.t].sort().map(t=>[k,t])),tC=SP.reduce((a,[,g])=>a+g.c,0),nl=LF.length;
+ let R3=rw(1,['Paket','No pick','Total Ctn','Real Paket'].map((x,i)=>cs(1,i,x,13)).join('')+cs(1,5,'Paket',13)+cs(1,6,'Toko',13),30),y3=2;
+ for(let i=0;i<Math.max(nl+1,RR.length);i++){let c='';
+  if(i<nl)c+=cs(y3,0,LF[i][0],14)+ce(y3,1,14)+cn(y3,2,LF[i][1],14)+(PTc.has(LF[i][0])?cf(y3,3,'PAKET!'+PTc.get(LF[i][0]),LF[i][1],14):ce(y3,3,14));
+  else if(i===nl)c+=cs(y3,0,'Total',16)+ce(y3,1,17)+cn(y3,2,tC,16)+cf(y3,3,'SUM(D2:D'+(nl+1)+')',tC,16);
+  if(i<RR.length)c+=cs(y3,5,RR[i][0],14)+cs(y3,6,RR[i][1],14);
+  R3+=rw(y3,c,20);y3++}
+ const S3=WS(R3,[[1,1,12],[2,2,12],[3,3,12],[4,4,12],[5,5,3],[6,6,12],[7,7,14]],[],true,'<conditionalFormatting sqref="D2:D'+(nl+2)+'"><cfRule type="expression" dxfId="0" priority="1"><formula>ROUND(D2-C2,2)&lt;&gt;0</formula></cfRule></conditionalFormatting>');
  // --- sheet 4: Detail (satu baris per toko per PLU)
- const DH=['AM','KOTA','TOKO','NAMA TOKO','RITASE','CAR','JADWAL','KELOMPOK','PAKET','GAB','PLU','DESC','ZONA','POLA1','KET NATARU','FRAC','MINOR','ACOST','STOCK_AKHIR','QTY_TARGET','QTY_NPB','SISA','CTN_SISA','QTY_ALOKASI','CTN_ALOKASI','RP_ALOKASI'];
+ const DH=['AM','KOTA','TOKO','NAMA TOKO','RITASE','CAR','GAB','PLU','DESC','ZONA','POLA1','KET NATARU','FRAC','MINOR','ACOST','STOCK_AKHIR','QTY_TARGET','QTY_NPB','SISA','CTN_SISA','QTY_ALOKASI','CTN_ALOKASI','RP_ALOKASI','PAKET','REVISI'];
+ // REVISI: selisih qty ctn di sheet PAKET (sel toko x PLU, bisa diedit) terhadap CTN_ALOKASI; kosong bila sama, terisi (+/-) bila direvisi
+ const rv=(r,y)=>{const a=PA.get(r.paket+'\u0001'+String(r.p)+'\u0001'+r.t);if(!a)return ce(y,24,4);const d='ROUND(PAKET!'+a+'-'+CL(21)+y+',2)';return'<c r="'+CL(24)+y+'" s="4" t="str"><f>IF('+d+'=0,"",'+d+')</f><v></v></c>'};
  let R4=rw(1,DH.map((x,i)=>cs(1,i,x,13)).join(''),30),y4=2;
- for(const r of res){const v=[r.am,r.kota,r.t,r.nt,r.rit,r.car,r.jad,r.zg,r.paket,r.gab,r.p,r.desc,r.zn,r.p1,r.kt,r.fr,r.mn,r.ac,r.stock,r.tg,r.npb,r.sisa,r.cs,r.q,r.ctn,r.rp];
-  R4+='<row r="'+y4+'">'+v.map((x,i)=>i<15?cs(y4,i,x??'',4):cn(y4,i,+x||0,4)).join('')+'</row>';y4++}
- const S4=WS(R4,[[1,3,11],[4,4,28],[5,10,10],[11,11,11],[12,12,42],[13,26,12]],[],true).replace('<sheetView workbookViewId="0"/>','<sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView>');
+ for(const r of res){const v=[r.am,r.kota,r.t,r.nt,r.rit,r.car,r.gab,r.p,r.desc,r.zn,r.p1,r.kt,r.fr,r.mn,r.ac,r.stock,r.tg,r.npb,r.sisa,r.cs,r.q,r.ctn,r.rp],pn=(String(r.paket).match(/\d+/)||[''])[0];// PAKET di kolom terakhir, hanya nomornya
+  R4+='<row r="'+y4+'">'+v.map((x,i)=>i<12?cs(y4,i,x??'',4):cn(y4,i,+x||0,4)).join('')+(pn!==''?cn(y4,23,+pn,4):cs(y4,23,r.paket??'',4))+rv(r,y4)+'</row>';y4++}
+ const S4=WS(R4,[[1,3,11],[4,4,28],[5,7,10],[8,8,11],[9,9,42],[10,25,12]],[],true,'<conditionalFormatting sqref="Y2:Y'+Math.max(2,y4-1)+'"><cfRule type="expression" dxfId="0" priority="1"><formula>Y2&lt;&gt;""</formula></cfRule></conditionalFormatting>').replace('<sheetView workbookViewId="0"/>','<sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView>');
  const xf=(n,f,fl,bd,al)=>'<xf numFmtId="'+n+'" fontId="'+f+'" fillId="'+fl+'" borderId="'+bd+'" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment '+al+'/></xf>',
   V='vertical="center"',CC='horizontal="center" '+V,
   styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="165" formatCode="_ * #,##0_ ;_ * \\-#,##0_ ;_ * &quot;-&quot;??_ ;_ @_ "/></numFmts><fonts count="5"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="18"/><name val="Calibri"/></font><font><sz val="12"/><name val="Calibri"/></font><font><b/><sz val="12"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFFF00"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF000000"/></left><right style="thin"><color rgb="FF000000"/></right><top style="thin"><color rgb="FF000000"/></top><bottom style="thin"><color rgb="FF000000"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="19">'
    +xf(0,0,0,0,'')+xf(0,2,0,0,'horizontal="left" '+V)+xf(0,1,0,1,CC)+xf(0,0,0,1,CC)+xf(0,0,0,1,V)+xf(165,0,0,1,V)+xf(165,1,0,1,V)+xf(0,1,0,1,CC)+xf(0,0,0,1,V)
    +xf(0,2,0,0,CC+' wrapText="1"')+xf(0,2,2,0,CC)+xf(0,2,2,0,'horizontal="right" '+V)+xf(0,2,2,0,'horizontal="centerContinuous" '+V)
    +xf(0,4,0,1,CC+' wrapText="1"')+xf(0,3,0,1,CC+' wrapText="1"')+xf(0,3,0,1,V)+xf(0,4,0,1,CC+' wrapText="1"')+xf(0,3,0,1,V)+xf(0,4,0,0,'horizontal="left" '+V)
-   +'</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>',
+   +'</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles><dxfs count="1"><dxf><font><b/><color rgb="FF9C0006"/></font><fill><patternFill><bgColor rgb="FFFFC7CE"/></patternFill></fill></dxf></dxfs></styleSheet>',
   NS='xmlns="http://schemas.openxmlformats.org/package/2006/relationships"',HD='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>',RT='http://schemas.openxmlformats.org/officeDocument/2006/relationships/',WT='application/vnd.openxmlformats-officedocument.spreadsheetml.';
  return zipStore([
   ['[Content_Types].xml',HD+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="'+WT+'sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/worksheets/sheet3.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/worksheets/sheet4.xml" ContentType="'+WT+'worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="'+WT+'styles+xml"/></Types>'],
@@ -1146,24 +1159,25 @@ async function kvCalc(){const jm=$('#kv_msg'),go=$('#kv_go'),out=$('#kv_res');go
   const A=new Set();let tq=0,tc=0,tr=0;
   for(const r of res){A.add(r.pk);tq+=r.q;tc+=r.ctn;tr+=r.rp}
   const nf=(v,dc=0)=>Number(v).toLocaleString('id-ID',{maximumFractionDigits:dc});
-  const dt=new Date(),tail=(($('#gd').value||'G113').replace(/[^\w-]/g,'')||'G113')+'_'+String(dt.getDate()).padStart(2,'0')+'_'+['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'][dt.getMonth()]+'_'+String(dt.getFullYear()).slice(-2),
-   nx='Rekap_Kanvas_'+tail+'.xlsx',nz='Kanvas_CSV_per_paket_'+tail+'.zip';
+  const dt=new Date(),
+   hr=String.fromCharCode(65+Math.floor(Math.random()*26));// huruf acak tiap proses, dipakai untuk nama CSV paket
   for(const u of kvUrls)if(u)URL.revokeObjectURL(u);
   const IT=new Map();for(const r of res){let g=IT.get(r.pk);if(!g)IT.set(r.pk,g={p:r.p,desc:r.desc,pola:r.p1,rk:Number(r.zn)===17,zn:r.zn,al:r.al,fr:r.fr,mn:r.mn,ac:r.ac,st:r.stock,q:0,c:0,rp:0,tk:new Set()});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp;g.tk.add(r.t)}
   const items=[...IT.values()].sort((a,b)=>String(a.zn).localeCompare(String(b.zn),'id',{numeric:true})||b.q-a.q),
    MB=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],bs=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1),per=String(bs.getDate()).padStart(2,'0')+' '+MB[bs.getMonth()]+' '+String(bs.getFullYear()).slice(-2);
+  const nx='Rekap Kanvas '+per+'.xlsx',nz='Paket Kanvas '+per+'.zip';
   const u2=URL.createObjectURL(kvBook(res,dt));
   const PF=new Map();for(const r of res){let g=PF.get(r.paket);if(!g)PF.set(r.paket,g={n:r.paket,l:[]});g.l.push(r.t+','+r.p+','+r.q+',SEASONAL')}
-  const u3=URL.createObjectURL(zipStore([...PF.values()].sort((a,b)=>a.n.localeCompare(b.n,'id',{numeric:true})).map(g=>['P'+(g.n.replace(/\D/g,'')||g.n)+' '+String(dt.getDate()).padStart(2,'0')+' '+MB[dt.getMonth()]+'.csv','TOKO,PRDCD,QTY,KET\r\n'+g.l.join('\r\n')+'\r\n']),'application/zip'));
+  const u3=URL.createObjectURL(zipStore([...PF.values()].sort((a,b)=>a.n.localeCompare(b.n,'id',{numeric:true})).map(g=>[hr+String(g.n.replace(/\D/g,'')||g.n).padStart(2,'0')+'.csv','TOKO,PRDCD,QTY,KET\r\n'+g.l.join('\r\n')+'\r\n']),'application/zip'));
   const PS=new Map();for(const r of res){let g=PS.get(r.paket);if(!g)PS.set(r.paket,g={zg:r.zg,rit:r.rit,car:new Set(),jad:new Set(),t:new Set(),it:new Set(),c:0});g.car.add(r.car);g.jad.add(r.jad);g.t.add(r.t);g.it.add(r.pk);g.c+=r.ctn}
   const PL_=[...PS].sort((a,b)=>a[0].localeCompare(b[0],'id',{numeric:true}));
   kvUrls=[u2,u3];
   const pt=l=>'<table class="kvt kvp"><tr class="th"><td>Paket</td><td>CAR</td><td>Toko</td><td>Item</td><td>CTN</td></tr>'+l.map(([k,g])=>'<tr><td>'+esc(k)+'</td><td>'+esc([...g.car].filter(Boolean).sort().join('/'))+'</td><td>'+nf(g.t.size)+'</td><td>'+nf(g.it.size)+'</td><td>'+nf(g.c)+'</td></tr>').join('')+'</table>',
    RT=[...new Set(PL_.map(([,g])=>g.rit||'-'))].sort((x,y)=>String(x).localeCompare(String(y),'id',{numeric:true})),
    pg=RT.map(rt=>{const l=PL_.filter(([,g])=>(g.rit||'-')===rt),c=l.reduce((a,[,g])=>a+g.c,0);return'<div><div class="kvh">'+esc(kvRl(rt))+' <span>'+nf(l.length)+' paket · '+nf(c)+' ctn</span></div>'+pt(l)+'</div>'}).join(''),
-   IR=RT.map(rt=>{const m=new Map();for(const r of res){if((r.rit||'-')!==rt)continue;let g=m.get(r.pk);if(!g)m.set(r.pk,g={p:r.p,desc:r.desc,pola:r.p1,q:0,c:0,rp:0});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp}
+   IR=['*'].map(rt=>{const m=new Map();for(const r of res){let g=m.get(r.pk);if(!g)m.set(r.pk,g={p:r.p,desc:r.desc,pola:r.p1,q:0,c:0,rp:0});g.q+=r.q;g.c+=r.ctn;g.rp+=r.rp}
     const l=[...m.values()].sort((x,y)=>(x.pola==='BASIC'?0:1)-(y.pola==='BASIC'?0:1)||String(x.p).localeCompare(String(y.p),'id',{numeric:true})),c=l.reduce((s,x)=>s+x.c,0);
-    return'<div class="kvh" style="margin-top:12px">'+esc(kvRl(rt))+' <span>'+nf(l.length)+' item \u00b7 '+nf(c)+' ctn</span></div><div class="kvit"><table class="kvt kvi2"><tr class="th"><td>PRDCD</td><td>DESC</td><td>Pola1</td><td>QTY</td><td>CTN</td><td>RP</td></tr>'
+    return'<div class="kvh" style="margin-top:12px">Total <span>'+nf(l.length)+' item \u00b7 '+nf(c)+' ctn</span></div><div class="kvit"><table class="kvt kvi2"><tr class="th"><td>PRDCD</td><td>DESC</td><td>Pola1</td><td>QTY</td><td>CTN</td><td>RP</td></tr>'
      +l.map(x=>'<tr><td>'+esc(x.p)+'</td><td>'+esc(x.desc)+'</td><td>'+esc(x.pola)+'</td><td>'+nf(x.q)+'</td><td>'+nf(x.c,2)+'</td><td>'+nf(x.rp)+'</td></tr>').join('')
      +'<tr class="tot"><td colspan="3">Total</td><td>'+nf(l.reduce((s,x)=>s+x.q,0))+'</td><td>'+nf(c,2)+'</td><td>'+nf(l.reduce((s,x)=>s+x.rp,0))+'</td></tr></table></div>'}).join('');
   out.innerHTML='<div class="kvr"><div class="kvs"><div class="st"><span>Item</span><b>'+nf(A.size)+'</b></div><div class="st"><span>Paket</span><b>'+nf(PS.size)+'</b></div><div class="st"><span>CTN</span><b>'+nf(tc,2)+'</b></div><div class="st"><span>Rp</span><b>'+nf(tr)+'</b></div></div>'
@@ -1218,6 +1232,6 @@ async function boot(){const ld=$('#ld');
  catch(e){ld.className='on er';$('#ldt').textContent='Gagal membaca database';$('#ldm').className='m e';$('#ldm').textContent=(e&&e.message)||'Koneksi gagal.';$('#ldr').disabled=false}}
 $('#ldr').onclick=boot;boot();
 // versi aplikasi: sama dengan VER di sw.js (header, footer, dan cache service worker)
-const APP_VER='1.2.5';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
+const APP_VER='1.3.2';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
 </script></body></html>
