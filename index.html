@@ -87,10 +87,10 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 .c.k label.ck{flex-direction:row;align-items:center;gap:5px;align-self:flex-end;height:38px;box-sizing:border-box;white-space:nowrap;font-size:13px;cursor:pointer}.c.k label.ck input{width:18px;height:18px;margin:0;accent-color:var(--yel,#fc0)}
 @media(max-width:560px){.c.t.k{flex-wrap:wrap;row-gap:8px}}
 .isb{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.isb button{height:38px;padding:0 6px;font-size:13px;font-weight:600;white-space:normal;line-height:1.15;position:relative}.isb button::after{content:'\25BE';margin-left:5px;font-size:10px;display:inline-block;transition:transform .15s}.isb button[aria-expanded=true]{border-color:var(--yel,#fc0);color:var(--yel,#fc0)}.isb button[aria-expanded=true]::after{transform:rotate(180deg)}.isp{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end;margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:4px;background:var(--pn2)}.isp[hidden]{display:none}.isp label{white-space:normal;min-width:0;line-height:1.25}.isp input{width:100%;height:36px;padding:0 8px;min-width:0}.isgo{display:flex;justify-content:flex-end;margin-top:12px}.isgo #al_go{height:36px;padding:0 18px}
-.kvdd{position:relative;display:flex;flex-direction:column;font-size:13px;color:var(--mut);gap:4px;text-align:center;min-width:0;line-height:1.25}.c.isi .kvdd>button{width:100%;height:36px;padding:0 8px;font-size:13px;background:var(--pn2);color:var(--ink);border:1px solid var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kvdd .pp{position:absolute;top:100%;left:0;min-width:100%;width:max-content;z-index:30;margin-top:4px;background:var(--pn);border:1px solid var(--line);border-radius:6px;padding:4px 8px;box-shadow:0 6px 18px rgba(0,0,0,.45);text-align:left}.kvdd .pp[hidden]{display:none}.c.isi.kvi .kvdd .pp label.ck{height:34px}
+.kvdd{position:relative;display:flex;flex-direction:column;font-size:13px;color:var(--mut);gap:4px;text-align:center;min-width:0;line-height:1.25}.c.isi .kvdd>button{width:100%;height:36px;padding:0 8px;font-size:13px;background:var(--pn2);color:var(--ink);border:1px solid var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kvdd .pp{position:fixed;top:0;left:0;width:max-content;z-index:60;margin:0;background:var(--pn);border:1px solid var(--line);border-radius:6px;padding:4px 8px;box-shadow:0 6px 18px rgba(0,0,0,.45);text-align:left}.kvdd .pp[hidden]{display:none}.c.isi.kvi .kvdd .pp label.ck{height:34px}
 .kvh0 input.sm{width:38px;height:26px;padding:0 4px;text-align:center;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:4px;background:var(--pn2);color:var(--ink)}
 </style></head><body><div id="ld" class="on" role="status" aria-live="polite"><div class="sp"></div><div class="t" id="ldt">Membaca database...</div><div class="m" id="ldm">Menghubungkan ke database...</div><button type="button" id="ldr">Sinkron ulang</button></div><main>
-<div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1><span class="hv" id="hv">v1.4.3</span>
+<div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1><span class="hv" id="hv">v1.4.5</span>
 <nav class="mn" id="mn" hidden><button type="button" id="t2" aria-selected="false">Master</button><button type="button" id="t3" aria-selected="false">Alokasi DPD</button><button type="button" id="t5" aria-selected="false">Alokasi Kanvas</button><a href="https://docs.google.com/spreadsheets/d/1sNZO22t6ZnRRiFcIFOpMFJiKqLt9BpcUGDLfw5qrQdg/edit?pli=1&amp;gid=0#gid=0" class="db" target="_blank" rel="noopener">&#9888;&#xFE0E; DATABASE</a></nav></div>
 <div class="tabs" role="tablist"><button type="button" role="tab" id="t1" class="on" aria-selected="true">Ringkasan</button><button type="button" role="tab" id="t4" aria-selected="false">Trend Termin</button></div>
 <div id="pg1"><section class="p gen"><div id="sm"></div></section></div>
@@ -125,19 +125,19 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <b>Sudah alokasi</b><span>GAB (12 karakter), PLU (8), atau TOKO (4)</span>
 </div>
 <div class="m" id="al_um" style="margin-top:8px;white-space:normal"></div><div id="al_ul" style="margin-top:6px"></div></section>
-<section class="p gen" style="overflow:visible"><div class="alt">Pilihan</div><div class="alg">
+<section class="p gen" style="overflow:visible"><div class="alt">Alokasi</div><div class="alg">
 <div class="alf"><span>Ket Nataru</span><div id="al_ket"></div></div>
 <div class="alf"><span>Pola 1</span><div id="al_pola1"></div></div>
 <div class="alf"><span>Pola 2</span><div id="al_pola2"></div></div>
 <div class="alf"><span>Zona</span><div id="al_zona"></div></div>
-</div></section>
-<section class="p gen"><div class="alt">Isian</div><div class="isb"><button type="button" data-k="s" aria-expanded="false">Basic</button><button type="button" data-k="n" aria-expanded="false">Non Bulky</button><button type="button" data-k="b" aria-expanded="false">Bulky</button><button type="button" data-k="r" aria-expanded="false">Rokok</button></div>
+</div>
+<div class="isb" style="margin-top:14px"><button type="button" data-k="s" aria-expanded="false">Basic</button><button type="button" data-k="n" aria-expanded="false">Non Bulky</button><button type="button" data-k="b" aria-expanded="false">Bulky</button><button type="button" data-k="r" aria-expanded="false">Rokok</button></div>
 <div class="isp" data-k="s" hidden><label>Max qty (&times; minor)<input type="number" id="al_mqs" min="0" step="1" inputmode="numeric"></label><label>Max stock (ctn)<input type="number" id="al_mxb" min="0" step="1" inputmode="numeric"></label></div>
 <div class="isp" data-k="n" hidden><label>Min stock (PCS)<input type="number" id="al_ms" min="0" step="1" inputmode="numeric"></label><label>Min Rp (per PLU)<input type="text" id="al_mr" inputmode="numeric" autocomplete="off"></label><label>Max item (per zona)<input type="number" id="al_mnb" min="0" step="1" inputmode="numeric"></label><label>Max qty (&times; minor)<input type="number" id="al_mq" min="0" step="1" inputmode="numeric"></label></div>
 <div class="isp" data-k="b" hidden><label>Max item (per zona)<input type="number" id="al_mi" min="0" step="1" inputmode="numeric"></label><label>Max qty (&times; minor)<input type="number" id="al_mqb" min="0" step="1" inputmode="numeric"></label><label>Max stock (ctn)<input type="number" id="al_mxs" min="0" step="1" inputmode="numeric"></label></div>
 <div class="isp" data-k="r" hidden><label>Max item (per zona)<input type="number" id="al_mrk" min="0" step="1" inputmode="numeric"></label><label>Max qty (&times; minor)<input type="number" id="al_mqr" min="0" step="1" inputmode="numeric"></label></div>
 <div class="isgo"><button id="al_go">Hitung alokasi</button></div>
-<div class="m" id="al_msg" style="margin-top:12px;white-space:normal"></div><div id="al_res" style="margin-top:12px"></div></section>
+<div class="m" id="al_msg" style="margin-top:12px;white-space:normal"></div><div id="al_res" style="margin-top:12px;overflow-x:auto"></div></section>
 </div>
 <div id="pg5" hidden>
 <section class="p gen"><div class="alt">Upload</div>
@@ -160,10 +160,10 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <div class="m" id="kv_msg" style="margin-top:12px;white-space:normal"></div><div id="kv_res" style="margin-top:12px"></div></section>
 </div>
 <div id="pg4" hidden><section class="p gen"><div class="sg"><button type="button" class="g on" data-v="k">Kumulatif</button><button type="button" class="g" data-v="h">Per hari</button></div><div class="m" id="trn" style="margin:0 0 8px;white-space:normal"></div><div class="trw" id="trw"></div></section></div>
-<footer>Resep Rahasia Krabby Patty <span id="fv">v1.4.3</span> @2026 &bull; Zie Project</footer>
+<footer>Resep Rahasia Krabby Patty <span id="fv">v1.4.5</span> @2026 &bull; Zie Project</footer>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.3/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.5/html2canvas.min.js"></script>
 <script>
 const $=s=>document.querySelector(s),tick=()=>new Promise(r=>setTimeout(r)),fn=n=>Number(n).toLocaleString('id-ID'),fdt=t=>{const m=String(t||'').match(/(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/);return m&&+m[2]>=1&&+m[2]<=12?m[1].padStart(2,'0')+' '+['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][+m[2]-1]+' '+m[3].slice(2):String(t||'').split(/[,\s]/)[0]},pc=(a,b)=>(b?Math.min(100,Math.floor(100*a/b)):100)+' %',
 tpd=t=>{const m=String(t||'').match(/(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})(?:\D+(\d{1,2})[.:](\d{2}))?/);if(!m||+m[2]<1||+m[2]>12)return null;return new Date(+m[3],+m[2]-1,+m[1],+(m[4]||0),+(m[5]||0))},
@@ -860,7 +860,8 @@ if(!Array.isArray(KV.gc))KV.gc=KV_CATS.map(x=>x[0]);
 const kvGcSync=()=>{const b=$('#kv_gc_b'),pp=$('#kv_gc_p'),a=KV.gc;for(const i of pp.querySelectorAll('input'))i.checked=a.includes(i.value);b.textContent=a.length===0?'Tidak ada':a.length===KV_CATS.length?'Semua':KV_CATS.filter(x=>a.includes(x[0])).map(x=>x[1]).join(', ')};
 {const b=$('#kv_gc_b'),pp=$('#kv_gc_p');pp.innerHTML=KV_CATS.map(([k,n])=>'<label class="ck"><input type="checkbox" value="'+k+'">'+n+'</label>').join('');
  for(const i of pp.querySelectorAll('input'))i.onchange=()=>{KV.gc=[...pp.querySelectorAll('input')].filter(x=>x.checked).map(x=>x.value);kvGcSync();kvSave()};
- b.onclick=e=>{e.stopPropagation();pp.hidden=!pp.hidden};document.addEventListener('click',e=>{if(!pp.hidden&&!pp.contains(e.target)&&e.target!==b)pp.hidden=true});kvGcSync()}
+ const place=()=>{const r=b.getBoundingClientRect();pp.style.minWidth=r.width+'px';pp.style.top=(r.bottom+4)+'px';pp.style.left=Math.max(4,Math.min(r.left,innerWidth-pp.offsetWidth-8))+'px'};
+ b.onclick=e=>{e.stopPropagation();pp.hidden=!pp.hidden;if(!pp.hidden)place()};const hid=()=>{if(!pp.hidden)pp.hidden=true};addEventListener('scroll',hid,true);addEventListener('resize',hid);document.addEventListener('click',e=>{if(!pp.hidden&&!pp.contains(e.target)&&e.target!==b)pp.hidden=true});kvGcSync()}
 for(const[id,k]of[['kv_gp','gp'],['kv_mi','mi'],['kv_mp','mp'],['kv_kl','kl'],['kv_ms','ms'],['kv_mx','mx']]){const e=$('#'+id);if(KV[k]!=null)e.value=KV[k];e.oninput=()=>{KV[k]=e.value===''?null:Math.max(0,Math.floor(+e.value));kvSave()}}
 let kvArt;$('#kv_rs').onclick=async()=>{const b=$('#kv_rs');
  if(!b.classList.contains('ask')){b.classList.add('ask');b.textContent='Yakin? Klik lagi';clearTimeout(kvArt);kvArt=setTimeout(()=>{b.classList.remove('ask');b.textContent='Reset'},5000);return}
@@ -1231,6 +1232,6 @@ async function boot(){const ld=$('#ld');
  catch(e){ld.className='on er';$('#ldt').textContent='Gagal membaca database';$('#ldm').className='m e';$('#ldm').textContent=(e&&e.message)||'Koneksi gagal.';$('#ldr').disabled=false}}
 $('#ldr').onclick=boot;boot();
 // versi aplikasi: sama dengan VER di sw.js (header, footer, dan cache service worker)
-const APP_VER='1.4.3';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
+const APP_VER='1.4.5';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
 </script></body></html>
