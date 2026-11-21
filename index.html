@@ -160,7 +160,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <div class="m" id="kv_msg" style="margin-top:12px;white-space:normal"></div><div id="kv_res" style="margin-top:12px"></div></section>
 </div>
 <div id="pg4" hidden><section class="p gen"><div class="sg"><button type="button" class="g on" data-v="k">Kumulatif</button><button type="button" class="g" data-v="h">Per hari</button></div><div class="m" id="trn" style="margin:0 0 8px;white-space:normal"></div><div class="trw" id="trw"></div></section></div>
-<footer>Resep Rahasia Krabby Patty <span id="fv">v1.4.7</span> @2026 &bull; Zie Project</footer>
+<footer>Resep Rahasia Krabby Patty <span id="fv">v1.4.8</span> @2026 &bull; Zie Project</footer>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.5/html2canvas.min.js"></script>
@@ -513,7 +513,7 @@ $('#go').onclick=async()=>{const go=$('#go'),bar=$('#bar'),fl=$('#fl'),jm=$('#jm
   parts.push(buf.join('\n')+'\n');let orphan=0;for(const k of P.keys())if(!tg.has(k))orphan++;let orf=0;for(const k of FT.keys())if(!tg.has(k))orf++;
   const url=URL.createObjectURL(new Blob(parts,{type:'text/csv;charset=utf-8'}));fl.style.width='100%';jm.textContent='Selesai';
   const dt=new Date(),nm2='Rekap_'+(g.replace(/[^\w-]/g,'')||'G113')+'_'+String(dt.getDate()).padStart(2,'0')+'_'+['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'][dt.getMonth()]+'_'+String(dt.getFullYear()).slice(-2)+'.csv';
-  $('#res').innerHTML=`<div class="ac"><a class="dl" href="${url}" download="${nm2}">Unduh ${nm2}</a></div><table>
+  $('#res').innerHTML=`<div class="ac"><a class="dl" href="${url}" download="${nm2}">Unduh Rekap</a></div><table>
   <tr><td>Baris rekap</td><td>${fn(tg.size)}</td></tr><tr><td>Toko tidak ada di data Toko</td><td>${dz(nt)}</td></tr>
   <tr><td>PLU tidak ada di Master</td><td>${dz(nm)}</td></tr><tr><td>PLU tidak ada di Item</td><td>${dz(ni)}</td></tr>
   <tr><td>GAB di NPB tanpa Target (tidak ikut terhitung)</td><td>${dz(orphan)}</td></tr><tr><td>GAB di FT_HO tanpa Target (tidak ikut terhitung)</td><td>${dz(orf)}</td></tr></table>`;
@@ -1232,6 +1232,6 @@ async function boot(){const ld=$('#ld');
  catch(e){ld.className='on er';$('#ldt').textContent='Gagal membaca database';$('#ldm').className='m e';$('#ldm').textContent=(e&&e.message)||'Koneksi gagal.';$('#ldr').disabled=false}}
 $('#ldr').onclick=boot;boot();
 // versi aplikasi: sama dengan VER di sw.js (header, footer, dan cache service worker)
-const APP_VER='1.4.7';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
+const APP_VER='1.4.8';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
 </script></body></html>
