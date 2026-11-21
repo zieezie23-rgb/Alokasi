@@ -90,7 +90,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 .kvdd{position:relative;display:flex;flex-direction:column;font-size:13px;color:var(--mut);gap:4px;text-align:center;min-width:0;line-height:1.25}.c.isi .kvdd>button{width:100%;height:36px;padding:0 8px;font-size:13px;background:var(--pn2);color:var(--ink);border:1px solid var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kvdd .pp{position:fixed;top:0;left:0;width:max-content;z-index:60;margin:0;background:var(--pn);border:1px solid var(--line);border-radius:6px;padding:4px 8px;box-shadow:0 6px 18px rgba(0,0,0,.45);text-align:left}.kvdd .pp[hidden]{display:none}.c.isi.kvi .kvdd .pp label.ck{height:34px}
 .kvh0 input.sm{width:38px;height:26px;padding:0 4px;text-align:center;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:4px;background:var(--pn2);color:var(--ink)}
 </style></head><body><div id="ld" class="on" role="status" aria-live="polite"><div class="sp"></div><div class="t" id="ldt">Membaca database...</div><div class="m" id="ldm">Menghubungkan ke database...</div><button type="button" id="ldr">Sinkron ulang</button></div><main>
-<div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1><span class="hv" id="hv">v1.4.6</span>
+<div class="hw"><h1><img src="assets/icon.png" alt="" width="36" height="36" decoding="async"><span>Resep Rahasia Krabby Patty</span><button type="button" id="mb" class="hb" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5.5h17M3.5 12h17M3.5 18.5h17"/></svg></button></h1><span class="hv" id="hv">v1.4.5</span>
 <nav class="mn" id="mn" hidden><button type="button" id="t2" aria-selected="false">Master</button><button type="button" id="t3" aria-selected="false">Alokasi DPD</button><button type="button" id="t5" aria-selected="false">Alokasi Kanvas</button><a href="https://docs.google.com/spreadsheets/d/1sNZO22t6ZnRRiFcIFOpMFJiKqLt9BpcUGDLfw5qrQdg/edit?pli=1&amp;gid=0#gid=0" class="db" target="_blank" rel="noopener">&#9888;&#xFE0E; DATABASE</a></nav></div>
 <div class="tabs" role="tablist"><button type="button" role="tab" id="t1" class="on" aria-selected="true">Ringkasan</button><button type="button" role="tab" id="t4" aria-selected="false">Trend Termin</button></div>
 <div id="pg1"><section class="p gen"><div id="sm"></div></section></div>
@@ -160,7 +160,7 @@ input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);borde
 <div class="m" id="kv_msg" style="margin-top:12px;white-space:normal"></div><div id="kv_res" style="margin-top:12px"></div></section>
 </div>
 <div id="pg4" hidden><section class="p gen"><div class="sg"><button type="button" class="g on" data-v="k">Kumulatif</button><button type="button" class="g" data-v="h">Per hari</button></div><div class="m" id="trn" style="margin:0 0 8px;white-space:normal"></div><div class="trw" id="trw"></div></section></div>
-<footer>Resep Rahasia Krabby Patty <span id="fv">v1.4.6</span> @2026 &bull; Zie Project</footer>
+<footer>Resep Rahasia Krabby Patty <span id="fv">v1.4.7</span> @2026 &bull; Zie Project</footer>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.5/html2canvas.min.js"></script>
@@ -528,8 +528,8 @@ $('#go').onclick=async()=>{const go=$('#go'),bar=$('#bar'),fl=$('#fl'),jm=$('#jm
     jm.textContent='Selesai. Rekap juga sudah tersimpan.'}
    catch(e){jm.innerHTML='<span class="e">CSV siap diunduh, tetapi rekap belum tersimpan: '+e.message+'</span>'}}
  }catch(e){jm.innerHTML='<span class="e">'+e.message+'</span>'}go.disabled=rekapHold};
-const DEF_KEY='$B0NC0kuadrat';
-const DEF_URL='https://rekapnataru.zichookymirnanda.workers.dev';
+const DEF_KEY='00000';
+const DEF_URL='https://script.google.com/macros/s/AKfycbwymu26Dh5II0KEVYTJFEOzrp1Zp7o9dYye9FYBdTq_Ciqja13HCb7WADsfdagx5V6n/exec';
 let rt;$('#rs').onclick=async()=>{const b=$('#rs'),um=$('#um');
  if(!b.classList.contains('ask')){b.classList.add('ask');b.textContent='Yakin hapus semua? Klik lagi';clearTimeout(rt);rt=setTimeout(()=>{b.classList.remove('ask');b.textContent='Reset database'},5000);return}
  clearTimeout(rt);b.disabled=true;$('#ulb').classList.add('off');um.className='m';
@@ -1232,6 +1232,6 @@ async function boot(){const ld=$('#ld');
  catch(e){ld.className='on er';$('#ldt').textContent='Gagal membaca database';$('#ldm').className='m e';$('#ldm').textContent=(e&&e.message)||'Koneksi gagal.';$('#ldr').disabled=false}}
 $('#ldr').onclick=boot;boot();
 // versi aplikasi: sama dengan VER di sw.js (header, footer, dan cache service worker)
-const APP_VER='1.4.6';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
+const APP_VER='1.4.7';for(const id of['hv','fv']){const e=document.getElementById(id);if(e)e.textContent='v'+APP_VER}
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
 </script></body></html>
